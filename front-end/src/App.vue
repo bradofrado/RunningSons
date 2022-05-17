@@ -6,10 +6,12 @@
 
 <style>
 body {
-    background-image: linear-gradient(-180deg, #4a6d6c , #033740);
-    background-size: 200% 200%;
-    animation: gradient 5s ease infinite;
     margin: 0px;
+    font-family: 'Montserrat', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    color: #fff;
+    font-size: 12px;
 }
 
 @keyframes gradient {
@@ -18,12 +20,11 @@ body {
     100%{background-position:10% 0%}
 }
 #app {
-  font-family: 'Montserrat', 'Helvetica Neue', Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #fff;
-  height: 100vh;
+    text-align: center;
+    height: 100vh;
+    background-image: linear-gradient(-180deg, #188B7D , #033740);
+    background-size: 200% 200%;
+    animation: gradient 5s ease infinite;
 }
 
 nav {
@@ -37,5 +38,11 @@ nav a {
 
 nav a.router-link-exact-active {
   color: #42b983;
+}
+
+@media only screen and (min-width: 960px) {
+    body {
+        font-size: 16px;
+    }
 }
 </style>

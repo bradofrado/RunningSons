@@ -1,7 +1,7 @@
 <template>
     <div class="home-container">
         <h1 class="title">Running Sons</h1>
-        <p>Music and Merchandise coming soon...</p>
+        <p>Album <em>Falling Sand</em> and Merchandise coming soon...</p>
     </div>
 </template>
 
@@ -22,7 +22,17 @@ export default {
     text-shadow: 2px 4px 20px #283b3b;
 }
 
+p {
+    color: #FFC31F;
+}
+
 .home-container {
-    padding-top: 150px;
+    padding-top: 100px;
+}
+
+@media only screen and (min-width: 960px) {
+    .home-container {
+        padding-top: 150px;
+    }
 }
 </style>
