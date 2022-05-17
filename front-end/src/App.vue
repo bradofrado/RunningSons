@@ -1,8 +1,20 @@
 <template>
-  <div id="app">
-    <router-view/>
+  <div id="app" class="footer-app-container">
+    <router-view class="footer-app"/>
+    <Footer/>
   </div>
 </template>
+
+<script>
+import Footer from '@/components/Footer.vue';
+
+export default {
+    name: "App",
+    components: {
+        Footer
+    }
+}
+</script>
 
 <style>
 body {
@@ -21,10 +33,21 @@ body {
 }
 #app {
     text-align: center;
-    height: 100vh;
     background-image: linear-gradient(-180deg, #188B7D , #033740);
     background-size: 200% 200%;
     animation: gradient 5s ease infinite;
+}
+
+.footer-app-container {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+.footer-app {
+    flex: 1;
+    margin-top: 20px;
+    margin-bottom: 20px;
 }
 
 nav {
