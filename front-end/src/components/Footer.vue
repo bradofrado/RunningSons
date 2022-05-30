@@ -4,7 +4,7 @@
         ALL CONTENT COPYRIGHT &#169; 2022 Running Sons
     </div>
     <div class="icons-container">
-        <logo-icon icon="instagram"/>                 
+        <logo-icon icon="instagram" class="icon"/>                 
     </div>   
 </div>     
 </template>
@@ -57,23 +57,7 @@ export default {
 }
 
 .icon {
-    width: 2rem;
     margin-right: 1rem;
-}
-
-.email-icon {
-    width: 1.5rem;
-    margin: 10px 0 0 10px;
-}
-
-.etsy-icon {
-    width: 1.3rem;
-    padding-top: 2px;
-}
-
-.github-icon {
-    width: 1.5rem;
-    padding-top: 2px;
 }
 
 .footer-bottom {
