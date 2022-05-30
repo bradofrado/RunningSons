@@ -1,6 +1,11 @@
 import Vue from 'vue'
 import App from './App.vue'
 import router from './router'
+import { BootstrapVue } from 'bootstrap-vue'
+import '@/scss/custom.scss'
+
+// Make BootstrapVue available throughout your project
+Vue.use(BootstrapVue)
 
 Vue.config.productionTip = false
 

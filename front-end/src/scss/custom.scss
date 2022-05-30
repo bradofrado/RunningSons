@@ -1,0 +1,26 @@
+$white: #fff;
+$black: #2A2D34;
+//$primary: #033740;
+$primary-2: #228579;
+//$secondary: #FFC31F;
+//$secondary-2: #FF5900;
+
+$primary: #033740;
+//$primary-2: #04677C;
+$secondary: #FACE0B;
+$secondary-2: #E06F05;
+
+$body-bg: $primary;
+$body-color: $secondary;
+$font-family-sans-serif: 'Montserrat', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+
+
+
+body {
+    margin: 0px;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    font-size: 12px;
+}
+
+@import 'bootstrap/scss/bootstrap.scss'
