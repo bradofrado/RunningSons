@@ -8,7 +8,8 @@
             <b-collapse id="nav-collapse" is-nav>
                 <b-navbar-nav>
                     <b-nav-item to="/" exact-active-class="active">Home</b-nav-item>
-                    <b-nav-item to="/items" active-class="active">Items</b-nav-item>                    
+                    <b-nav-item to="/music" active-class="active">Music</b-nav-item> 
+                    <b-nav-item to="/merchandise" active-class="active">Merchandise</b-nav-item>                                       
                 </b-navbar-nav>
             </b-collapse>
         </div>

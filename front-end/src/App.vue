@@ -42,6 +42,27 @@ export default {
     animation: gradient 5s ease infinite;
 }
 
+.title-container {
+    padding-top: 100px;
+}
+
+.title {
+    text-transform: uppercase;
+    font-weight: 700;
+    font-size: 5em;
+    text-shadow: 2px 4px 20px #283b3b;
+}
+
+.sub-title {
+    color: #FFC31F;
+}
+
+@media only screen and (min-width: 960px) {
+    .title-container {
+        padding-top: 150px;
+    }
+}
+
 .footer-app-container {
     display: flex;
     flex-direction: column;
