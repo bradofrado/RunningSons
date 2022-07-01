@@ -1,7 +1,6 @@
 <template>
-    <div class="home-container">
-        <h1 class="title">Running Sons</h1>
-        <p>Album <em>Falling Sand</em> and Merchandise coming soon...</p>
+    <div>
+        Hello world
     </div>
 </template>
 
