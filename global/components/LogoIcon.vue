@@ -51,7 +51,7 @@ export default {
     name: "LogoIcon",
     components: iconComponents,
     props: {
-        icon: String
+        icon: String,
     },
     computed: {
         iconComponent() {
@@ -69,7 +69,6 @@ export default {
 <style scoped>
 .icon {
     width: 2rem;
-    margin-right: 1rem;
 }
 
 .email-icon {
