@@ -10,9 +10,9 @@
 </template>
 
 <script>
-import LogoIcon from './LogoIcon.vue'
+import LogoIcon from '../components/LogoIcon.vue'
 export default {
-    name: "FooterControl",
+    name: "Footer",
     components: { 
         LogoIcon 
     },

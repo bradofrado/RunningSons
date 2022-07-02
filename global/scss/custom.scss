@@ -1,0 +1,94 @@
+@import "https://fonts.googleapis.com/css?family=Montserrat";
+
+$white: #fff;
+$black: #2A2D34;
+//$primary: #033740;
+$primary-2: #228579;
+//$secondary: #FFC31F;
+//$secondary-2: #FF5900;
+
+$primary: #033740;
+//$primary-2: #04677C;
+$secondary: #FACE0B;
+$secondary-2: #E06F05;
+
+$body-bg: $primary;
+$body-color: $white;
+$font-family-sans-serif: 'Montserrat', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+
+
+
+body {
+    margin: 0px;
+    font-family: $font-family-sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    color: $white;
+    font-size: 12px;
+}
+
+@media only screen and (min-width: 960px) {
+    body {
+        font-size: 16px;
+    }
+}
+
+h1 {
+    margin-top: 0.67em !important;
+    margin-bottom: 0.67em !important;
+}
+
+p {
+    margin-top: 1em !important;
+    margin-bottom: 1em !important;
+}
+
+@keyframes gradient {
+    0%{background-position:10% 0%}
+    50%{background-position:91% 100%}
+    100%{background-position:10% 0%}
+}
+
+.app-default {
+    text-align: center;
+    background-image: linear-gradient(-180deg, $primary-2 , $primary);
+    background-size: 200% 200%;
+    animation: gradient 5s ease infinite;
+}
+
+.footer-app-container {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+.footer-app {
+    flex: 1;
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+
+
+
+.title-container {
+    padding-top: 100px;
+}
+
+.title {
+    text-transform: uppercase;
+    font-weight: 700;
+    font-size: 5em;
+    text-shadow: 2px 4px 20px #283b3b;
+}
+
+.sub-title {
+    color: $secondary;
+}
+
+@media only screen and (min-width: 960px) {
+    .title-container {
+        padding-top: 150px;
+    }
+}
+
+@import 'bootstrap/scss/bootstrap.scss'
