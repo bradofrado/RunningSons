@@ -4,7 +4,11 @@ const mongoose = require('mongoose');
 const router = express.Router();
 
 const musicSchema = new mongoose.Schema({
-    title: String
+    title: String,
+    isDeleted: {
+        type: Boolean,
+        default: false
+    }
 });
 
 const Music = mongoose.model('Music', musicSchema);
