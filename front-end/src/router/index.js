@@ -2,7 +2,8 @@ import Vue from 'vue'
 import VueRouter from 'vue-router'
 import HomeView from '@/views/HomeView.vue'
 import MerchandiseView from '@/views/MerchandiseView.vue'
-import MusicView from '@/views/MusicView.vue'
+import MusicView from '@/views/MusicView.vue';
+import MerchItemView from '@/views/MerchItemView.vue'
 
 Vue.use(VueRouter)
 
@@ -21,6 +22,11 @@ const routes = [
     path: '/music',
     name: 'music',
     component: MusicView
+  },
+  {
+    path: '/merchandise/:id',
+    name: 'merchandiseItem',
+    component: MerchItemView
   }
 ]
 

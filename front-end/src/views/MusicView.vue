@@ -3,8 +3,32 @@
 </template>
 
 <script>
+import axios from 'axios'
+
 export default {
-    name: "MusicView"
+    name: "MusicView",
+    data() {
+        return {
+            music: []
+        }
+    },
+    components: {
+
+    },
+    async created() {
+        await this.getMusic();
+    },
+    methods: {
+        async getMusic() {
+            try {
+                const response = await axios.get('/api/music');
+
+                this.music = response.data; 
+            } catch(error) {
+                console.log(error);
+            }
+        }
+    }
 }
 </script>
 

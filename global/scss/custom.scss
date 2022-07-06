@@ -49,6 +49,18 @@ p {
     100%{background-position:10% 0%}
 }
 
+.button {
+    border: none;
+    border-radius: 10px;
+    min-height: 30px;
+    padding: 10px;
+}
+
+.button-primary {
+    background-color: $secondary-2;
+    color: $white;
+}
+
 .app-default {
     text-align: center;
     background-image: linear-gradient(-180deg, $primary-2 , $primary);
