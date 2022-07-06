@@ -3,7 +3,14 @@
 //   transpileDependencies: true
 // })
 
+require('dotenv').config({ path: '../.env' });
+
+const port = process.env.SERVER_PORT;
+
 module.exports = {
+    devServer: {
+        proxy: 'http://localhost:'+port,
+    },
     css: {
         loaderOptions: {
           sass: {

@@ -5,7 +5,7 @@ import components from '../../global'
 import { BootstrapVue } from 'bootstrap-vue'
 
 // Make BootstrapVue available throughout your project
-Vue.use(BootstrapVue)
+Vue.use(BootstrapVue);
 
 components.forEach(component => {
     Vue.component(component.name, component);
