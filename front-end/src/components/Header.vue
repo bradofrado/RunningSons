@@ -12,6 +12,11 @@
                     <b-nav-item to="/merchandise" active-class="active">Merchandise</b-nav-item>                                       
                 </b-navbar-nav>
             </b-collapse>
+            <b-navbar-nav>
+                <b-nav-item to="/">
+                    <logo-icon icon="shoppingCart"/>
+                </b-nav-item>
+            </b-navbar-nav>
         </div>
     </b-navbar>
 </template>
@@ -23,7 +28,9 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-
+.collapsed {
+    order: 2
+}
 /* .navbar-dark .navbar-nav .nav-link.router-link-exact-active,
 .navbar-dark .navbar-nav .nav-link.router-link-exact-active:focus {
     color: #fff;

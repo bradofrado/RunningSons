@@ -1,5 +1,8 @@
 <template>
-    <div class="merch-container">
+    <h1 v-if="!item">
+        Loading...
+    </h1>
+    <div v-else class="merch-container">
         <div class="image-container">
             <img :src="item.image"/>
         </div>
@@ -11,7 +14,7 @@
                 <span>Quantity:</span>
                 <number-picker v-model="numItems" class="date-picker"/>
             </div>
-            <button class="button button-primary" @click="addToCart">Add to Cart</button>
+            <button class="button button-primary" @click="addToCart" :disabled="added">{{addToCartText}}</button>
         </div>
     </div>
 </template>
@@ -27,13 +30,17 @@ export default {
     },
     data() {
         return {
+            added: false,
             numItems: 1,
-            item: {
-                name: "Cool Shirt",
-                price: "40",
-                description: "This here is a way sweet shirt",
-                image: "https://cdn.shopify.com/s/files/1/0011/4651/9637/products/Taylors-version-Purple_01-1_1000x.png?v=1652317513"
-            }
+            item: null
+        }
+    },
+    async created() {
+        await this.getItem();
+    },
+    computed: {
+        addToCartText() {
+            return this.added ? 'Added' : 'Add to Cart';
         }
     },
     methods: {
@@ -48,6 +55,7 @@ export default {
         },
         addToCart() {
             console.log(this.numItems);
+            this.added = true;
         }
     }
 }
@@ -56,11 +64,9 @@ export default {
 <style scoped>
 .merch-container {
     display: flex;
+    flex-direction: column;
 }
 
-.merch-container > div {
-    width: 50%;
-}
 .image-container {
 
 }
@@ -89,5 +95,14 @@ img {
 
 button {
     width: 80%;
+}
+@media only screen and (min-width: 960px) {
+    .merch-container {
+        flex-direction: row;
+    }
+
+    .merch-container > div {
+        width: 50%;
+    }
 }
 </style>

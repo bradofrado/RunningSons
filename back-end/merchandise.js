@@ -42,6 +42,26 @@ router.get('/', async (req, res) => {
     }
 });
 
+router.get('/:id', async (req, res) => {
+    try {
+        const merchItem = await Merchandise.findOne({
+            _id: req.params.id
+        });
+
+        if (!merchItem) {
+            console.log("Could not find merchandise item with id " + req.params.id);
+            return res.status(400).send({
+                message: "Could not find merchandise item with id " + req.params.id
+            });
+        }
+
+        res.send(merchItem);
+    } catch(error) {
+        console.log(error);
+        res.sendStatus(500);
+    }
+})
+
 router.post('/', validUser(['Admin']), upload.single('merchandise'), async (req, res) => {
     if (!req.body.name ||  !req.body.price || !req.file) {
         return res.status(400).send({
