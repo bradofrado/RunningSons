@@ -14,17 +14,40 @@ const upload = multer({
     }
 });
 
+const MerchandiseType = require('./merchandise-types.js').model;
+
 const merchandiseSchema = new mongoose.Schema({
     name: String,
     price: Number,
     description: String,
     image: String,
-    type: String,
+    type: {
+        type: mongoose.Schema.ObjectId,
+        ref: "MerchandiseType"
+    },
     isDeleted: {
         type: Boolean,
         default: false
     }
 });
+
+merchandiseSchema.methods.toJSONAsync = async function() {
+    var obj = this.toObject();
+
+    if (mongoose.isValidObjectId(obj.type)) {
+        const type = await MerchandiseType.findOne({
+            _id: obj.type
+        });
+
+        if (type) {
+            obj.type = type.type;
+        }
+    } else {
+        obj.type = obj.type.type;
+    }
+    return obj;
+}
+
 
 const Merchandise = mongoose.model('Merchandise', merchandiseSchema);
 
@@ -39,6 +62,47 @@ router.get('/', async (req, res) => {
     } catch(error) {
         console.log(error);
         res.sendStatus(500);
+    }
+});
+
+router.get('/type/:type', async (req, res) => {
+    try {
+        // const merchandise = await Merchandise.aggregate([
+        //     {
+        //         $unwind: "$type"
+        //     },
+        //     {
+        //       $lookup: {
+        //         from: "merchandisetype",
+        //         localField: "type",
+        //         foreignField: "_id",
+        //         as: "type",
+        //       },
+        //     },
+        //     {
+        //       $match: {
+        //         "type.type": req.params.type,
+        //       },
+        //     },
+        //   ])
+
+        Merchandise.find().populate('type').exec((err, merchandise) => {
+            if (err) throw err;
+
+            merchandise = merchandise.filter(m => m.type.type == req.params.type);
+
+            if (!merchandise || !merchandise.length) {
+                console.log("Could not find merchandise with type " + req.params.type);
+                return res.status(400).send({
+                    message: "Could not find merchandise with type " + req.params.type
+                });
+            }
+    
+            res.send(merchandise);
+        });
+        
+    } catch(error) {
+        console.log(error);
     }
 });
 
@@ -60,7 +124,7 @@ router.get('/:id', async (req, res) => {
         console.log(error);
         res.sendStatus(500);
     }
-})
+});
 
 router.post('/', validUser(['Admin']), upload.single('merchandise'), async (req, res) => {
     if (!req.body.name ||  !req.body.price || !req.file) {

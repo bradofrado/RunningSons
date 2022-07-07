@@ -2,6 +2,7 @@ import Vue from 'vue'
 import VueRouter from 'vue-router'
 import HomeView from '@/views/HomeView.vue'
 import MerchandiseView from '@/views/MerchandiseView.vue'
+import MerchandiseCollectionsView from '@/views/MerchandiseCollectionsView.vue'
 import MusicView from '@/views/MusicView.vue';
 import MerchItemView from '@/views/MerchItemView.vue'
 
@@ -17,6 +18,11 @@ const routes = [
     path: '/merchandise',
     name: 'merchandise',
     component: MerchandiseView
+  },
+  {
+    path: '/merchandise/collections/:type',
+    name: 'erchandiseType',
+    component: MerchandiseCollectionsView
   },
   {
     path: '/music',

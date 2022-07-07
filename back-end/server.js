@@ -31,10 +31,12 @@ app.use(cookieSession({
 
 const music = require('./music.js');
 const users = require('./users.js');
+const merchandiseType = require('./merchandise-types.js');
 const merchandise = require('./merchandise.js');
 
 app.use('/api/music', music.routes);
 app.use('/api/users', users.routes);
 app.use('/api/merchandise', merchandise.routes);
+app.use('/api/types', merchandiseType.routes);
 
 app.listen(port, () => console.log(`Server listening on port ${port}!`));

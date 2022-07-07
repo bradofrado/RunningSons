@@ -10,7 +10,7 @@
 
 <script>
 export default {
-    name: "ImageButton",
+    name: "MerchItemButton",
     props: {
         item: Object
     },

@@ -1,34 +1,37 @@
 <template>
-    <h1 v-if="!items">Loading...</h1>
-    <h1 v-else-if="!items.length" class="title-container">Merchandise coming soon...</h1>
-    <div v-else class="items-container">
-        <merch-item-button v-for="item in items" :key="item._id" :item="item"/>
+    <h1 v-if="!types">Loading...</h1>
+    <h1 v-else-if="!Object.keys(types).length" class="title-container">Merchandise coming soon...</h1>
+    <div v-else>
+        <h2>Merchandise</h2>
+        <div class="types-container">
+            <image-button v-for="type in types" :key="type._id" :img="type.image" :name="type.name" :to="'/merchandise/collections/' + type.type"/>
+        </div>
     </div>
 </template>
 
 <script>
-import MerchItemButton from '@/components/MerchItemButton.vue'
 import axios from 'axios';
+import ImageButton from '@/components/ImageButton.vue';
 
 export default {
     name: "MerchandiseView",
     components: {
-        MerchItemButton
+        ImageButton
     },
     data() {
         return {
-            items: null
+            types: null
         }
     },
     async created() {
-        await this.getMerchandiseItems();
+        await this.getMerchandiseTypes();
     },
     methods: {
-        async getMerchandiseItems() {
+        async getMerchandiseTypes() {
             try {
-                const response = await axios.get('/api/merchandise');
+                const response = await axios.get('/api/types');
 
-                this.items = response.data;
+                this.types = response.data;
             } catch(error) {
                 console.log(error);
             }
@@ -38,13 +41,13 @@ export default {
 </script>
 
 <style scoped lang="scss">
-.items-container {
+.types-container {
     display: grid;
     grid-template-columns: auto;
 }
 
 @media only screen and (min-width: 960px) {
-    .items-container {
+    .types-container {
         display: grid;
         grid-template-columns: auto auto auto;
     }
