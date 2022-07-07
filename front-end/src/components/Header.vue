@@ -9,8 +9,13 @@
                 <b-navbar-nav>
                     <b-nav-item to="/" exact-active-class="active">Home</b-nav-item>
                     <b-nav-item to="/music" active-class="active">Music</b-nav-item> 
-                    <b-nav-item to="/merchandise" active-class="active">Merchandise</b-nav-item>                                       
+                    <b-nav-item id="merch-popover" active-class="active" to="/merchandise">Merchandise</b-nav-item>                                                        
                 </b-navbar-nav>
+                <b-popover v-if="types" target="merch-popover" triggers="hover" placement="bottom">
+                        <b-navbar-nav>
+                            <b-nav-item v-for="type in types" class="nav-dropdown-item" :href="'/merchandise/collections/'+type.type" :key="type._id">{{type.name}}</b-nav-item>                            
+                        </b-navbar-nav>
+                </b-popover>   
             </b-collapse>
             <b-navbar-nav>
                 <b-nav-item to="/">
@@ -22,14 +27,43 @@
 </template>
 
 <script>
+import axios from 'axios';
+
 export default {
-    name: "HeaderControl"
+    name: "HeaderControl",
+    data() {
+        return {
+            types: null
+        }
+    },
+    async created() {
+        await this.getMerchandiseTypes();
+    },
+    methods: {
+        async getMerchandiseTypes() {
+            try {
+                const response = await axios.get('/api/types');
+
+                this.types = response.data;
+            } catch(error) {
+                console.log(error);
+            }
+        }
+    }
 }
 </script>
 
 <style lang="scss" scoped>
 .collapsed {
     order: 2
+}
+
+.nav-dropdown-item {
+    // padding: 5px;
+}
+
+.nav-link:hover, .nav-dropdown-active {
+    color: $secondary-2;
 }
 /* .navbar-dark .navbar-nav .nav-link.router-link-exact-active,
 .navbar-dark .navbar-nav .nav-link.router-link-exact-active:focus {
