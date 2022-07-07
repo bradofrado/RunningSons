@@ -9,9 +9,9 @@
                 <b-navbar-nav>
                     <b-nav-item to="/" exact-active-class="active">Home</b-nav-item>
                     <b-nav-item to="/music" active-class="active">Music</b-nav-item> 
-                    <b-nav-item id="merch-popover" active-class="active" to="/merchandise">Merchandise</b-nav-item>                                                        
+                    <b-nav-item id="merch-popover" active-class="active" to="/merchandise" @click="onMerchClick">Merchandise</b-nav-item>                                                        
                 </b-navbar-nav>
-                <b-popover v-if="types" target="merch-popover" triggers="hover" placement="bottom">
+                <b-popover v-if="types" ref="popover" target="merch-popover" triggers="hover blur" placement="bottom">
                         <b-navbar-nav>
                             <b-nav-item v-for="type in types" class="nav-dropdown-item" :href="'/merchandise/collections/'+type.type" :key="type._id">{{type.name}}</b-nav-item>                            
                         </b-navbar-nav>
@@ -40,6 +40,9 @@ export default {
         await this.getMerchandiseTypes();
     },
     methods: {
+        onMerchClick() {
+            this.$refs.popover.$emit('close');
+        },
         async getMerchandiseTypes() {
             try {
                 const response = await axios.get('/api/types');
