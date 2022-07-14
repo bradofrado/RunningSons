@@ -1,5 +1,7 @@
 <template>
+<div>
     <h1 class="title-container">Falling Sand out soon...</h1>
+</div>
 </template>
 
 <script>
@@ -11,9 +13,6 @@ export default {
         return {
             music: []
         }
-    },
-    components: {
-
     },
     async created() {
         await this.getMusic();

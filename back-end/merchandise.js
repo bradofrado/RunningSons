@@ -31,20 +31,43 @@ const merchandiseSchema = new mongoose.Schema({
     }
 });
 
-merchandiseSchema.methods.toJSONAsync = async function() {
-    var obj = this.toObject();
-
-    if (mongoose.isValidObjectId(obj.type)) {
+merchandiseSchema.methods.populateType = async function() {
+    if (mongoose.isValidObjectId(this.type)) {
         const type = await MerchandiseType.findOne({
-            _id: obj.type
+            _id: this.type
         });
 
         if (type) {
-            obj.type = type.type;
+            this.type = type;
         }
-    } else {
+    } 
+}
+
+merchandiseSchema.post('find', async function(docs, next) {
+    for(let doc of docs) {
+        await doc.populateType();
+    }
+
+    next();
+});
+
+merchandiseSchema.post('findOne', async function(doc, next) {
+    if (doc) {
+        await doc.populateType();
+    }
+
+    next();
+})
+
+merchandiseSchema.methods.toJSON = function() {
+    var obj = this.toObject();
+
+    if (obj.type && obj.type.type) {
         obj.type = obj.type.type;
     }
+
+    delete obj.isDeleted;
+
     return obj;
 }
 
@@ -86,36 +109,34 @@ router.get('/type/:type', async (req, res) => {
         //     },
         //   ])
 
-        Merchandise.find().populate('type').exec((err, merchandise) => {
-            if (err) throw err;
+        let merchandise = await Merchandise.find();
 
-            merchandise = merchandise.filter(m => m.type.type == req.params.type);
+        merchandise = merchandise.filter(m => m.type.type == req.params.type);
 
-            if (!merchandise || !merchandise.length) {
-                console.log("Could not find merchandise with type " + req.params.type);
-                return res.status(400).send({
-                    message: "Could not find merchandise with type " + req.params.type
-                });
-            }
-    
-            res.send(merchandise);
-        });
+        if (!merchandise || !merchandise.length) {
+            console.log("Could not find merchandise with type " + req.params.type);
+            return res.status(400).send({
+                message: "Could not find merchandise with type " + req.params.type
+            });
+        }
+
+        res.send(merchandise);
         
     } catch(error) {
         console.log(error);
     }
 });
 
-router.get('/:id', async (req, res) => {
+router.get('/:name', async (req, res) => {
     try {
         const merchItem = await Merchandise.findOne({
-            _id: req.params.id
+            name: req.params.name
         });
 
         if (!merchItem) {
-            console.log("Could not find merchandise item with id " + req.params.id);
+            console.log("Could not find merchandise item with name " + req.params.name);
             return res.status(400).send({
-                message: "Could not find merchandise item with id " + req.params.id
+                message: "Could not find merchandise item with name " + req.params.name
             });
         }
 

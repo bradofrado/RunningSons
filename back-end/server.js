@@ -33,10 +33,14 @@ const music = require('./music.js');
 const users = require('./users.js');
 const merchandiseType = require('./merchandise-types.js');
 const merchandise = require('./merchandise.js');
+const payments = require('./payment.js');
+const cart = require('./cart.js');
 
 app.use('/api/music', music.routes);
 app.use('/api/users', users.routes);
 app.use('/api/merchandise', merchandise.routes);
 app.use('/api/types', merchandiseType.routes);
+app.use('/api/payments', payments.routes);
+app.use('/api/cart', cart.routes);
 
 app.listen(port, () => console.log(`Server listening on port ${port}!`));

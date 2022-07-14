@@ -24,6 +24,7 @@ export default {
     methods: {
         async getMerchandise() {
             try {
+                await axios.get('/api/merchandise');
                 const response = await axios.get('/api/merchandise/type/'+this.$route.params.type);
 
                 this.items = response.data;

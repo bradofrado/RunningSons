@@ -19,7 +19,7 @@ export default {
             return this.$listeners && this.$listeners.click;
         },
         to() {
-            return '/merchandise/' + this.item._id;
+            return '/merchandise/' + this.item.name;
         }
     },
     methods: {

@@ -18,7 +18,7 @@
                 </b-popover>   
             </b-collapse>
             <b-navbar-nav>
-                <b-nav-item to="/">
+                <b-nav-item to="/cart">
                     <logo-icon icon="shoppingCart"/>
                 </b-nav-item>
             </b-navbar-nav>

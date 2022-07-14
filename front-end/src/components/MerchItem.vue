@@ -1,12 +1,12 @@
 <template>
     <div class="merch-container">
         <div class="image-container">
-            <img :src="item.image"/>
+            <img :src="theItem.image"/>
         </div>
         <div class="info-container">
-            <h1>{{item.name}}</h1>
-            <span>${{item.price}}</span>
-            <p>{{item.description}}</p>
+            <h1>{{theItem.name}}</h1>
+            <span>${{theItem.price}}</span>
+            <p>{{theItem.description}}</p>
             <div>
                 <span>Quantity:</span>
                 <number-picker v-model="numItems" class="date-picker"/>
@@ -18,6 +18,7 @@
 
 <script>
 import NumberPicker from '../components/NumberPicker.vue';
+import axios from 'axios';
 
 export default {
     name: "MerchItem",
@@ -25,23 +26,61 @@ export default {
         NumberPicker
     },
     props: {
-        item: Object
+        item: Object,
+        edit: Boolean
     },
     data() {
         return {
             added: false,
-            numItems: 1
+            numItems: 1,
+            isEdit: false,
+            theItem: null
         }
+    },
+    created() {
+        this.numItems = this.edit ? this.item.quantity : 1;
+        this.isEdit = this.edit;
+        this.theItem = this.item;
     },
     computed: {
         addToCartText() {
+            if (this.isEdit) {
+                return this.added ? 'Edited' : 'Edit';
+            }
             return this.added ? 'Added' : 'Add to Cart';
         }
     },
+    watch: {
+        numItems() {
+            if (this.added) {
+                this.isEdit = true;
+            }
+
+            this.added = false;
+        }
+    },
     methods: {
-        addToCart() {
-            console.log(this.numItems);
-            this.added = true;
+        async addToCart() {
+            try {
+                //If we are editing this item, then put it
+                if (this.isEdit) {
+                    await axios.put('/api/cart/' + this.theItem._id, {
+                        quantity: this.numItems
+                    });
+                //Otherwise make a new one
+                } else {
+                    const response = await axios.post('/api/cart', {
+                        item: this.theItem,
+                        quantity: this.numItems
+                    });
+
+                    this.theItem = response.data;
+                }
+                this.added = true;
+            } catch(error) {
+                console.log(error);
+            }
+            
         }
     }
 }
