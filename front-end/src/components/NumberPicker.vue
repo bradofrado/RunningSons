@@ -1,8 +1,8 @@
 <template>
     <div class="picker-container">
-        <button class="square" @click="remove">-</button>
-        <input ref="input" class="square" :value="content" @blur="handleInput"/>
-        <button class="square" @click="add">+</button>
+        <button class="square button button-secondary" @click="remove">-</button>
+        <input ref="input" class="square input" :value="content" @blur="handleInput"/>
+        <button class="square button button-secondary" @click="add">+</button>
     </div>
 </template>
 
@@ -89,5 +89,6 @@ export default {
 
 input {
     text-align: center;
+    background-color: #fff;
 }
 </style>
