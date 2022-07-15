@@ -1,11 +1,11 @@
 <template>
-    <div class="cart-item-container">
+    <div v-if="mobile" class="cart-item-container">
         <div class="image-container">
             <img :src="item.image"/>
         </div>
         <div class="data-container">
             <p>{{item.name}}</p>
-            <p>{{item.price}}</p>
+            <p>${{item.price}}</p>
             <number-picker v-model="numItems" class="date-picker"/>
             <div class="button-container">
                 <button class='button button-secondary mr-1' @click='edit'>Edit</button>
@@ -13,16 +13,38 @@
             </div>
         </div>
     </div>
+    <tr v-else>
+        <td class="item-product">
+            <div class="image-container">
+                <img :src="item.image"/>
+            </div>
+            <p>{{item.name}}</p>
+        </td>
+        <td>
+            <p>${{item.price.toFixed(2)}}</p>
+        </td>
+        <td>
+            <p><number-picker v-model="numItems"/></p>
+            <button class="button button-secondary mr-1" @click="edit(item)">Edit</button>
+            <button class="button button-secondary" @click="remove(item)">Remove</button>
+        </td>
+        <td><p>${{totals(item).toFixed(2)}}</p></td>
+    </tr>
 </template>
 
 <script>
 import NumberPicker from './NumberPicker.vue'
 import axios from 'axios';
 
-export default {
+const totals = (item) => {
+    return (item.price * item.quantity);
+}
+
+const CartItem = {
     name: "CartItem",
     props: {
-        item: Object
+        item: Object,
+        mobile: Boolean
     },
     components: {
         NumberPicker
@@ -43,7 +65,9 @@ export default {
                     await axios.put('/api/cart/' + self.item._id, {
                         quantity: item
                     });
-                }, 100)
+                }, 100);
+
+                this.item.quantity = item;
             }
         }
     },
@@ -58,12 +82,38 @@ export default {
             } catch(error) {
                 console.log(error);
             }
-        }
+        },
+        totals
     }
 }
+CartItem.totals = totals;
+
+export default CartItem;
 </script>
 
 <style scoped>
+.item-product {
+    display: flex;
+    width: 100%;
+}
+
+.image-container {
+    max-width: 180px;
+}
+
+img {
+    width: 100%;
+}
+
+td {
+    vertical-align: top;
+    width: 20%;
+}
+
+.float-left {
+    float: left;
+}
+
 .cart-item-container {
     display: flex;
     max-width: 600px;

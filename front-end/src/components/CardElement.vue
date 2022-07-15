@@ -1,7 +1,7 @@
 <template>
 <div>
     <div ref="card"></div>
-    <button class="button button-primary" @click="purchase">Purchase</button>
+    <button class="button button-primary mt-3" @click="purchase">Purchase</button>
 </div>
 </template>
 
@@ -29,7 +29,7 @@ export default {
                 const response = await axios.post('/api/payments/create-payment-intent');
                 let clientSecret = response.data.clientSecret;
                 const appearance = {
-                    theme: 'flat',
+                    theme: 'night',
                 };
                 console.log(clientSecret);
                 elements = stripe.elements({ clientSecret, appearance });
@@ -53,12 +53,20 @@ export default {
                 elements,
                 confirmParams: {
                 // Make sure to change this to your payment completion page
-                    return_url: "http://localhost:8080/music",
+                    return_url: "http://localhost:8080/cart",
                 },
             });
+
+            if (!error) {
+                await axios.post('/api/payments');
+            }
             console.log(error);
             
         }
     }
 };
 </script>
+
+<style scoped>
+
+</style>

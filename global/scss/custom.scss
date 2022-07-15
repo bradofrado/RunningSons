@@ -103,6 +103,10 @@ p {
     color: $secondary;
 }
 
+.mr-1 {
+    margin-right: 10px;
+}
+
 @media only screen and (min-width: 960px) {
     .title-container {
         padding-top: 150px;

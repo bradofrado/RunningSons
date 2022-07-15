@@ -5,10 +5,17 @@ const router = express.Router();
 
 const merchandise = require('./merchandise.js');
 
+const user = require('./users.js');
+const valid = user.valid;
+
 const cartItemSchema = new mongoose.Schema({
     item: {
         type: mongoose.Schema.ObjectId,
         ref: 'Merchandise'
+    },
+    user: {
+        type: mongoose.Schema.ObjectId,
+        ref: 'User'
     },
     quantity: Number,
     isDeleted: {
@@ -69,9 +76,11 @@ const NotFoundMessage = (id) => {
     return "Could not find cart item with id " + id;
 }
 
-router.get('/', async (req, res) => {
+router.get('/', valid, async (req, res) => {
     try {
-        let items = await CartItem.find();
+        let items = await CartItem.find({
+            user: req.user
+        });
         
         res.send(items);
     } catch(error) {
@@ -80,10 +89,11 @@ router.get('/', async (req, res) => {
     }
 });
 
-router.get('/:id', async (req, res) => {
+router.get('/:id', valid, async (req, res) => {
     try {
         const item = await CartItem.findOne({
             _id: req.params.id,
+            user: req.user
         });
 
         if (!item) {
@@ -107,9 +117,15 @@ router.post('/', async (req, res) => {
         })
     }
     try {
+        if (!req.session.userID) {
+            const _user = await user.newGuest();
+            req.session.userID = _user._id;            
+        }
+
         const item = new CartItem({
             item: req.body.item,
-            quantity: req.body.quantity
+            quantity: req.body.quantity,
+            user: req.session.userID
         });
 
         await item.save();
@@ -121,15 +137,16 @@ router.post('/', async (req, res) => {
     }
 })
 
-router.put('/:id', async (req, res) => {
-    if (!req.ody.quantity) {
+router.put('/:id', valid, async (req, res) => {
+    if (!req.body.quantity) {
         return res.status(400).send({
             message: "Invalid body parameters"
         })
     }
     try {
         const item = await CartItem.findOne({
-            _id: req.params.id
+            _id: req.params.id,
+            user: req.user
         });
 
         if (!item) {
@@ -151,10 +168,11 @@ router.put('/:id', async (req, res) => {
     }
 });
 
-router.delete('/:id', async (req, res) => {
+router.delete('/:id', valid, async (req, res) => {
     try {
         const item = await CartItem.findOne({
-            _id: req.params.id
+            _id: req.params.id,
+            user: req.user
         });
 
         if (!item) {

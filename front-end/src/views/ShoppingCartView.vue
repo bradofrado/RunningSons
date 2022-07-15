@@ -2,20 +2,24 @@
     <div>
         <h1>Shopping Cart</h1>
         <p v-if="!items.length">No items</p>
-        <div v-else class="cart-items-container">
-            <cart-item v-for="item in items" :key="item._id" :item="item" class="cart-item" @remove="getItems"/>
+        <div v-else class="shopping-container">
+            <cart-items :items="items" @remove="getItems"/>
+            <div class="sub-totals">
+                <p><em>Subtotal: ${{subtotals.toFixed(2)}}</em></p>
+                <button class="button button-primary" @click="checkout">Checkout</button>
+            </div>
         </div>
     </div>
 </template>
 
 <script>
-import CartItem from '../components/CartItem.vue';
 import axios from 'axios';
+import CartItems from '../components/CartItems.vue';
 
 export default {
     name: "ShoppingCartView",
     components: {
-        CartItem
+        CartItems
     },
     data() {
         return {
@@ -24,6 +28,11 @@ export default {
     },
     async created() {
         await this.getItems();
+    },
+    computed: {
+        subtotals() {
+            return this.items.reduce((prev, curr) => prev + CartItems.totals(curr), 0);
+        }
     },
     methods: {
         async getItems() {
@@ -34,24 +43,29 @@ export default {
             } catch(error) {
                 console.log(error);
             }
-        }
+        },
+        checkout() {
+            window.location = '/checkout';
+        },
+        
     }
 }
 </script>
 
 <style scoped>
-.cart-items-container {
-    display: grid;
-    grid-template-columns: auto;
+
+.shopping-container {
+    padding-top: 0.75rem;
 }
 
-.cart-item {
-    margin: 10px 0;
+.sub-totals {
+    width: 200px;
+    margin: auto;
 }
 
-@media only screen and (min-width: 960px) {
-    .cart-items-container {
-        grid-template-columns: auto auto;
+@media only screen and (min-width: 600px) {
+    .sub-totals {
+        float: right;
     }
 }
 </style>

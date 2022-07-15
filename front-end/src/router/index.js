@@ -6,6 +6,7 @@ import MerchandiseCollectionsView from '@/views/MerchandiseCollectionsView.vue'
 import MusicView from '@/views/MusicView.vue';
 import MerchItemView from '@/views/MerchItemView.vue'
 import ShoppingCartView from '@/views/ShoppingCartView.vue'
+import CheckoutView from '@/views/CheckoutView.vue'
 
 Vue.use(VueRouter)
 
@@ -39,6 +40,11 @@ const routes = [
     path: '/cart',
     name: 'shoppingCart',
     component: ShoppingCartView
+  },
+  {
+    path: '/checkout',
+    name: 'checkout',
+    component: CheckoutView
   }
 ]
 

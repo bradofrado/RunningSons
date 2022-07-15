@@ -51,6 +51,8 @@ userSchema.methods.hasRoles = function(roles) {
 
 const User = mongoose.model('User', userSchema);
 
+const activeUsers = [];
+
 /* Middleware */
 const validUserRoles = async (req, res, next, roles) => {
     if (!req.session.userID)
@@ -61,7 +63,7 @@ const validUserRoles = async (req, res, next, roles) => {
     }
     
     try {
-        const user = await User.findOne({
+        let user = await User.findOne({
             _id: req.session.userID 
         });
 
@@ -71,7 +73,7 @@ const validUserRoles = async (req, res, next, roles) => {
             });
         }
 
-        if (roles) {
+        if (roles && user.roles) {
             for (let i = 0; i < roles.length; i++) {
                 const role = roles[i];
                 if (user && !user.roles.includes(role)) {
@@ -111,6 +113,18 @@ const getRoles = async function(roles) {
     const users = await User.find();
 
     return users.filter(x => x.hasRoles(roles));
+}
+
+const newGuest = async function() {
+    const user = new User({
+
+    });
+    user.firstname = `Guest${user._id}`;
+    user.username = user.firstname;
+
+    await user.save();
+
+    return user;
 }
 
 /* Endpoints */
@@ -239,5 +253,6 @@ module.exports = {
     routes: router,
     model: User,
     valid: validUser,
-    getRoles: getRoles
+    getRoles: getRoles,
+    newGuest: newGuest
 }
