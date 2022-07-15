@@ -18,6 +18,14 @@ const cartItemSchema = new mongoose.Schema({
         ref: 'User'
     },
     quantity: Number,
+    dateCreated: Date,
+    dateModified: Date,
+    dateDeleted: Date,
+    dateBought: Date,
+    bought: {
+        type: Boolean,
+        default: false
+    },
     isDeleted: {
         type: Boolean,
         default: false
@@ -52,7 +60,7 @@ cartItemSchema.methods.populateMerchandise = async function() {
 }
 
 cartItemSchema.pre(/^find/, function() {
-    this.where({isDeleted: false});
+    this.where({isDeleted: false, bought: false});
 });
 
 cartItemSchema.post(/^find|save/, async function(docs, next) {
@@ -125,7 +133,8 @@ router.post('/', async (req, res) => {
         const item = new CartItem({
             item: req.body.item,
             quantity: req.body.quantity,
-            user: req.session.userID
+            user: req.session.userID,
+            dateCreated: new Date()
         });
 
         await item.save();
@@ -158,6 +167,7 @@ router.put('/:id', valid, async (req, res) => {
 
         item.item = req.body.item ?? item.item;
         item.quantity = req.body.quantity;
+        item.dateModified = new Date();
 
         await item.save();
 
@@ -183,6 +193,7 @@ router.delete('/:id', valid, async (req, res) => {
         }
 
         item.isDeleted = true;
+        item.dateDeleted = new Date();
 
         await item.save();
 

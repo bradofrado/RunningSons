@@ -1,4 +1,5 @@
 const express = require('express');
+const mongoose = require('mongoose');
 
 const user = require('./users.js');
 const validUser = user.valid;
@@ -7,6 +8,20 @@ const cart = require('./cart.js');
 
 const router = express.Router();
 const stripe = require("stripe")('sk_test_51LKwWoBXqDku0t2IqIBSAtSq6qCsXOOcVT1yCw9B4DkGSAymFCo0f1IkavOKONVxbhyekTEUA1EzRuUBpDDJWoYE00IVnboIS8');
+
+const paymentSchema = new mongoose.Schema({
+    amount: Number,
+    shipping: Object,
+    receipt_email: String,
+    paymentId: String,
+    dateBought: Date,
+    user: {
+        type: mongoose.Schema.ObjectId,
+        ref: 'User'
+    }
+});
+
+const Payment = mongoose.model('Payment', paymentSchema);
 
 const getPaymentAmount = async function(user) {
     const items = await cart.model.find({
@@ -25,21 +40,47 @@ const getPaymentAmount = async function(user) {
 }
 
 router.post('/', validUser, async (req, res) => {
+    if (!req.user.clientSecret) {
+        return res.status(400).send({
+            message: "User pust have a payment"
+        });
+    }
     try {
+        //Create a new payment object
+        const paymentIntent = await stripe.paymentIntents.retrieve(req.user.clientSecret);
+
+        if (paymentIntent.status !== 'succeeded') {
+            return res.status(400).send({
+                message: "Payment must have status succeeded"
+            });
+        }
+
+        const amount = paymentIntent.amount;
+        const shipping = paymentIntent.shipping;
+        const receipt_email = paymentIntent.receipt_email;
+        const payment = new Payment({
+            amount, shipping, receipt_email,
+            dateBought: new Date(),
+            user: req.user,
+            paymentId: paymentIntent.id
+        });
+        await payment.save();
+
+        //Make the cart items have bought status
         const items = await cart.model.find({
             user: req.user
         });
 
         for (let item of items) {
-            item.isDeleted = true;
+            item.bought = true;
+            item.dateBought = new Date();
             await item.save();
         }
 
         req.user.clientSecret = null;
-
         await req.user.save();
 
-        res.sendStatus(200);
+        res.send(payment);
     } catch(error) {
         console.log(error);
         res.sendStatus(500);
