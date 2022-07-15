@@ -35,6 +35,10 @@ router.post('/', validUser, async (req, res) => {
             await item.save();
         }
 
+        req.user.clientSecret = null;
+
+        await req.user.save();
+
         res.sendStatus(200);
     } catch(error) {
         console.log(error);
@@ -44,20 +48,55 @@ router.post('/', validUser, async (req, res) => {
 
 router.post("/create-payment-intent", validUser, async (req, res) => {
     const { items } = req.body;
-  
-    let amount = await getPaymentAmount(req.user);
-    // Create a PaymentIntent with the order amount and currency
-    const paymentIntent = await stripe.paymentIntents.create({
-        amount: amount,
-        currency: "usd",
-        automatic_payment_methods: {
-            enabled: true,
-        },
-    });
-  
-    res.send({
-        clientSecret: paymentIntent.client_secret,
-    });
+    try {
+        // let clientSecret = req.user.clientSecret;
+        let amount = await getPaymentAmount(req.user);
+        if (!req.user.clientSecret && amount > 0) {
+            
+            // Create a PaymentIntent with the order amount and currency
+            const paymentIntent = await stripe.paymentIntents.create({
+                amount: amount,
+                currency: "usd",
+                automatic_payment_methods: {
+                    enabled: true,
+                },
+            }); 
+
+            clientSecret = paymentIntent.client_secret;
+            req.user.clientSecret = paymentIntent.id;
+            await req.user.save();
+        }
+
+        res.send({
+            clientSecret: clientSecret,
+        });
+    } catch(error) {
+        console.log(error); 
+        res.sendStatus(500);
+    }
+});
+
+router.put("/create-payment-intent", validUser, async (req, res) => {
+    try {
+        let amount = await getPaymentAmount(req.user);
+        // Create a PaymentIntent with the order amount and currency
+        const paymentIntent = await stripe.paymentIntents.update(req.user.clientSecret, {
+            amount: amount,
+            currency: "usd",
+            receipt_email: req.body.email,
+            shipping: {
+                address: req.body.address,
+                name: req.body.name
+            }
+        });
+    
+        res.send({
+            clientSecret: paymentIntent.client_secret,
+        });
+    } catch(error) {
+        console.log(error);
+        res.sendStatus(500);
+    }
 });
 
 module.exports = {

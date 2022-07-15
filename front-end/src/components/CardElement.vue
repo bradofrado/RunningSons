@@ -14,6 +14,10 @@ let stripe = window.Stripe(`pk_test_51LKwWoBXqDku0t2IgfMlmC7sQuAWCAKD9CAr9m96m2V
 
 export default {
     name: "CardElement",
+    props: {
+        address: Object,
+        contact: Object,
+    },
     data() {
         return {
             clientSecret: null,
@@ -21,47 +25,80 @@ export default {
         }
     },
     async mounted() {
-        await this.initialize();
+        await this.getClient();
+    },
+    watch: {
+        // async address() {
+        //     await this.updateClient();
+        // },
+        // async contact() {
+        //     await this.updateClient();
+        // }
     },
     methods: {
-        async initialize() {
+        async getClient() {
             try {
                 const response = await axios.post('/api/payments/create-payment-intent');
                 let clientSecret = response.data.clientSecret;
-                const appearance = {
-                    theme: 'night',
-                };
-                console.log(clientSecret);
-                elements = stripe.elements({ clientSecret, appearance });
-                this.card = elements.create('payment');
-                this.card.mount(this.$refs.card);
+                
+                this.buildElement(clientSecret);
             } catch(error) {
                 console.log(error);
             }
         },
+        async updateClient() {
+            try {
+                await axios.put('/api/payments/create-payment-intent', {
+                    address: this.address,
+                    name: `${this.contact.firstname} ${this.contact.lastname}`,
+                    email: this.contact.email,
+                });
+                //let clientSecret = response.data.clientSecret;
+                
+                //this.buildElement(clientSecret);
+            } catch(error) {
+                console.log(error);
+            }
+        },
+        buildElement(clientSecret) {
+            console.log(clientSecret);
+            const appearance = {
+                theme: 'flat',
+                variables: {
+                    fontFamily: "'Montserrat', 'Helvetica Neue', Helvetica, Arial, sans-serif"
+                }
+            };
+            console.log(clientSecret);
+            elements = stripe.elements({ clientSecret, appearance });
+            this.card = elements.create('payment');
+            this.card.mount(this.$refs.card);
+        },
         async purchase() {
             
-            //let self = this;
+            try {
+                await axios.put('/api/payments/create-payment-intent', {
+                    address: this.address,
+                    name: `${this.contact.firstname} ${this.contact.lastname}`,
+                    email: this.contact.email,
+                });
 
-            // const result = await stripe.createToken(this.card);
-            // if (result.error) {
-            //     self.$forceUpdate(); // Forcing the DOM to update so the Stripe Element can update.
-            //     return;
-            // }
-            // console.log(result.token);
-            const { error } = await stripe.confirmPayment({
-                elements,
-                confirmParams: {
-                // Make sure to change this to your payment completion page
-                    return_url: "http://localhost:8080/cart",
-                },
-            });
+                const { error } = await stripe.confirmPayment({
+                    elements, 
+                    redirect: 'if_required'                   
+                    // confirmParams: {
+                    // // Make sure to change this to your payment completion page
+                    //     return_url: "http://localhost:8080/cart",
+                    // },
+                });
 
-            if (!error) {
-                await axios.post('/api/payments');
+                if (!error) {
+                    await axios.post('/api/payments');
+                    window.location = '/cart';
+                }
+                console.log(error);
+            } catch(error) {
+                console.log(error);
             }
-            console.log(error);
-            
         }
     }
 };

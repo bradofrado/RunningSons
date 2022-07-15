@@ -10,6 +10,7 @@ const userSchema = new mongoose.Schema({
     email: String,
     firstname: String,
     lastname: String,
+    clientSecret: String,
     roles: [{
         type: String,
         default: ""
