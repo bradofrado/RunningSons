@@ -11,7 +11,9 @@
                 <span>Quantity:</span>
                 <number-picker v-model="numItems" class="date-picker"/>
             </div>
-            <button class="button button-primary" @click="addToCart" :disabled="added">{{addToCartText}}</button>
+            <button class="button button-primary" @click="addToCart" :disabled="loading" v-spinner="loading">
+                {{addToCartText}}
+            </button>
         </div>
     </div>
 </template>
@@ -34,7 +36,8 @@ export default {
             added: false,
             numItems: 1,
             isEdit: false,
-            theItem: null
+            theItem: null,
+            loading: false
         }
     },
     created() {
@@ -45,16 +48,16 @@ export default {
     computed: {
         addToCartText() {
             if (this.isEdit) {
-                return this.added ? 'Edited' : 'Edit';
+                return this.added ? 'Edit' : 'Edit';
             }
-            return this.added ? 'Added' : 'Add to Cart';
+            return this.added ? 'Add to Cart' : 'Add to Cart';
         }
     },
     watch: {
         numItems() {
-            if (this.added) {
-                this.isEdit = true;
-            }
+            // if (this.added) {
+            //     this.isEdit = true;
+            // }
 
             this.added = false;
         }
@@ -62,6 +65,7 @@ export default {
     methods: {
         async addToCart() {
             try {
+                this.loading = true;
                 //If we are editing this item, then put it
                 if (this.isEdit) {
                     await axios.put('/api/cart/' + this.theItem._id, {
@@ -69,16 +73,18 @@ export default {
                     });
                 //Otherwise make a new one
                 } else {
-                    const response = await axios.post('/api/cart', {
+                    await axios.post('/api/cart', {
                         item: this.theItem,
                         quantity: this.numItems
                     });
 
-                    this.theItem = response.data;
+                    //this.theItem = response.data;
                 }
                 this.added = true;
+                this.loading = false;
             } catch(error) {
                 console.log(error);
+                this.loading = false;
             }
             
         }

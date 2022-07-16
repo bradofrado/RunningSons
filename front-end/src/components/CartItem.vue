@@ -9,7 +9,7 @@
             <number-picker v-model="numItems" class="date-picker"/>
             <div class="button-container">
                 <button class='button button-secondary mr-1' @click='edit'>Edit</button>
-                <button class='button button-secondary' @click='remove'>Remove</button>
+                <button class='button button-secondary' @click='remove' v-spinner:dark="loading">Remove</button>
             </div>
         </div>
     </div>
@@ -26,7 +26,7 @@
         <td>
             <p><number-picker v-model="numItems"/></p>
             <button class="button button-secondary mr-1" @click="edit(item)">Edit</button>
-            <button class="button button-secondary" @click="remove(item)">Remove</button>
+            <button class="button button-secondary" @click="remove(item)" v-spinner:dark="loading">Remove</button>
         </td>
         <td><p>${{totals(item).toFixed(2)}}</p></td>
     </tr>
@@ -51,7 +51,8 @@ const CartItem = {
     },
     data() {
         return {
-            numItems: 0
+            numItems: 0,
+            loading: false,
         }
     },
     created() {
@@ -77,8 +78,10 @@ const CartItem = {
         },
         async remove() {
             try {
+                this.loading = true;
                 await axios.delete('/api/cart/' + this.item._id);
-                this.$emit('remove', this.item._id);
+                await this.$emit('remove', this.item._id);
+                this.loading = false;
             } catch(error) {
                 console.log(error);
             }

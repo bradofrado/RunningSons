@@ -23,7 +23,8 @@ export default {
     },
     data() {
         return {
-            items: []
+            items: [],
+            loading: false
         }
     },
     async created() {
@@ -37,6 +38,7 @@ export default {
     methods: {
         async getItems() {
             try {
+                this.loading = true;
                 const response = await axios.get('/api/cart');
 
                 this.items = response.data;
