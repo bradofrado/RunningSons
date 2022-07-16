@@ -18,9 +18,10 @@
                 </b-popover>   
             </b-collapse>
             <b-navbar-nav>
-                <b-nav-item to="/cart">
-                    <logo-icon icon="shoppingCart"/>
+                <b-nav-item to="/cart" active-class="active">
+                    Cart
                 </b-nav-item>
+                <b-nav-item to="/account" exact-active-class="active">Account</b-nav-item>
             </b-navbar-nav>
         </div>
     </b-navbar>

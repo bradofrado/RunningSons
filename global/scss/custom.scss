@@ -14,6 +14,8 @@ $secondary: #FACE0B;
 $secondary-2: #E06F05;
 $secondary-2-hover: #ce6504;
 
+$danger: #df1b41;
+
 $body-bg: $primary;
 $body-color: $white;
 $font-family-sans-serif: 'Montserrat', 'Helvetica Neue', Helvetica, Arial, sans-serif;
@@ -43,6 +45,10 @@ h1 {
 p {
     margin-top: 1em !important;
     margin-bottom: 1em !important;
+}
+
+a {
+    color: $white !important;
 }
 
 @keyframes gradient {
@@ -201,6 +207,15 @@ p {
     -webkit-transform: rotate(360deg);
     transform: rotate(360deg);
   }
+}
+
+.danger {
+    color: $danger;
+    font-weight: 600;
+}
+
+.invalid {
+    border: 1px solid $danger;
 }
 
 @media only screen and (min-width: 960px) {

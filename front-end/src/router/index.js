@@ -7,6 +7,9 @@ import MusicView from '@/views/MusicView.vue';
 import MerchItemView from '@/views/MerchItemView.vue'
 import ShoppingCartView from '@/views/ShoppingCartView.vue'
 import CheckoutView from '@/views/CheckoutView.vue'
+import AccountView from '@/views/AccountView.vue'
+import LoginView from '@/views/LoginView.vue'
+import SignupView from '@/views/SignupView.vue'
 
 Vue.use(VueRouter)
 
@@ -45,6 +48,22 @@ const routes = [
     path: '/checkout',
     name: 'checkout',
     component: CheckoutView
+  },
+  {
+    path: '/account',
+    name: 'account',
+    component: AccountView
+  },
+  {
+    path: '/account/login',
+    name: 'login',
+    component: LoginView
+  }
+  ,
+  {
+    path: '/account/signup',
+    name: 'signup',
+    component: SignupView
   }
 ]
 

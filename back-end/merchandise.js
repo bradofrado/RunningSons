@@ -147,7 +147,7 @@ router.get('/:name', async (req, res) => {
     }
 });
 
-router.post('/', validUser(['Admin']), upload.single('merchandise'), async (req, res) => {
+router.post('/', validUser(['admin']), upload.single('merchandise'), async (req, res) => {
     if (!req.body.name ||  !req.body.price || !req.file) {
         return res.status(400).send({
             message: "Name and price and image are required"
@@ -171,7 +171,7 @@ router.post('/', validUser(['Admin']), upload.single('merchandise'), async (req,
     }
 });
 
-router.put('/:id', validUser(['Admin']), async (req, res) => {
+router.put('/:id', validUser(['admin']), async (req, res) => {
     try {
         if (!req.body.name ||  !req.body.price) {
             return res.status(400).send({
@@ -202,9 +202,9 @@ router.put('/:id', validUser(['Admin']), async (req, res) => {
     }
 });
 
-router.delete('/:id', validUser(['Admin']), async (req, res) => {
+router.delete('/:id', validUser(['admin']), async (req, res) => {
     try {
-        const isAdmin = req.user.roles.includes('Admin');
+        const isAdmin = req.user.roles.includes('admin');
 
         let merchandise;
         

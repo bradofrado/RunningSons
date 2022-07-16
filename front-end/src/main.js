@@ -39,9 +39,24 @@ Vue.directive('spinner', function(el, binding) {
         el.style.width = '';
         el.style.height = '';
     }
+});
+
+Vue.directive('invalid', function(el, binding) {
+    const invalid = binding.value;
+
+    if (invalid) {
+        el.classList.add('invalid');
+    } else {
+        el.classList.remove('invalid');
+    }
 })
 
+const data = {
+    user: null
+}
+
 new Vue({
-  router,
-  render: h => h(App)
+    router,
+    data,
+    render: h => h(App)
 }).$mount('#app')

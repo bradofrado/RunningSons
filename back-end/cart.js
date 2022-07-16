@@ -127,7 +127,7 @@ router.post('/', async (req, res) => {
     try {
         if (!req.session.userID) {
             const _user = await user.newGuest();
-            req.session.userID = _user._id;            
+            req.session.userID = _user._id;          
         }
 
         const item = new CartItem({

@@ -122,6 +122,7 @@ const newGuest = async function() {
     });
     user.firstname = `Guest${user._id}`;
     user.username = user.firstname;
+    user.roles = ['Guest'];
 
     await user.save();
 
@@ -133,18 +134,20 @@ const newGuest = async function() {
 router.post('/', async (req, res) => {
     if (!req.body.username || !req.body.password || !req.body.email) {
         return res.status(400).send({
-            message: "username, password, and email are required"
+            message: "Username, password, and email are required"
         });
     }
 
     try {
+        req.body.username = req.body.username.toLowerCase();
+
         const existingUser = await User.findOne({
             username: req.body.username
         });
         if (existingUser) {
             console.log('Username already exists: ' + req.body.username);
             return res.status(403).send({
-                message: "username already exists"
+                message: "Username already exists"
             });
         }
 
@@ -183,13 +186,13 @@ router.post('/login', async (req, res) => {
     // password, otherwise return an error.
     if (!req.body.username || !req.body.password)
       return res.status(400).send({
-          message: "must include username and password"
+          message: "Must include username and password"
       });
   
     try {
         //  lookup user record
         const user = await User.findOne({
-            username: req.body.username
+            username: req.body.username.toLowerCase()
         });
 
         // Return an error if user does not exist.
@@ -197,7 +200,7 @@ router.post('/login', async (req, res) => {
             console.log('Failed login: ' + req.body.username);
 
             return res.status(403).send({
-                message: "username or password is incorrect"
+                message: "Username or password is incorrect"
             });
         }
   
@@ -207,7 +210,7 @@ router.post('/login', async (req, res) => {
             console.log('Failed login: ' + req.body.username);
 
             return res.status(403).send({
-                message: "username or password is incorrect"
+                message: "Username or password is incorrect"
             });
         }
 
@@ -228,12 +231,19 @@ router.post('/login', async (req, res) => {
 // get logged in user
 router.get('/', validUser, async (req, res) => {
     try {
-      res.send({
-        user: req.user
-      });
+        //Don't send back any guest users
+        if (req.user.hasRoles(['guest'])) {
+            return res.status(403).send({
+                message: "Not logged in"
+            });
+        }
+
+        res.send({
+            user: req.user
+        });
     } catch (error) {
-      console.log(error);
-      return res.sendStatus(500);
+        console.log(error);
+        return res.sendStatus(500);
     }
 });
 

@@ -27,7 +27,7 @@ router.get('/', async (req, res) => {
     }
 });
 
-router.post('/', validUser(['Admin']), async(req, res) => {
+router.post('/', validUser(['admin']), async(req, res) => {
     try {
         const music = new Music({
             title: req.body.title
@@ -42,7 +42,7 @@ router.post('/', validUser(['Admin']), async(req, res) => {
     }
 })
 
-router.put('/:id', validUser(['Admin']), async (req, res) => {
+router.put('/:id', validUser(['admin']), async (req, res) => {
     try {
         if (!req.body.title) {
             return res.status(400).send({
@@ -73,9 +73,9 @@ router.put('/:id', validUser(['Admin']), async (req, res) => {
     }
 });
 
-router.delete('/:id', validUser(['Admin']), async (req, res) => {
+router.delete('/:id', validUser(['admin']), async (req, res) => {
     try {
-        const isAdmin = req.user.roles.includes('Admin');
+        const isAdmin = req.user.roles.includes('admin');
 
         const music = await Music.findOne({
             _id: req.params.id                
