@@ -47,7 +47,7 @@ p {
     margin-bottom: 1em !important;
 }
 
-a {
+.a {
     color: $white !important;
 }
 
@@ -122,6 +122,10 @@ a {
 
 .mr-1 {
     margin-right: 10px;
+}
+
+.ml-0 {
+    margin-left: 10px;
 }
 
 .bubble-container{

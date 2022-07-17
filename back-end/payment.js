@@ -92,6 +92,7 @@ router.post("/create-payment-intent", validUser, async (req, res) => {
     try {
         // let clientSecret = req.user.clientSecret;
         let amount = await getPaymentAmount(req.user);
+        let clientSecret;
         if (!req.user.clientSecret && amount > 0) {
             
             // Create a PaymentIntent with the order amount and currency
@@ -106,6 +107,9 @@ router.post("/create-payment-intent", validUser, async (req, res) => {
             clientSecret = paymentIntent.client_secret;
             req.user.clientSecret = paymentIntent.id;
             await req.user.save();
+        } else {
+            const paymentIntent = await stripe.paymentIntents.retrieve(req.user.clientSecret);
+            clientSecret = paymentIntent.client_secret;
         }
 
         res.send({

@@ -11,7 +11,7 @@
         <p v-if="errorText" class="danger grid-1-1">{{errorText}}</p>
         <button class="button button-primary grid-1-1" type="submit" v-spinner="loading">Sign up</button>
     </form>
-    <p>Already have an account? <router-link to="/account/login">Login</router-link></p>
+    <p>Already have an account? <router-link to="/account/login" class="a">Login</router-link></p>
 </div>
 </template>
 

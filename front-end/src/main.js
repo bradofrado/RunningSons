@@ -58,5 +58,5 @@ const data = {
 new Vue({
     router,
     data,
-    render: h => h(App)
+    render: h => h(App, {ref: 'app'})
 }).$mount('#app')

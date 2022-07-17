@@ -31,6 +31,7 @@ const merchandiseSchema = new mongoose.Schema({
     }
 });
 
+
 merchandiseSchema.methods.populateType = async function() {
     if (mongoose.isValidObjectId(this.type)) {
         const type = await MerchandiseType.findOne({
@@ -42,6 +43,10 @@ merchandiseSchema.methods.populateType = async function() {
         }
     } 
 }
+
+merchandiseSchema.pre(/^find/, function() {
+    this.where({isDeleted: false});
+});
 
 merchandiseSchema.post('find', async function(docs, next) {
     for(let doc of docs) {
@@ -147,19 +152,28 @@ router.get('/:name', async (req, res) => {
     }
 });
 
-router.post('/', validUser(['admin']), upload.single('merchandise'), async (req, res) => {
-    if (!req.body.name ||  !req.body.price || !req.file) {
+router.post('/', validUser(['admin']), upload.single('image'), async (req, res) => {
+    if (!req.body.name ||  !req.body.price || !req.body.type) {
         return res.status(400).send({
-            message: "Name and price and image are required"
+            message: "Name and price are required"
         });
     }
     try {
+        const merchandiseType = await MerchandiseType.findOne({
+            type: req.body.type
+        });
+
+        if (!merchandiseType) {
+            return res.status(400).send({
+                message: "Could not find the merchandise type " + req.body.type
+            })
+        }
         const merchandise = new Merchandise({
             name: req.body.name,
             description: req.body.description,
-            image: '/images/' + req.file.filename,
+            image: req.file ? '/images/' + req.file.filename : null,
             price: req.body.price,
-            type: req.body.type
+            type: merchandiseType._id
         });
 
         await merchandise.save();
@@ -171,7 +185,7 @@ router.post('/', validUser(['admin']), upload.single('merchandise'), async (req,
     }
 });
 
-router.put('/:id', validUser(['admin']), async (req, res) => {
+router.put('/:id', validUser(['admin']), upload.single('image'), async (req, res) => {
     try {
         if (!req.body.name ||  !req.body.price) {
             return res.status(400).send({
@@ -190,6 +204,11 @@ router.put('/:id', validUser(['admin']), async (req, res) => {
                 message: "Could not find merchandise with id "
             });
         }
+
+        merchandise.name = req.body.name;
+        merchandise.price = req.body.price;
+        merchandise.description = req.body.description ?? merchandise.description;
+        merchandise.image = req.file ? '/images/' + req.file.name : merchandise.image;
 
         await merchandise.save();
 

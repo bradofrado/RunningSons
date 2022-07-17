@@ -6,7 +6,7 @@
         <router-link v-if="to" :class="'image-button image-hover center-center' + (img ? ' no-color ' : '') + (buttonClass ? buttonClass : '')" :to="to">            
             <div class="image-button-text center-center" >{{name ? name : ''}}</div>
         </router-link>
-        <button v-else-if="hasClick" :class="'image-button image-hover center-center' + (img ? ' no-color ' : '') + (buttonClass ? buttonClass : '')" @click="onClick">            
+        <button v-else-if="hasClick" :class="'image-button image-hover center-center button' + (img ? ' no-color ' : '') + (buttonClass ? buttonClass : '')" @click="onClick">            
             <div class="image-button-text center-center" >{{name ? name : ''}}</div>
         </button>
         <div v-else :class="'image-button center-center' + (img ? ' no-color' : '')">

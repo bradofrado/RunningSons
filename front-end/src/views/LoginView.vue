@@ -7,7 +7,7 @@
         <p v-if="errorText" class="danger">{{errorText}}</p>
         <button class="button button-primary" type="submit" v-spinner="loading">Login</button>
     </form>
-    <p>Don't have an account? <router-link to="/account/signup">Sign up</router-link></p>
+    <p>Don't have an account? <router-link to="/account/signup" class="a">Sign up</router-link></p>
 </div>
 </template>
 
