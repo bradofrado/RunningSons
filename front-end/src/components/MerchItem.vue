@@ -25,11 +25,11 @@ import axios from 'axios';
 export default {
     name: "MerchItem",
     components: {
-        NumberPicker
+        NumberPicker,
     },
     props: {
         item: Object,
-        edit: Boolean
+        edit: Boolean,
     },
     data() {
         return {

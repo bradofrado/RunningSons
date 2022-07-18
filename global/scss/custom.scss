@@ -1,9 +1,10 @@
 @import "https://fonts.googleapis.com/css?family=Montserrat";
 
-$white: #fff;
-$black: #2A2D34;
+$white: #EFEBE3;
+$off-white: #FFFCE7;
+$black: #292017;
 //$primary: #033740;
-$primary-2: #228579;
+$primary-2: #2D667A;
 //$secondary: #FFC31F;
 //$secondary-2: #FF5900;
 
@@ -17,10 +18,19 @@ $secondary-2-hover: #ce6504;
 $danger: #df1b41;
 
 $body-bg: $primary;
-$body-color: $white;
-$font-family-sans-serif: 'Montserrat', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+$body-color: $off-white;
+$font-family-sans-serif: 'Tenor Sans',Helvetica,Verdana,Arial,sans-serif;;
+$body-text-align: center;
+$body-font-weight: 600; 
 
+@font-face {
+    font-family: 'Tenor Sans';
+    src: url('http://localhost:8080/fonts/tenorsans-regular-webfont.woff2') format('woff2'),
+         url('http://localhost:8080/fonts/tenorsans-regular-webfont.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
 
+}
 
 body {
     margin: 0px;
@@ -29,6 +39,7 @@ body {
     -moz-osx-font-smoothing: grayscale;
     color: $white;
     font-size: 12px;
+    background-color: $primary;
 }
 
 @media only screen and (min-width: 960px) {
@@ -64,6 +75,10 @@ p {
     padding: 10px;
 }
 
+.button:hover {
+    background-color: #919191;
+}
+
 .button-primary {
     background-color: $secondary-2;
     color: $white;
@@ -85,7 +100,6 @@ p {
 }
 
 .app-default {
-    text-align: center;
     background-image: linear-gradient(-180deg, $primary-2 , $primary);
     background-size: 200% 200%;
     animation: gradient 5s ease infinite;
@@ -220,6 +234,18 @@ p {
 
 .invalid {
     border: 1px solid $danger;
+}
+
+.circle-hover {
+    width: 32px;
+}
+
+// .circle-hover:hover {
+//     background-color: $secondary-2-hover;
+//     border-radius: 50%;
+// }
+.circle-hover:hover svg {
+    fill: $secondary-2-hover;
 }
 
 @media only screen and (min-width: 960px) {

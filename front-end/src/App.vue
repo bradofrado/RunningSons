@@ -1,6 +1,6 @@
 <template>
 <div>
-    <div id="app" class="footer-app-container app-default">
+    <div id="app" class="footer-app-container">
        <Header/>
         <div class="footer-app container">
             <router-view />
@@ -14,6 +14,7 @@
 <script>
 import Header from '@/components/Header.vue';
 import ModalBase from './components/ModalBase.vue';
+import axios from 'axios';
 
 export default {
     name: "App",
@@ -27,10 +28,21 @@ export default {
             intro: true
         }
     },
+    async created() {
+        try {
+            const response = await axios.get('/api/users');
+
+            this.$root.$data.user = response.data.user;
+        } catch(error) {
+            console.log(error);
+        }
+    }
 }
 </script>
 
 <style lang="scss">
 //asdfasdf
-
+.popover-body {
+    background-color: $black;
+}
 </style>

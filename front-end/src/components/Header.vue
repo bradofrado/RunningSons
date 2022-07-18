@@ -17,20 +17,30 @@
                         </b-navbar-nav>
                 </b-popover>   
             </b-collapse>
-            <b-navbar-nav>
+            <ul class="navbar-nav navbar-singleline">
                 <b-nav-item to="/cart" active-class="active">
-                    Cart
+                    <icon class="active-circle" icon="cart" circle/>
                 </b-nav-item>
-                <b-nav-item to="/account" exact-active-class="active">Account</b-nav-item>
-            </b-navbar-nav>
+                <b-nav-item v-if="user" to="/account" exact-active-class="active">
+                    <icon class="active-circle" icon="profile" circle/>
+                </b-nav-item>
+                <template v-else>
+                    <b-nav-item  to="/account/signup" active-class="active">Sign up</b-nav-item>
+                    |
+                    <b-nav-item  to="/account/login" active-class="active">Login</b-nav-item>
+                    
+                </template>
+            </ul>
         </div>
     </b-navbar>
 </template>
 
 <script>
 import axios from 'axios';
+import Icon from '../../../global/components/Icon.vue';
 
 export default {
+  components: { Icon },
     name: "HeaderControl",
     data() {
         return {
@@ -39,6 +49,11 @@ export default {
     },
     async created() {
         await this.getMerchandiseTypes();
+    },
+    computed: {
+        user() {
+            return this.$root.$data.user;
+        }
     },
     methods: {
         onMerchClick() {
@@ -66,8 +81,26 @@ export default {
     // padding: 5px;
 }
 
-.nav-link:hover, .nav-dropdown-active {
-    color: $secondary-2;
+.nav-link {
+    color: $white;
+}
+
+.nav-link:hover, .nav-dropdown-active, .navbar-dark .navbar-nav .nav-link:hover {
+    color: $secondary-2-hover;
+}
+
+.navbar-singleline {
+    flex-direction: row !important;
+    align-items: center;
+}
+
+.navbar-singleline li:first-child {
+    margin: 0 10px;
+}
+
+.active .active-circle {
+    background-color: $black;
+    border-radius: 50%;
 }
 /* .navbar-dark .navbar-nav .nav-link.router-link-exact-active,
 .navbar-dark .navbar-nav .nav-link.router-link-exact-active:focus {

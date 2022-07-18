@@ -31,7 +31,7 @@ export default {
 @media only screen and (min-width: 960px) {
     .items-container {
         display: grid;
-        grid-template-columns: auto auto auto;
+        grid-template-columns: auto auto auto auto;
     }
 }
 
