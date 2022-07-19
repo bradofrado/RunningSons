@@ -29,14 +29,18 @@ app.use(cookieSession({
     }
 }));
 
-const music = require('./music.js');
+const songs = require('./songs.js');
+const bands = require('./bands.js');
+const albums = require('./albums.js');
 const users = require('./users.js');
 const merchandiseType = require('./merchandise-types.js');
 const merchandise = require('./merchandise.js');
 const payments = require('./payment.js');
 const cart = require('./cart.js');
 
-app.use('/api/music', music.routes);
+app.use('/api/songs', songs.routes);
+app.use('/api/bands', bands.routes);
+app.use('/api/albums', albums.routes);
 app.use('/api/users', users.routes);
 app.use('/api/merchandise', merchandise.routes);
 app.use('/api/types', merchandiseType.routes);

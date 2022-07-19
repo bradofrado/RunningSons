@@ -43,7 +43,7 @@ export default {
     },
     computed: {
         title() {
-            return this.editRoom ? 'Edit ' + this.editRoom.name : 'Add ' + this.name;
+            return this.editRoom ? 'Edit ' + (this.editRoom.name || this.editRoom.title) : 'Add ' + this.name;
         }
     },
     methods: {

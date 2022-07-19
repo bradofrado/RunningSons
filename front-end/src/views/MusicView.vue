@@ -1,17 +1,22 @@
 <template>
 <div>
-    <h1 class="title-container">Falling Sand out soon...</h1>
+    <h1>This is Running Sons...</h1>
+    <div class="songs-container">
+        <song-line-item class="song-item" v-for="song in songs" :key="song._id" :song="song"/>
+    </div>
 </div>
 </template>
 
 <script>
 import axios from 'axios'
+import SongLineItem from '../components/SongLineItem.vue';
 
 export default {
+  components: { SongLineItem },
     name: "MusicView",
     data() {
         return {
-            music: []
+            songs: []
         }
     },
     async created() {
@@ -20,9 +25,9 @@ export default {
     methods: {
         async getMusic() {
             try {
-                const response = await axios.get('/api/music');
+                const response = await axios.get('/api/songs');
 
-                this.music = response.data; 
+                this.songs = response.data; 
             } catch(error) {
                 console.log(error);
             }
@@ -33,5 +38,7 @@ export default {
 
 <style scoped lang="scss">
 //@import '@/scss/custom.scss';
-
+.song-item {
+    margin-top: 20px;
+}
 </style>
