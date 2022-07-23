@@ -1,5 +1,8 @@
 <template>
     <a class="song-container" :href="'/music/songs/' + song._id">
+        <div class="number-container">
+            <div>{{index + 1}}</div>
+        </div>
         <div class="image-container">
             <img :src="song.albumCover"/>
         </div>
@@ -14,7 +17,8 @@
 export default {
     name: "SongLineItem",
     props: {
-        song: Object
+        song: Object,
+        index: Number
     },
     
 }
@@ -24,15 +28,26 @@ export default {
 .song-container {
     display: flex;
     flex-direction: row;
+    align-items: center;
     width: 100%;
     color: $white;
     text-decoration: none;
     border-radius: 10px;
+    padding: 10px 0;
 }
 
 .song-container:hover {
     background-color: #505050;
     color: $white;
+}
+
+.number-container {
+    padding: 20px;
+    font-size: 1.25rem;
+}
+
+.number-container div {
+    width: 16px;
 }
 
 .image-container {

@@ -2,7 +2,7 @@
 <div>
     <h1>This is Running Sons...</h1>
     <div class="songs-container">
-        <song-line-item class="song-item" v-for="song in songs" :key="song._id" :song="song"/>
+        <song-line-item class="song-item" v-for="(song, i) in songs" :key="song._id" :song="song" :index="i"/>
     </div>
 </div>
 </template>
@@ -39,6 +39,6 @@ export default {
 <style scoped lang="scss">
 //@import '@/scss/custom.scss';
 .song-item {
-    margin-top: 20px;
+    // margin-top: 20px;
 }
 </style>
