@@ -79,7 +79,20 @@ const validUser = users.valid;
 
 router.get('/', async (req, res) => {
     try {
-        const albums = await Album.find();
+        const {album, band} = req.query;
+
+        let albums;
+        if (album) {
+            albums = await Album.find({
+                title: album
+            });
+        } else {
+            albums = await Album.find();
+        }
+
+        if (band) {
+            albums = albums.filter(x => x.band.name === band);
+        }
 
         res.send(albums);
     } catch(error) {

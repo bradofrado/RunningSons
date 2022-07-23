@@ -89,17 +89,12 @@ router.get('/', async (req, res) => {
             songs = await Song.find({
                 title: song
             });
-            if (album) {
-                songs = songs && songs.find(x => x.album.title == album) || null;
-            }
         } else {
             songs = await Song.find();
         }
 
-        if (!songs) {
-            return res.status(400).send({
-                message: "Cannot find songs"
-            })
+        if (album) {
+            songs = songs.filter(x => x.album.title == album);
         }
         
 

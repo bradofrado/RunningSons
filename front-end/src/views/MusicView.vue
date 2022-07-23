@@ -1,6 +1,6 @@
 <template>
 <div>
-    <h1>This is Running Sons...</h1>
+    <h1>This is Running Sons</h1>
     <div class="songs-container">
         <song-line-item class="song-item" v-for="(song, i) in songs" :key="song._id" :song="song" :index="i"/>
     </div>

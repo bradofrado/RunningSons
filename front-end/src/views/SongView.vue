@@ -29,7 +29,7 @@ export default {
             try {
                 console.log('hit' + this.$route.params);
                 const response = await axios.get('/api/songs?song=' + this.$route.params.title + '&album=' + this.$route.params.album);
-                this.song = response.data;
+                this.song = response.data[0];
             } catch(error) {
                 console.log(error);
             }
