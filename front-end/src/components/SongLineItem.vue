@@ -1,5 +1,5 @@
 <template>
-    <router-link class="song-container" :to="`/music/${song.album}/${song.title}`">
+    <router-link class="song-container transition-background" :to="`/music/${song.album}/${song.title}`">
         <div class="number-container">
             <div>{{index + 1}}</div>
         </div>
@@ -37,7 +37,7 @@ export default {
 }
 
 .song-container:hover {
-    background-color: #505050;
+    background-color: $background-hover;
     color: $white;
 }
 

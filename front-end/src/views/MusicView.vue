@@ -4,23 +4,27 @@
     <div class="songs-container">
         <song-line-item class="song-item" v-for="(song, i) in songs" :key="song._id" :song="song" :index="i"/>
     </div>
+    <image-list name="Albums" :items="albums" to="/music/" />
 </div>
 </template>
 
 <script>
 import axios from 'axios'
 import SongLineItem from '../components/SongLineItem.vue';
+import ImageList from '../components/ImageList.vue';
 
 export default {
-  components: { SongLineItem },
+  components: { SongLineItem, ImageList },
     name: "MusicView",
     data() {
         return {
-            songs: []
+            songs: [],
+            albums: []
         }
     },
     async created() {
         await this.getMusic();
+        await this.getAlbums();
     },
     methods: {
         async getMusic() {
@@ -31,14 +35,27 @@ export default {
             } catch(error) {
                 console.log(error);
             }
-        }
+        },
+        async getAlbums() {
+            try {
+                const response = await axios.get('/api/albums');
+
+                //The image list is expecting a name property
+                this.albums = response.data.map(x => {
+                    const name = x.title;
+                    delete x.title;
+                    return {...x, name: name};
+                });
+            } catch(error) {
+                console.log(error);
+            }
+        },
     }
 }
 </script>
 
 <style scoped lang="scss">
-//@import '@/scss/custom.scss';
-.song-item {
-    // margin-top: 20px;
+.songs-container {
+    margin-bottom: 40px;
 }
 </style>
