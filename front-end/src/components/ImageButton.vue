@@ -13,7 +13,7 @@
             <div class="image-button-text center-center" >{{name ? name : ''}}</div>
         </div>
     </div>
-    <div v-else v-b-tooltip.hover :title="title" :class="'image-button-container-2 image-hover transition-background' + (dark ? ' dark' : '')" @click="onClick">
+    <div v-else v-b-tooltip.hover :title="title" :class="'image-button-container-2 image-hover transition-background' + (img ? ' no-color ' : '') + (dark ? ' dark' : '')" @click="onClick">
         <div v-if="img" class="image-container-2">
             <img :src="img">
         </div>
@@ -100,7 +100,7 @@ img {
 .image-button {
     position: relative;
     color: inherit;
-    background-color: #999;
+    background-color: $black;
     transition: background-color .3s ease-in-out;
     width: 100%;
     height: 100%;
@@ -110,7 +110,7 @@ img {
 
 .image-button-2 {
     color: inherit;
-    background-color: #999;
+    background-color: $black;
     transition: background-color .3s ease-in-out;
     white-space: nowrap;
     border-radius: 8px;
@@ -152,7 +152,7 @@ img {
 
 
 .image-hover:hover {
-    background-color: $background-hover;
+    background-color: $background-dark-hover;
     
     color: inherit;
     cursor: pointer;

@@ -2,7 +2,7 @@
 <div>
     <h4>{{name}}</h4>
     <div class="items-container">
-        <image-button v-for="item in items" :key="item._id" :img="item.image" @click="editItem(item)" :title="item.name"/>
+        <image-button v-for="item in items" :key="item._id" :img="item.image" @click="editItem(item)" :title="item.name || item.title"/>
         <image-button name="Add" @click="addItem"/>
     </div>
     <modal :show="show">

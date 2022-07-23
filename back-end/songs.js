@@ -56,6 +56,10 @@ songSchema.methods.toJSON = function() {
         obj.band = band.name;
     }
 
+    if (!obj.image) {
+        obj.image = obj.albumCover;
+    }
+
     return obj;
 }
 
@@ -163,7 +167,7 @@ router.put('/:id', validUser(['admin']), upload.single('image'), async (req, res
         }
 
         const album = req.body.album ? await Album.findOne({
-            name: req.body.album
+            title: req.body.album
         }) : song.album;
         
         if (!album) {
