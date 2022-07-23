@@ -83,7 +83,25 @@ const validUser = users.valid;
 
 router.get('/', async (req, res) => {
     try {
-        const songs = await Song.find();
+        let songs;
+        const {song, album} = req.query;
+        if (song) {
+            songs = await Song.find({
+                title: song
+            });
+            if (album) {
+                songs = songs && songs.find(x => x.album.title == album) || null;
+            }
+        } else {
+            songs = await Song.find();
+        }
+
+        if (!songs) {
+            return res.status(400).send({
+                message: "Cannot find songs"
+            })
+        }
+        
 
         res.send(songs);
     } catch(error) {

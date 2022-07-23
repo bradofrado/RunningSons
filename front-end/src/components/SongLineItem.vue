@@ -1,5 +1,5 @@
 <template>
-    <a class="song-container" :href="'/music/songs/' + song._id">
+    <a class="song-container" :href="`/music/${song.album}/${song.title}`">
         <div class="number-container">
             <div>{{index + 1}}</div>
         </div>
