@@ -18,7 +18,7 @@ export default {
     name: "SongView",
     data() {
         return {
-            song: null
+            song: {}
         }
     },
     async created() {
@@ -42,11 +42,6 @@ export default {
 .song-view {
     display: flex;
     flex-direction: column;
-    padding: 20px 40px;
-}
-
-.song-view div {
-    width: 50%;
 }
 
 .image-container {
@@ -70,6 +65,12 @@ img {
 @media only screen and (min-width: 960px) {
     .song-view {
         flex-direction: row;
+        padding: 20px 40px;
     }
+
+        .song-view div {
+        width: 50%;
+    }
+
 }
 </style>

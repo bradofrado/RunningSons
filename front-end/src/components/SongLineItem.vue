@@ -1,5 +1,5 @@
 <template>
-    <a class="song-container" :href="`/music/${song.album}/${song.title}`">
+    <router-link class="song-container" :to="`/music/${song.album}/${song.title}`">
         <div class="number-container">
             <div>{{index + 1}}</div>
         </div>
@@ -10,7 +10,7 @@
             <h4>{{song.title}}</h4>
             <p class="text-secondary text-band">{{song.band}}</p>
         </div>
-    </a>
+    </router-link>
 </template>
 
 <script>
