@@ -1,7 +1,7 @@
 <template>
 <div v-if="user">
     <h1>Welcome, {{user.firstname}}</h1>
-    <a href="" @click="logout" class="a">Logout</a>
+    <a href="" @click.prevent="logout" class="a">Logout</a>
     <div v-if="isAdmin" class="products-container">
         <admin-products class="item" name="Merchandise Types" :items="types" :inputs="inputs.types" url="/api/types" @upload="getMerchandiseTypes" @delete="getMerchandiseTypes"/>
         <admin-products class="item" name="Merchandise" :items="merchandise" :inputs="inputs.merchandise" url="/api/merchandise" @upload="getMerchandiseItems"  @delete="getMerchandiseItems"/>

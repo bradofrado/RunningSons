@@ -122,7 +122,7 @@ const newGuest = async function() {
     });
     user.firstname = `Guest${user._id}`;
     user.username = user.firstname;
-    user.roles = ['Guest'];
+    user.roles = ['guest'];
 
     await user.save();
 
