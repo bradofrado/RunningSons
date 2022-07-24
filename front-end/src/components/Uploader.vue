@@ -4,19 +4,23 @@
         <legend>{{title}}</legend>
         <template v-for="(input, index) of theInputs" >
             <fieldset v-if="input.type == 'input'" :key="index">
+                <label>{{input.title}}</label>
                 <input v-model="input.value" :placeholder="input.title"/>                
             </fieldset>
             <fieldset v-else-if="input.type == 'textarea'" :key="index">
-                <input v-model="input.value" :placeholder="input.title"/>                
+                <label>{{input.title}}</label>
+                <textarea v-model="input.value" :placeholder="input.title"/>                
             </fieldset>                 
         </template>
         <div class="imageInputContainer">
             <template v-for="(input, index) of theInputs" >
                 <fieldset v-if="input.type == 'file'" :key="index">
+                    <label>{{input.title}}</label>
                     <file-input v-model="input.value" :title="input.title" />                            
                 </fieldset>
-                <fieldset v-else-if="input.type == 'calendar'" :key="index">
-                    <calendar v-model="input.value" />        
+                <fieldset v-else-if="input.type == 'date'" :key="index">
+                    <label>{{input.title}}</label>
+                    <b-form-datepicker v-model="input.value" />        
                 </fieldset>        
             </template>
         </div>
@@ -108,7 +112,15 @@ export default {
     }
 }
 </script>
+<style>
+div:not(.bg-light) > .text-dark {
+    color: #fff !important;
+}
 
+.form-control.focus {
+    background-color:#033740 !important;
+}
+</style>
 <style scoped>
 /* Form */
 
@@ -119,6 +131,12 @@ export default {
     margin-bottom: 0.3em;
     color: #333;
     border-bottom: 1px solid #e5e5e5;
+}
+
+.pure-form label {
+    width: 100%;
+    color: #000;
+    text-align: left;
 }
 
 .pure-form fieldset {

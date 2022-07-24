@@ -109,7 +109,7 @@ export default {
                         required: true,
                     },
                     releaseDate: {
-                        type: 'input',
+                        type: 'date',
                         title: 'Release Date',
                         required: true
                     },
