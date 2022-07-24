@@ -1,20 +1,13 @@
 const express = require('express');
 const mongoose = require('mongoose');
-const multer = require('multer');
+const uploader = require('./uploader.js');
 
 const router = express.Router();
 const path = '/images/albums';
 
-const env = require('./env.js');
-
 const Band = require('./bands.js').model;
 
-const upload = multer({
-    dest: env.root+path,
-    limits: {
-        fileSize: 50000000
-    }
-});
+const upload = uploader.upload(path).single('image');
 
 const albumSchema = new mongoose.Schema({
     title: String,
@@ -66,7 +59,7 @@ albumSchema.post(/^find/, async function(docs, next) {
     }
 
     for (let item of items) {
-        await item.populate();
+        item && await item.populate();
     }
 
     next();
@@ -101,11 +94,24 @@ router.get('/', async (req, res) => {
     }
 });
 
-router.post('/', validUser(['admin']), upload.single('image'), async(req, res) => {
+router.post('/', validUser(['admin']), upload, async(req, res) => {
     if (!req.body.title || !req.body.description || !req.body.releaseDate || !req.body.band) {
+        if (req.file) {
+            uploader.delete(path + '/' + req.file.filename);
+        }
         console.log("Invalid body parameters");
         return res.status(400).send({
             message: "Invalid body parameters"
+        })
+    }
+
+    if (!Date.parse(req.body.releaseDate)) {
+        if (req.file) {
+            uploader.delete(path + '/' + req.file.filename);
+        }
+        console.log("Invalid date " + req.body.releaseDate);
+        return res.status(400).send({
+            message: "Invalid date " + req.body.releaseDate
         })
     }
 
@@ -137,11 +143,24 @@ router.post('/', validUser(['admin']), upload.single('image'), async(req, res) =
     }
 })
 
-router.put('/:id', validUser(['admin']), upload.single('image'), async (req, res) => {
+router.put('/:id', validUser(['admin']), upload, async (req, res) => {
     if (!req.body.title || !req.body.description || !req.body.releaseDate) {
+        if (req.file) {
+            uploader.delete(path + '/' + req.file.filename);
+        }
         console.log("Invalid body parameters");
         return res.status(400).send({
             message: "Invalid body parameters"
+        })
+    }
+
+    if (!Date.parse(req.body.releaseDate)) {
+        if (req.file) {
+            uploader.delete(path + '/' + req.file.filename);
+        }
+        console.log("Invalid date " + req.body.releaseDate);
+        return res.status(400).send({
+            message: "Invalid date " + req.body.releaseDate
         })
     }
 
@@ -169,11 +188,17 @@ router.put('/:id', validUser(['admin']), upload.single('image'), async (req, res
             })
         }
 
+        const oldImage = album.image;
+
         album.title = req.body.title,
         album.image = req.file ? path + '/' + req.file.filename : album.image,
         album.description = req.body.description,
         album.releaseDate = req.body.releaseDate
         album.band = band 
+
+        if (album.image != oldImage) {
+            uploader.delete(oldImage);
+        }
 
         await album.save();
 
@@ -201,6 +226,7 @@ router.delete('/:id', validUser(['admin']), async (req, res) => {
 
         //Admins can do hard deletes. Other wise just mark it as deleted
         if (req.query.hard === 'true') {
+            uploader.delete(album.image);
             await album.delete();
             console.log('Hard deleted album ' + album._id);
         } else {

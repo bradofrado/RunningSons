@@ -5,8 +5,8 @@
         <img src="/images/banner.png"/>
     </div>
     <div class="image-buttons-container">
-        <image-button class="imadge-item" to="/music" name="Music" img="https://cdn.shopify.com/s/files/1/0011/4651/9637/products/ImagefromiOS_ac5f3ced-96a2-44fa-b404-7f045a649d44_600x.png?v=1656031036"/>
-        <image-button class="imadge-item" to="/merchandise" name="Merchandise" img="https://cdn.shopify.com/s/files/1/0011/4651/9637/files/redrf2_1500x_8f95a411-4b69-4006-8e9b-387ba5cfa445_750x960_crop_center.png?v=1643835192"/>
+        <image-button class="imadge-item" to="/music" img="/images/MusicLogo.png"/>
+        <image-button class="imadge-item" to="/merchandise" img="/images/MerchLogo.png"/>
     </div>
     <merch-collection :items="items" label="Featured Items"/>
 </div>

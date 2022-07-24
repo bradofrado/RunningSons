@@ -2,17 +2,12 @@ const express = require('express');
 const mongoose = require('mongoose');
 const router = express.Router();
 
-const multer = require('multer');
+const uploader = require('./uploader.js');
 
 const env = require('./env.js');
-const root = env.root;
+const path = '/images/merchandise/';
 
-const upload = multer({
-    dest: root+'/images/',
-    limits: {
-        fileSize: 50000000
-    }
-});
+const upload = uploader.upload('/images/merchandise').single('image');
 
 const MerchandiseType = require('./merchandise-types.js').model;
 
@@ -50,7 +45,7 @@ merchandiseSchema.pre(/^find/, function() {
 
 merchandiseSchema.post('find', async function(docs, next) {
     for(let doc of docs) {
-        await doc.populateType();
+        doc && await doc.populateType();
     }
 
     next();
@@ -95,25 +90,6 @@ router.get('/', async (req, res) => {
 
 router.get('/type/:type', async (req, res) => {
     try {
-        // const merchandise = await Merchandise.aggregate([
-        //     {
-        //         $unwind: "$type"
-        //     },
-        //     {
-        //       $lookup: {
-        //         from: "merchandisetype",
-        //         localField: "type",
-        //         foreignField: "_id",
-        //         as: "type",
-        //       },
-        //     },
-        //     {
-        //       $match: {
-        //         "type.type": req.params.type,
-        //       },
-        //     },
-        //   ])
-
         let merchandise = await Merchandise.find();
 
         merchandise = merchandise.filter(m => m.type.type == req.params.type);
@@ -152,8 +128,11 @@ router.get('/:name', async (req, res) => {
     }
 });
 
-router.post('/', validUser(['admin']), upload.single('image'), async (req, res) => {
+router.post('/', validUser(['admin']), upload, async (req, res) => {
     if (!req.body.name ||  !req.body.price || !req.body.type) {
+        if (req.file) {
+            uploader.delete(path + '/' + req.file.filename);
+        }
         return res.status(400).send({
             message: "Name and price are required"
         });
@@ -171,7 +150,7 @@ router.post('/', validUser(['admin']), upload.single('image'), async (req, res) 
         const merchandise = new Merchandise({
             name: req.body.name,
             description: req.body.description,
-            image: req.file ? '/images/' + req.file.filename : null,
+            image: req.file ? path + req.file.filename : null,
             price: req.body.price,
             type: merchandiseType._id
         });
@@ -185,9 +164,12 @@ router.post('/', validUser(['admin']), upload.single('image'), async (req, res) 
     }
 });
 
-router.put('/:id', validUser(['admin']), upload.single('image'), async (req, res) => {
+router.put('/:id', validUser(['admin']), upload, async (req, res) => {
     try {
         if (!req.body.name ||  !req.body.price) {
+            if (req.file) {
+                uploader.delete(path + '/' + req.file.filename);
+            }
             return res.status(400).send({
                 message: "Name and price are required"
             });
@@ -205,10 +187,16 @@ router.put('/:id', validUser(['admin']), upload.single('image'), async (req, res
             });
         }
 
+        const oldImage = merchandise.image;
+
         merchandise.name = req.body.name;
         merchandise.price = req.body.price;
         merchandise.description = req.body.description ?? merchandise.description;
-        merchandise.image = req.file ? '/images/' + req.file.name : merchandise.image;
+        merchandise.image = req.file ? path + req.file.filename : merchandise.image;
+
+        if (oldImage != merchandise.image) {
+            uploader.delete(oldImage);
+        }
 
         await merchandise.save();
 
@@ -241,6 +229,7 @@ router.delete('/:id', validUser(['admin']), async (req, res) => {
         //Admins can do hard deletes. Other wise just mark it as deleted
         if (req.query.hard === 'true') {
             if (isAdmin) {
+                uploader.delete(merchandise.image);
                 await merchandise.delete();
                 console.log('Hard deleted merchandise ' + merchandise._id);            
             } else {

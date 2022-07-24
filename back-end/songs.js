@@ -1,6 +1,6 @@
 const express = require('express');
 const mongoose = require('mongoose');
-const multer = require('multer');
+const uploader = require('./uploader.js');
 
 const router = express.Router();
 const path = '/images/songs';
@@ -8,12 +8,7 @@ const path = '/images/songs';
 const env = require('./env.js');
 const Album = require('./albums.js').model;
 
-const upload = multer({
-    dest: env.root+path,
-    limits: {
-        fileSize: 50000000
-    }
-});
+const upload = uploader.upload(path).single('image');
 
 const songSchema = new mongoose.Schema({
     title: String,
@@ -74,7 +69,7 @@ songSchema.post(/^find/, async function(docs, next) {
     }
 
     for (let item of items) {
-        await item.populate();
+        item && await item.populate();
     }
 
     next();
@@ -109,8 +104,11 @@ router.get('/', async (req, res) => {
     }
 });
 
-router.post('/', validUser(['admin']), upload.single('image'), async(req, res) => {
+router.post('/', validUser(['admin']), upload, async(req, res) => {
     if (!req.body.title || !req.body.description || !req.body.album) {
+        if (req.file) {
+            uploader.delete(path + '/' + req.file.filename);
+        }
         console.log("Invalid body parameters");
         return res.status(400).send({
             message: "Invalid body parameters"
@@ -145,8 +143,11 @@ router.post('/', validUser(['admin']), upload.single('image'), async(req, res) =
     }
 })
 
-router.put('/:id', validUser(['admin']), upload.single('image'), async (req, res) => {
+router.put('/:id', validUser(['admin']), upload, async (req, res) => {
     if (!req.body.title || !req.body.description || !req.body.album) {
+        if (req.file) {
+            uploader.delete(path + '/' + req.file.filename);
+        }
         console.log("Invalid body parameters");
         return res.status(400).send({
             message: "Invalid body parameters"
@@ -177,10 +178,16 @@ router.put('/:id', validUser(['admin']), upload.single('image'), async (req, res
             })
         }
 
+        const oldImage = song.image;
+
         song.title = req.body.title,
         song.image = req.file ? path + '/' + req.file.filename : song.image,
         song.description = req.body.description,
         song.album = album;
+
+        if (song.image != oldImage) {
+            uploader.delete(oldImage);
+        }
 
         await song.save();
 
@@ -208,6 +215,7 @@ router.delete('/:id', validUser(['admin']), async (req, res) => {
 
         //Admins can do hard deletes. Other wise just mark it as deleted
         if (req.query.hard === 'true') {
+            uploader.delete(song.image);
             await song.delete();
             console.log('Hard deleted song ' + song._id);
         } else {

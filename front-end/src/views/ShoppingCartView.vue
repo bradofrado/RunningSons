@@ -5,7 +5,10 @@
         <div v-else class="shopping-container">
             <cart-items :items="items" @remove="getItems"/>
             <div class="sub-totals">
-                <p><em>Subtotal: ${{subtotals.toFixed(2)}}</em></p>
+                <p>Subtotal: ${{subtotals.toFixed(2)}}</p>
+                <p>Shipping: ${{shipping.toFixed(2)}}</p>
+                <hr>
+                <p><em>Total: ${{total.toFixed(2)}}</em></p>
                 <button class="button button-primary" @click="checkout">Checkout</button>
             </div>
         </div>
@@ -33,6 +36,12 @@ export default {
     computed: {
         subtotals() {
             return this.items.reduce((prev, curr) => prev + CartItems.totals(curr), 0);
+        },
+        shipping() {
+            return 5;
+        },
+        total() {
+            return this.subtotals + this.shipping;
         }
     },
     methods: {
@@ -62,6 +71,12 @@ export default {
 
 .sub-totals {
     width: 200px;
+    margin: auto;
+    text-align: left;
+}
+
+button {
+    display: block;
     margin: auto;
 }
 

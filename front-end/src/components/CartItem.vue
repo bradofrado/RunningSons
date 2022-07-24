@@ -6,7 +6,6 @@
         <div class="data-container">
             <p>{{item.name}}</p>
             <p>${{item.price}}</p>
-            <number-picker v-model="numItems" class="date-picker"/>
             <div class="button-container">
                 <button class='button button-secondary mr-1' @click='edit'>Edit</button>
                 <button class='button button-secondary' @click='remove' v-spinner:dark="loading">Remove</button>
@@ -100,8 +99,12 @@ export default CartItem;
     width: 100%;
 }
 
+.item-product > p {
+    margin-left: 20px;
+}
+
 .image-container {
-    max-width: 180px;
+    max-width: 150px;
 }
 
 img {
@@ -120,6 +123,7 @@ td {
 .cart-item-container {
     display: flex;
     max-width: 600px;
+    margin: 10px 0;
 }
 
 /* .cart-item-container div {

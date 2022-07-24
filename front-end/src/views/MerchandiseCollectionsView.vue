@@ -1,5 +1,6 @@
 <template>
     <merch-collection v-if="items && type" :items="items" :label="type.name"/>
+    <p v-else>Sorry, there are currently no {{type.name}}</p>
 </template>
 
 <script>

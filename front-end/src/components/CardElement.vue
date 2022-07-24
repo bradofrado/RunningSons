@@ -1,7 +1,7 @@
 <template>
 <div>
     <div ref="card"></div>
-    <button class="button button-primary mt-3" @click="purchase">Purchase</button>
+    <button class="button button-primary mt-3" @click="purchase" v-spinner="loading">Purchase</button>
 </div>
 </template>
 
@@ -21,7 +21,8 @@ export default {
     data() {
         return {
             clientSecret: null,
-            card: null
+            card: null,
+            loading: false
         }
     },
     async mounted() {
@@ -76,6 +77,7 @@ export default {
         async purchase() {
             
             try {
+                this.loading = true;
                 await axios.put('/api/payments/create-payment-intent', {
                     address: this.address,
                     name: `${this.contact.firstname} ${this.contact.lastname}`,
@@ -96,7 +98,9 @@ export default {
                     window.location = '/cart';
                 }
                 console.log(error);
+                this.loading = false;
             } catch(error) {
+                this.loading = false;
                 console.log(error);
             }
         }

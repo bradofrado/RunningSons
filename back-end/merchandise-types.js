@@ -5,14 +5,10 @@ const router = express.Router();
 const multer = require('multer');
 
 const env = require('./env.js');
-const root = env.root;
+const uploader = require('./uploader.js');
+const path = '/images/merchandiseTypes/';
 
-const upload = multer({
-    dest: root+'/images/',
-    limits: {
-        fileSize: 50000000
-    }
-});
+const upload = uploader.upload('/images/merchandiseTypes').single('image');
 
 const merchandiseTypeSchema = new mongoose.Schema({
     type: String,
@@ -60,8 +56,11 @@ router.get('/:type', async (req, res) => {
     }
 });
 
-router.post('/', validUser(['admin']), upload.single('merchandise'), async (req, res) => {
+router.post('/', validUser(['admin']), upload, async (req, res) => {
     if (!req.body.name ||  !req.body.type || !req.file) {
+        if (req.file) {
+            uploader.delete(path + '/' + req.file.filename);
+        }
         return res.status(400).send({
             message: "Name and type and image are required"
         });
@@ -70,7 +69,7 @@ router.post('/', validUser(['admin']), upload.single('merchandise'), async (req,
         const merchandiseType = new MerchandiseType({
             name: req.body.name,
             type: req.body.type,
-            image: '/images/' + req.file.filename,            
+            image: path + req.file.filename,            
         });
 
         await merchandiseType.save();
@@ -82,9 +81,12 @@ router.post('/', validUser(['admin']), upload.single('merchandise'), async (req,
     }
 });
 
-router.put('/:id', validUser(['admin']), async (req, res) => {
+router.put('/:id', validUser(['admin']), upload, async (req, res) => {
     try {
         if (!req.body.name ||  !req.body.type) {
+            if (req.file) {
+                uploader.delete(path + '/' + req.file.filename);
+            }
             return res.status(400).send({
                 message: "Name and type are required"
             });
@@ -102,6 +104,15 @@ router.put('/:id', validUser(['admin']), async (req, res) => {
             });
         }
 
+        const oldImage = merchandiseType.image;
+
+        merchandiseType.name = req.body.name;
+        merchandiseType.type = req.body.type;
+        merchandiseType.image = req.file ? path + req.file.filename : merchandiseType.image;  
+
+        if (oldImage != merchandiseType.image) {
+            uploader.delete(oldImage);
+        }
         await merchandiseType.save();
 
         console.log('Edited merchandise ' + merchandiseType._id);
@@ -133,6 +144,7 @@ router.delete('/:id', validUser(['admin']), async (req, res) => {
         //Admins can do hard deletes. Other wise just mark it as deleted
         if (req.query.hard === 'true') {
             if (isAdmin) {
+                uploader.delete(merchandiseType.image);
                 await merchandiseType.delete();
                 console.log('Hard deleted merchandise type ' + merchandiseType._id);            
             } else {

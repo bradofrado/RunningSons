@@ -130,6 +130,7 @@ h4 {
 .items-container {
     display: flex;
     flex-direction: column;
+    flex-wrap: wrap;
 }
 
 @media only screen and (min-width: 960px) {
