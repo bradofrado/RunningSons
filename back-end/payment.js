@@ -41,7 +41,7 @@ const getPaymentAmount = async function(items) {
 const getMetadata = async function(items) {
     const metadata = {};
     for (let item of items) {
-        const name = item.item.name;
+        const name = `${item.item.name} (${item.size})`;
         const quantity = item.quantity;
 
         if (!metadata[name]) {

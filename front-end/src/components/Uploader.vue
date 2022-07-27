@@ -10,7 +10,11 @@
             <fieldset v-else-if="input.type == 'textarea'" :key="index">
                 <label>{{input.title}}</label>
                 <textarea v-model="input.value" :placeholder="input.title"/>                
-            </fieldset>                 
+            </fieldset>  
+            <fieldset v-else-if="input.type == 'custom'" :key="index">
+                <label>{{input.title}}</label>
+                <component :is="AddSize" v-model="input.value"/>
+            </fieldset>               
         </template>
         <div class="imageInputContainer">
             <template v-for="(input, index) of theInputs" >
@@ -26,7 +30,7 @@
         </div>
         <p v-if="submitError" class="danger mt-2">{{submitError}}</p>
         <fieldset class="buttons">
-            <button type="button" @click="$emit('close')" class="button button-secondary">Close</button>
+            <button type="button" @click="onClose" class="button button-secondary">Close</button>
             <div>
                 <button v-if="$listeners.delete" type="button" @click="onDelete" class="button button-secondary" v-spinner="loadingDelete">Delete</button>
                 <button type="submit" class="button button-primary ml-0" v-spinner="loading">Submit</button>
@@ -40,6 +44,7 @@
 //import axios from 'axios';
 import FileInput from "@/components/FileInput.vue"
 import {Copy} from '@/util.js';
+import AddSize from '@/components/AddSize.vue';
 
 export default {
     name: 'Uploader',
@@ -59,6 +64,7 @@ export default {
             theInputs: {},
             loading: false,
             loadingDelete: false,
+            AddSize
         }
     },
     created() {
@@ -71,22 +77,22 @@ export default {
         }
     },
     methods: {
-        // onImageUpload(image) {
-        //     this.image = image;
-        // },
-        // onThumbnailUpload(thumbnail) {
-        //     this.thumbnail = thumbnail;
-        // }, 
+        onClose() {
+            this.$emit('close');
+            this.submitError = '';
+        },
         async onDelete() {
             this.loadingDelete = true;
             await this.$emit('delete', this.id);
             this.loadingDelete = false;
+            this.submitError = '';
         },    
         async onSubmit() {
             this.loading = true;
 
             let output = {};    
             let inputsChanged = false;
+            console.log('after submit: ' + this.theInputs);
             for (const name in this.theInputs) {
                 const input = this.theInputs[name];
 
@@ -108,6 +114,7 @@ export default {
             await this.$emit('submit', output, inputsChanged);
 
             this.loading = false;
+            this.submitError = '';
         }
     }
 }

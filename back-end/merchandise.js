@@ -20,6 +20,7 @@ const merchandiseSchema = new mongoose.Schema({
         type: mongoose.Schema.ObjectId,
         ref: "MerchandiseType"
     },
+    sizes: Object,
     isDeleted: {
         type: Boolean,
         default: false
@@ -76,6 +77,11 @@ const Merchandise = mongoose.model('Merchandise', merchandiseSchema);
 
 const users = require('./users.js');
 const validUser = users.valid;
+
+const manipulateSizes = (json) => {
+    const parsed = JSON.parse(json);
+    return parsed;
+}
 
 router.get('/', async (req, res) => {
     try {
@@ -155,6 +161,10 @@ router.post('/', validUser(['admin']), upload, async (req, res) => {
             type: merchandiseType._id
         });
 
+        if (req.body.sizes) {
+            merchandise.sizes = manipulateSizes(req.body.sizes);
+        }
+
         await merchandise.save();
 
         res.send(merchandise);
@@ -193,6 +203,11 @@ router.put('/:id', validUser(['admin']), upload, async (req, res) => {
         merchandise.price = req.body.price;
         merchandise.description = req.body.description ?? merchandise.description;
         merchandise.image = req.file ? path + req.file.filename : merchandise.image;
+
+        if (req.body.sizes) {
+            merchandise.sizes = manipulateSizes(req.body.sizes);
+        }
+       
 
         if (oldImage != merchandise.image) {
             uploader.delete(oldImage);

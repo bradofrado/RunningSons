@@ -5,6 +5,7 @@
             <th class='float-left'>Product</th>
             <th>Price</th>
             <th>Quantity</th>
+            <th>Size</th>
             <th>Total</th>
         </tr>
         <cart-item v-for="item in items" :key="item._id" :item="item" @remove="$emit('remove')"/>

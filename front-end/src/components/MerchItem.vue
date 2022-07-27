@@ -9,8 +9,13 @@
             <p>{{theItem.description}}</p>
             <div>
                 <span>Quantity:</span>
-                <number-picker v-model="numItems" class="date-picker"/>
+                <number-picker v-model="numItems" class="date-picker" :max="max"/>
             </div>
+            <div>
+                <span>Sizes:</span>
+                <select-size :sizes="theItem.sizes" v-model="theItem.size"/>
+            </div>
+            <p v-if="error" class="danger">{{error}}</p>
             <button class="button button-primary" @click="addToCart" :disabled="loading" v-spinner="loading">
                 {{addToCartText}}
             </button>
@@ -21,11 +26,13 @@
 <script>
 import NumberPicker from '../components/NumberPicker.vue';
 import axios from 'axios';
+import SelectSize from './SelectSize.vue';
 
 export default {
     name: "MerchItem",
     components: {
         NumberPicker,
+        SelectSize,
     },
     props: {
         item: Object,
@@ -37,7 +44,8 @@ export default {
             numItems: 1,
             isEdit: false,
             theItem: null,
-            loading: false
+            loading: false,
+            error: null
         }
     },
     created() {
@@ -51,6 +59,9 @@ export default {
                 return this.added ? 'Edit' : 'Edit';
             }
             return this.added ? 'Add to Cart' : 'Add to Cart';
+        },
+        max() {
+            return this.theItem.size ? this.theItem.sizes[this.theItem.size] : null;
         }
     },
     watch: {
@@ -64,26 +75,34 @@ export default {
     },
     methods: {
         async addToCart() {
+            if (!this.theItem.size || this.theItem.sizes[this.theItem.size] <= 0) {
+                this.error = 'Please select a size';
+                return;
+            }
+
             try {
                 this.loading = true;
                 //If we are editing this item, then put it
                 if (this.isEdit) {
                     await axios.put('/api/cart/' + this.theItem._id, {
-                        quantity: this.numItems
+                        quantity: this.numItems,
+                        size: this.theItem.size
                     });
                 //Otherwise make a new one
                 } else {
                     await axios.post('/api/cart', {
                         item: this.theItem,
-                        quantity: this.numItems
+                        quantity: this.numItems,
+                        size: this.theItem.size
                     });
 
                     //this.theItem = response.data;
                 }
+                this.error = '';
                 this.added = true;
                 this.loading = false;
             } catch(error) {
-                console.log(error);
+                this.error = 'There was an error in saving your item';
                 this.loading = false;
             }
             
@@ -126,6 +145,10 @@ img {
 
 button {
     width: 80%;
+}
+
+p.danger {
+    padding: 0;
 }
 @media only screen and (min-width: 960px) {
     .merch-container {

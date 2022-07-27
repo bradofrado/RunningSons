@@ -62,7 +62,6 @@ const iconComponents = {
 
 export default {
     name: "Icon",
-    //components: iconComponents,
     props: {
         icon: String,
         circle: Boolean
@@ -79,16 +78,6 @@ export default {
 
         return h(icon);
     },
-    // computed: {
-    //     iconComponent() {
-    //         const icon = iconComponents[this.icon];
-    //         if (!icon) {
-    //             console.error("Invalid icon " + this.icon);
-    //         }
-
-    //         return icon;
-    //     }
-    // }
 }
 
 </script>

@@ -6,6 +6,7 @@
         <div class="data-container">
             <p>{{item.name}}</p>
             <p>${{item.price}}</p>
+            <p>{{item.size}}</p>
             <div class="button-container">
                 <button class='button button-secondary mr-1' @click='edit'>Edit</button>
                 <button class='button button-secondary' @click='remove' v-spinner:dark="loading">Remove</button>
@@ -23,9 +24,12 @@
             <p>${{item.price.toFixed(2)}}</p>
         </td>
         <td>
-            <p><number-picker v-model="numItems"/></p>
+            <p><number-picker v-model="numItems" :max="max"/></p>
             <button class="button button-secondary mr-1" @click="edit(item)">Edit</button>
             <button class="button button-secondary" @click="remove(item)" v-spinner:dark="loading">Remove</button>
+        </td>
+        <td>
+            <p>{{item.size}}</p>
         </td>
         <td><p>${{totals(item).toFixed(2)}}</p></td>
     </tr>
@@ -56,6 +60,11 @@ const CartItem = {
     },
     created() {
         this.numItems = this.item.quantity;
+    },
+    computed: {
+        max() {
+            return this.item.size ? this.item.sizes[this.item.size] : null;
+        }
     },
     watch: {
         numItems(item, oldItem) {

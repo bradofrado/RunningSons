@@ -15,6 +15,7 @@
 <script>
 import axios from 'axios';
 import AdminProducts from '../components/AdminProducts.vue';
+import AddKeyValue from '@/components/AddKeyValue.vue';
 
 export default {
     name: "AccountView",
@@ -63,6 +64,12 @@ export default {
                         type: 'textarea',
                         title: 'Description',
                         required: true,
+                    },
+                    sizes: {
+                        type: 'custom',
+                        title: 'Sizes',
+                        required: true,
+                        component: AddKeyValue
                     },
                     image: {
                         type: 'file',

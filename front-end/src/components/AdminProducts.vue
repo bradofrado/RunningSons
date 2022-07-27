@@ -96,8 +96,12 @@ export default {
                         if (typeof outputs[key] === 'object')
                             formData.append(key, outputs[key], outputs[key].name);
                     }
-                    else 
-                        formData.append(key, outputs[key]);
+                    else {
+                        if (typeof outputs[key] === 'object')
+                            formData.append(key, JSON.stringify(outputs[key]))
+                        else
+                            formData.append(key, outputs[key]);
+                    }
                     console.log(outputs[key]);
                 }
 

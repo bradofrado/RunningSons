@@ -49,7 +49,15 @@ Vue.directive('invalid', function(el, binding) {
     } else {
         el.classList.remove('invalid');
     }
-})
+});
+
+Vue.directive('active', function(el, binding) {
+    if (binding.value) {
+        el.classList.add('active');
+    } else {
+        el.classList.remove('active');
+    }
+});
 
 const data = {
     user: null

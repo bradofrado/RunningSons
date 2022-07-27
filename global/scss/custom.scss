@@ -79,7 +79,7 @@ p {
     padding: 10px;
 }
 
-.button:hover {
+.button:hover:not(:disabled) {
     background-color: #919191;
 }
 

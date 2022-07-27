@@ -18,6 +18,7 @@ const cartItemSchema = new mongoose.Schema({
         ref: 'User'
     },
     quantity: Number,
+    size: String,
     dateCreated: Date,
     dateModified: Date,
     dateDeleted: Date,
@@ -31,6 +32,16 @@ const cartItemSchema = new mongoose.Schema({
         default: false
     }
 });
+
+cartItemSchema.methods.checkSize = async function(size) {
+    if (!this.item.sizes) {
+        await this.populateMerchandise();
+    }
+
+    const sizes = Object.keys(this.item.sizes);
+
+    return sizes.includes(size) && this.item.sizes[size] > 0;
+}
 
 cartItemSchema.methods.toJSON = function() {
     var obj = this.toObject();
@@ -119,7 +130,7 @@ router.get('/:id', valid, async (req, res) => {
 });
 
 router.post('/', async (req, res) => {
-    if (!req.body.item || !req.body.quantity) {
+    if (!req.body.item || !req.body.quantity || !req.body.size) {
         return res.status(400).send({
             message: "Invalid body parameters"
         })
@@ -133,9 +144,16 @@ router.post('/', async (req, res) => {
         const item = new CartItem({
             item: req.body.item,
             quantity: req.body.quantity,
+            size: req.body.size,
             user: req.session.userID,
             dateCreated: new Date()
         });
+
+        if (!await item.checkSize(req.body.size)) {
+            return res.status(400).send({
+                message: 'Invalid size ' + req.body.size
+            })
+        }
 
         await item.save();
 
@@ -147,7 +165,7 @@ router.post('/', async (req, res) => {
 })
 
 router.put('/:id', valid, async (req, res) => {
-    if (!req.body.quantity) {
+    if (!req.body.quantity || !req.body.size) {
         return res.status(400).send({
             message: "Invalid body parameters"
         })
@@ -167,7 +185,14 @@ router.put('/:id', valid, async (req, res) => {
 
         item.item = req.body.item ?? item.item;
         item.quantity = req.body.quantity;
+        item.size = req.body.size;
         item.dateModified = new Date();
+
+        if (!await item.checkSize(req.body.size)) {
+            return res.status(400).send({
+                message: 'Invalid size ' + req.body.size
+            })
+        }
 
         await item.save();
 

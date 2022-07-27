@@ -1,8 +1,8 @@
 <template>
     <div class="picker-container">
-        <button class="square button button-secondary" @click="remove">-</button>
+        <button class="square button button-secondary" @click="remove" :disabled="min && content <= min">-</button>
         <input ref="input" class="square input" :value="content" @blur="handleInput"/>
-        <button class="square button button-secondary" @click="add">+</button>
+        <button class="square button button-secondary" @click="add" :disabled="max && content >= max">+</button>
     </div>
 </template>
 
@@ -28,6 +28,14 @@ export default {
             content: this.value
         }
     },
+    watch: {
+        max() {
+            this.setValue(this.content);
+        },
+        min() {
+            this.setValue(this.content);
+        }
+    },
     methods: {
         handleInput(e) {
             const val = parseInt(e.target.value);
@@ -48,12 +56,16 @@ export default {
             if (this.max != null && val > this.max) {
                 val = this.max;
                 this.$refs.input.value = val;
+                this.content = val;
+                this.$emit('input', val);
                 return;
             }
 
             if (val < this.min) {
                 val = this.min;
                 this.$refs.input.value = val;
+                this.content = val;
+                this.$emit('input', val);
                 return;
             }
 
@@ -79,8 +91,9 @@ export default {
 }
 
 .square {
-    width: 50px;
+    min-width: 50px;
     height: 50px;
+    max-width: 100px;
 }
 
 .picker-button {
@@ -89,6 +102,5 @@ export default {
 
 input {
     text-align: center;
-    background-color: #fff;
 }
 </style>
