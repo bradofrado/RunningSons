@@ -1,5 +1,5 @@
 <template>
-    <div v-if="mobile" class="cart-item-container">
+    <div v-if="mobile" class="cart-item-container mobile">
         <div class="image-container">
             <img :src="item.image"/>
         </div>
@@ -13,7 +13,7 @@
             </div>
         </div>
     </div>
-    <tr v-else>
+    <tr v-else class="cart-item-container">
         <td class="item-product">
             <div class="image-container">
                 <img :src="item.image"/>
@@ -130,9 +130,12 @@ td {
 }
 
 .cart-item-container {
+    margin: 10px 0;
+}
+
+.cart-item-container.mobile {
     display: flex;
     max-width: 600px;
-    margin: 10px 0;
 }
 
 /* .cart-item-container div {

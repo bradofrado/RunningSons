@@ -231,6 +231,26 @@ p {
   }
 }
 
+.position-relative {
+    position: relative;
+}
+
+.num-icon {
+    position: absolute;
+    top: -9px;
+    right: -7px;
+    border: $white;
+    border-width: 2px;
+    border-style: solid;
+    border-radius: 15px;
+    padding: 3px 6px;
+    line-height: 1;
+    font-size: 11px;
+    font-weight: 700;
+    background-color: $secondary-2;
+    color: $white;
+}
+
 .danger {
     color: $danger;
     font-weight: 600;

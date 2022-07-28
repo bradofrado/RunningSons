@@ -1,6 +1,7 @@
 <template>
 <div>
     <div ref="card"></div>
+    <p v-if="error" class="danger">{{error}}</p>
     <button class="button button-primary mt-3" @click="purchase" v-spinner="loading">Purchase</button>
 </div>
 </template>
@@ -22,7 +23,8 @@ export default {
         return {
             clientSecret: null,
             card: null,
-            loading: false
+            loading: false,
+            error: null
         }
     },
     async mounted() {
@@ -97,7 +99,7 @@ export default {
                     await axios.post('/api/payments');
                     window.location = '/cart';
                 }
-                console.log(error);
+                this.error = error.message;
                 this.loading = false;
             } catch(error) {
                 this.loading = false;

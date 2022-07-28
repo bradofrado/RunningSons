@@ -51,6 +51,7 @@ export default {
                 const response = await axios.get('/api/cart');
 
                 this.items = response.data;
+                this.$root.$data.numCartItems = this.items.length;
             } catch(error) {
                 console.log(error);
             }

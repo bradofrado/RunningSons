@@ -108,6 +108,19 @@ router.get('/', valid, async (req, res) => {
     }
 });
 
+router.get('/amount', valid, async (req, res) => {
+    try {
+        let items = await CartItem.find({
+            user: req.user
+        });
+        
+        res.send({amount: items.length});
+    } catch(error) {
+        console.log(error);
+        res.sendStatus(500);
+    }
+});
+
 router.get('/:id', valid, async (req, res) => {
     try {
         const item = await CartItem.findOne({

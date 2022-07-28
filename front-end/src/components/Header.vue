@@ -18,8 +18,8 @@
                 </b-popover>   
             </b-collapse>
             <ul class="navbar-nav navbar-singleline">
-                <b-nav-item to="/cart" active-class="active">
-                    <icon class="active-circle" icon="cart" circle/>
+                <b-nav-item to="/cart" active-class="active" class="cart-icon">
+                    <icon class="active-circle" icon="cart" circle v-num-icon="numCartItems"/>
                 </b-nav-item>
                 <b-nav-item v-if="user" to="/account" exact-active-class="active">
                     <icon class="active-circle" icon="profile" circle/>
@@ -53,6 +53,9 @@ export default {
     computed: {
         user() {
             return this.$root.$data.user;
+        },
+        numCartItems() {
+            return this.$root.$data.numCartItems;
         }
     },
     methods: {
@@ -102,62 +105,7 @@ export default {
     background-color: $black;
     border-radius: 50%;
 }
-/* .navbar-dark .navbar-nav .nav-link.router-link-exact-active,
-.navbar-dark .navbar-nav .nav-link.router-link-exact-active:focus {
-    color: #fff;
+.cart-icon {
+    position: relative;
 }
-
-
-.button-primary {
-    background-color: #0f8aa0;
-    height: 2.5rem;
-    color: #fff;
-    margin: 1rem 0;
-    font-weight: 500;
-}
-
-.button-primary:hover {
-    background-color: #18c6e5;
-}
-
-button.nav-link {
-    border: none;
-    background-color: transparent;
-}
-
-button:focus, button:focus-visible {
-    outline: none;
-}
-
-.container.header-container {
-    max-width: 100%;
-    min-height: 80px;
-}
-
-.navbar-collapse {
-    justify-content: flex-end;
-    margin-right: 20px;
-}
-
-.navbar-toggler-container {
-    border: none;   
-}
-
-.navbar-dark .navbar-toggler {
-    color: rgba(255, 255, 255, .8);
-    border: none;
-}
-
-button.navbar-toggler {
-    padding: .75rem 0;
-}
-
-.navbar-toggler-label {
-    margin-right: 10px;
-    font-size: 1rem;
-}
-
-.bg-primary-dark {
-    background-color: #0f8aa0;
-} */
 </style>

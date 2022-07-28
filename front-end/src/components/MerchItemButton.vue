@@ -62,7 +62,7 @@ img {
 }
 
 .image-hover:hover {
-    background-color: $secondary-2-hover;
+    background-color: $gray;
     color: inherit;
     cursor: pointer;
 }

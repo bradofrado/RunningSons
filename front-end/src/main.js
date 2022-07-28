@@ -3,6 +3,7 @@ import App from './App.vue'
 import router from './router'
 import components from '../../global'
 import { BootstrapVue } from 'bootstrap-vue'
+import axios from 'axios'
 
 // Make BootstrapVue available throughout your project
 Vue.use(BootstrapVue);
@@ -59,12 +60,47 @@ Vue.directive('active', function(el, binding) {
     }
 });
 
+Vue.directive('num-icon', function(el, binding) {
+    const remove = () => {
+        el.classList.remove('position-relative');
+        const icon = el.querySelector('span.num-icon');
+        icon && icon.remove();
+    }
+
+    const add = (num) => {
+        el.classList.add('position-relative');
+        const icon = document.createElement('span');
+        icon.classList.add('num-icon');
+        icon.innerHTML = num;
+        el.appendChild(icon);
+    }
+    if (binding.value > 0) {
+        if (el.querySelector('span.num-icon')) {
+            remove();
+        }
+
+        add(binding.value);
+    } else {
+        remove();
+    }
+});
+
 const data = {
-    user: null
+    user: null,
+    numCartItems: 0
 }
 
 new Vue({
     router,
     data,
-    render: h => h(App, {ref: 'app'})
+    async created() {
+        await this.getCartAmount();
+    },
+    render: h => h(App, {ref: 'app'}),
+    methods: {
+        async getCartAmount() {
+            const response = await axios.get('/api/cart/amount');
+            this.$root.$data.numCartItems = response.data.amount;
+        }
+    }
 }).$mount('#app')

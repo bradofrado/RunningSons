@@ -96,6 +96,10 @@ export default {
                         size: this.theItem.size
                     });
 
+                    //Get the number of cart items
+                    const response = await axios.get('/api/cart');
+                    this.$root.$data.numCartItems = response.data.length;
+
                     //this.theItem = response.data;
                 }
                 this.error = '';
@@ -122,6 +126,7 @@ export default {
 }
 .info-container {
     text-align: center;
+    padding: 0 10%;
 }
 
 .info-container > * {
@@ -144,7 +149,7 @@ img {
 }
 
 button {
-    width: 80%;
+    width: 100%;
 }
 
 p.danger {
