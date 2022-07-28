@@ -54,7 +54,7 @@ export default {
 
 <style scoped>
 .card-container {
-    margin: 0 50px;
+   
 }
 
 @media only screen and (min-width: 960px) {

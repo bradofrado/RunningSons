@@ -1,5 +1,5 @@
 <template>
-<div>
+<div class="home-container">
     <h1 class="title">Running Sons</h1>
     <div class="banner-container">
         <img src="/images/banner.png"/>
@@ -47,6 +47,10 @@ export default {
 </script>
 
 <style scoped>
+.home-container {
+    font-size: 12px;
+}
+
 .banner-container {
     position:absolute;
     left: 0;
@@ -55,18 +59,26 @@ export default {
     width: 100%;
 }
 
-.tidtle {
-    padding-bottom: 150px;
-}
 
 .image-buttons-container {
     display: flex;
     justify-content:center;
     margin-bottom: 100px;
     padding-top: 35%;
+    flex-direction: column;
 }
 
 .image-item {
     margin: auto;
+}
+
+@media only screen and (min-width: 960px) {
+    .image-buttons-container {
+        flex-direction: row;
+    }
+    
+    .home-container {
+        font-size: 1rem;
+    }
 }
 </style>
