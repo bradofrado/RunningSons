@@ -99,8 +99,13 @@ new Vue({
     render: h => h(App, {ref: 'app'}),
     methods: {
         async getCartAmount() {
-            const response = await axios.get('/api/cart/amount');
-            this.$root.$data.numCartItems = response.data.amount;
+            try {
+                const response = await axios.get('/api/cart/amount');
+                this.$root.$data.numCartItems = response.data.amount;
+            } catch {
+                //
+            }
+            
         }
     }
 }).$mount('#app')

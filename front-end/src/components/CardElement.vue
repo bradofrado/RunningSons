@@ -9,7 +9,7 @@
 <script>
 import axios from 'axios';
 
-let stripe = window.Stripe(`pk_test_51LKwWoBXqDku0t2IgfMlmC7sQuAWCAKD9CAr9m96m2VuvFoNzs72iizZhUX8rfDAqku0WeDR4H20nN7xhWb10xQx00SwIhCiyz`),
+let stripe = window.Stripe(process.env.VUE_APP_STRIPE_KEY),
     elements;
     //card;
 
@@ -79,6 +79,10 @@ export default {
         async purchase() {
             
             try {
+                if (!this.validate(this.address, ['line2']) || !this.validate(this.contact)) {
+                    this.error = "Please fill out all fields";
+                    return;
+                }
                 this.loading = true;
                 await axios.put('/api/payments/create-payment-intent', {
                     address: this.address,
@@ -105,6 +109,15 @@ export default {
                 this.loading = false;
                 console.log(error);
             }
+        },
+        validate(obj, notInclude) {
+            if (!obj) return false;
+
+            for (let name in obj) {
+                if (!obj[name] && !notInclude.includes(name)) return false;
+            }
+
+            return true;
         }
     }
 };

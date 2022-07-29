@@ -43,7 +43,7 @@ export default {
         state () {
             this.change();
         },
-        zipcode () {
+        postal_code () {
             this.change();
         },
     },

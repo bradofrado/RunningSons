@@ -54,6 +54,18 @@ const getMetadata = async function(items) {
     return metadata;
 }
 
+const getDescription = async function(items) {
+    return items.reduce((prev, curr, i) => {
+        prev += `${curr.item.name} (${curr.size})`;
+
+        if (i < items.length - 1) {
+            prev += ', ';
+        }
+
+        return prev;
+    }, '')
+}
+
 router.post('/', validUser, async (req, res) => {
     if (!req.user.clientSecret) {
         return res.status(400).send({
@@ -111,7 +123,8 @@ router.post("/create-payment-intent", validUser, async (req, res) => {
 
         let amount = await getPaymentAmount(items);
         let metadata = await getMetadata(items);
-        
+        let description = await getDescription(items);
+
         let clientSecret;
         if (!req.user.clientSecret && amount > 0) {
             
@@ -122,7 +135,8 @@ router.post("/create-payment-intent", validUser, async (req, res) => {
                 automatic_payment_methods: {
                     enabled: true,
                 },
-                metadata: metadata
+                metadata: metadata,
+                description: description
             }); 
 
             clientSecret = paymentIntent.client_secret;
@@ -155,6 +169,8 @@ router.put("/create-payment-intent", validUser, async (req, res) => {
 
         let amount = await getPaymentAmount(items);
         let metadata = await getMetadata(items);
+        let description = await getDescription(items);
+
         // Update a PaymentIntent with the order amount and currency
         const paymentIntent = await stripe.paymentIntents.update(req.user.clientSecret, {
             amount: amount,
@@ -164,7 +180,8 @@ router.put("/create-payment-intent", validUser, async (req, res) => {
                 address: req.body.address,
                 name: req.body.name
             },
-            metadata: metadata
+            metadata: metadata,
+            description: description
         });
     
         res.send({
