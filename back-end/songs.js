@@ -29,9 +29,11 @@ songSchema.methods.populate = async function() {
         const album = await Album.findOne({
             _id: this.album
         });
-
-        if (album) {
+        
+        if (album && album.exists()) {
             this.album = album;
+        } else {
+            this.album = null;
         }
     } 
 }
@@ -42,12 +44,12 @@ songSchema.methods.toJSON = function() {
     const album = obj.album;
     const band = obj.album.band;
     
-    if (album.title) {
+    if (album && album.title) {
         obj.albumCover = album.image;
         obj.album = album.title;
     }
 
-    if (band.name) {
+    if (band && band.name) {
         obj.band = band.name;
     }
 
@@ -64,12 +66,22 @@ songSchema.pre(/^find/, function() {
 
 songSchema.post(/^find/, async function(docs, next) {
     let items = docs;
-    if (!Array.isArray(docs)) {
+    const isArray = Array.isArray(docs);
+    if (!isArray) {
         items = [docs];
     }
 
-    for (let item of items) {
+    for (let i = items.length - 1; i >= 0; i--) {
+        let item = items[i];
         item && await item.populate();
+
+        if (item && !item.album) {
+            items.splice(i, 1);
+        }
+    }
+
+    if (!isArray && items.length == 0) {
+        docs = null;
     }
 
     next();

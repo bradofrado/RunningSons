@@ -30,9 +30,7 @@ albumSchema.methods.populate = async function() {
             _id: this.band
         });
 
-        if (band) {
-            this.band = band;
-        }
+        this.band = band;
     } 
 }
 
@@ -46,6 +44,10 @@ albumSchema.methods.toJSON = function() {
     return obj;
 }
 
+albumSchema.methods.exists = function() {
+    return !this.isDeleted && !!this.band;
+}
+
 //Filter out the deleted albums
 albumSchema.pre(/^find/, function() {
     this.where({isDeleted: false});
@@ -54,11 +56,13 @@ albumSchema.pre(/^find/, function() {
 //Populate the albums 
 albumSchema.post(/^find/, async function(docs, next) {
     let items = docs;
-    if (!Array.isArray(docs)) {
+    const isArray = Array.isArray(docs);
+    if (!isArray) {
         items = [docs];
     }
 
-    for (let item of items) {
+    for (let i = items.length - 1; i >= 0; i--) {
+        let item = items[i];
         item && await item.populate();
     }
 
