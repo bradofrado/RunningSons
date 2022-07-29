@@ -32,8 +32,8 @@ export default {
                 const response = await axios.get('/api/songs');
 
                 this.songs = response.data; 
-            } catch(error) {
-                console.log(error);
+            } catch {
+                //
             }
         },
         async getAlbums() {
@@ -46,8 +46,8 @@ export default {
                     delete x.title;
                     return {...x, name: name};
                 });
-            } catch(error) {
-                console.log(error);
+            } catch {
+                //
             }
         },
     }

@@ -38,8 +38,8 @@ export default {
 
                 this.album = response.data[0];
                 this.songs = response2.data
-            } catch(error) {
-                console.log(error);
+            } catch {
+                //
             }
         }
     }

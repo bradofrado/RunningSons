@@ -38,8 +38,8 @@ export default {
             try {
                 const response = await axios.get('/api/merchandise');
                 this.items = response.data;
-            } catch(error) {
-                console.log(error);
+            } catch {
+                //
             }
         }
     }

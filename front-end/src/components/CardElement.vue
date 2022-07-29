@@ -45,8 +45,8 @@ export default {
                 let clientSecret = response.data.clientSecret;
                 
                 this.buildElement(clientSecret);
-            } catch(error) {
-                console.log(error);
+            } catch {
+                //
             }
         },
         async updateClient() {
@@ -55,23 +55,18 @@ export default {
                     address: this.address,
                     name: `${this.contact.firstname} ${this.contact.lastname}`,
                     email: this.contact.email,
-                });
-                //let clientSecret = response.data.clientSecret;
-                
-                //this.buildElement(clientSecret);
-            } catch(error) {
-                console.log(error);
+                });                
+            } catch {
+                //
             }
         },
         buildElement(clientSecret) {
-            console.log(clientSecret);
             const appearance = {
                 theme: 'flat',
                 variables: {
                     fontFamily: "'Montserrat', 'Helvetica Neue', Helvetica, Arial, sans-serif"
                 }
             };
-            console.log(clientSecret);
             elements = stripe.elements({ clientSecret, appearance });
             this.card = elements.create('payment');
             this.card.mount(this.$refs.card);
@@ -105,9 +100,8 @@ export default {
                 }
                 this.error = error.message;
                 this.loading = false;
-            } catch(error) {
-                this.loading = false;
-                console.log(error);
+            } catch {
+                this.loading = false;                
             }
         },
         validate(obj, notInclude) {

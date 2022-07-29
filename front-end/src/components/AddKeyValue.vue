@@ -64,7 +64,6 @@ export default {
     watch: {
         pairs: {
             handler(pairs) {
-                console.log(pairs);
                 this.$emit('input', pairs);
             },
             deep: true

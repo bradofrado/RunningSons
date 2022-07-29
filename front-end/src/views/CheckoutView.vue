@@ -40,14 +40,6 @@ export default {
                 lastname: null
             }
         }
-    },
-    watch: {
-        address: {
-            handler (a) {
-                console.log(a);
-            },
-            deep: true
-        }
     }
 }
 </script>

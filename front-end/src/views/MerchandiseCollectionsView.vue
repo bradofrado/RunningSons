@@ -1,6 +1,6 @@
 <template>
     <merch-collection v-if="items && type" :items="items" :label="type.name"/>
-    <p v-else>Sorry, there are currently no {{type.name}}</p>
+    <p v-else-if="type">Sorry, there are currently no {{type.name}}</p>
 </template>
 
 <script>
@@ -28,8 +28,8 @@ export default {
                 const response = await axios.get('/api/merchandise/type/'+this.$route.params.type);
 
                 this.items = response.data;
-            } catch(error) {
-                console.log(error);
+            } catch {
+                //
             }
         },
         async getType() {
@@ -37,8 +37,8 @@ export default {
                 const response = await axios.get('/api/types/'+this.$route.params.type);
 
                 this.type = response.data;
-            } catch(error) {
-                console.log(error);
+            } catch {
+                //
             }
         }
     }

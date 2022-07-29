@@ -18,7 +18,6 @@ export default {
         }
     },
     created() {
-        console.log(this.value);
         for (let key in this.value) {
             this.pairs.push({key: key, value: this.value[key]});
         }

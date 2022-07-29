@@ -33,8 +33,8 @@ export default {
             const response = await axios.get('/api/users');
 
             this.$root.$data.user = response.data.user;
-        } catch(error) {
-            console.log(error);
+        } catch {
+            //
         }
     }
 }

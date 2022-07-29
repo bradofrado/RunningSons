@@ -39,7 +39,6 @@ export default {
 
                 await this.$root.getCartAmount();
             } catch(error) {
-                console.log(error);
                 this.$root.$data.user = null;
                 this.loading = false;
 

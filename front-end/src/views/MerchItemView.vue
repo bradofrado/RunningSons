@@ -43,8 +43,8 @@ export default {
                 }
 
                 this.item = response.data;
-            } catch(error) {
-                console.log(error);
+            } catch {
+                //
             }
         },
     }

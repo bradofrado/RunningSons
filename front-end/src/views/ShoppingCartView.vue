@@ -52,8 +52,8 @@ export default {
 
                 this.items = response.data;
                 this.$root.$data.numCartItems = this.items.length;
-            } catch(error) {
-                console.log(error);
+            } catch {
+                //
             }
         },
         checkout() {

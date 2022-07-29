@@ -73,8 +73,8 @@ export default {
                 const response = await axios.get('/api/types');
 
                 this.types = response.data;
-            } catch(error) {
-                console.log(error);
+            } catch {
+                //
             }
         }
     }

@@ -41,8 +41,8 @@ const CartItems = {
                 await axios.delete('/api/cart/' + item._id);
                 
                 this.$emit('remove', item);
-            } catch(error) {
-                console.log(error);
+            } catch {
+                //
             }
         },
     }

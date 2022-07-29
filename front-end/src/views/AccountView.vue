@@ -184,8 +184,8 @@ export default {
                 const response = await axios.get('/api/types');
 
                 this.types = response.data;
-            } catch(error) {
-                console.log(error);
+            } catch {
+                //
             }
         },
         async getMerchandiseItems() {
@@ -193,8 +193,8 @@ export default {
                 const response = await axios.get('/api/merchandise');
 
                 this.merchandise = response.data;
-            } catch(error) {
-                console.log(error);
+            } catch {
+                //
             }
         },
         async getSongs() {
@@ -202,8 +202,8 @@ export default {
                 const response = await axios.get('/api/songs');
 
                 this.songs = response.data;
-            } catch(error) {
-                console.log(error);
+            } catch {
+                //
             }
         },
         async getAlbums() {
@@ -211,8 +211,8 @@ export default {
                 const response = await axios.get('/api/albums');
 
                 this.albums = response.data;
-            } catch(error) {
-                console.log(error);
+            } catch {
+                //
             }
         },
         async getBands() {
@@ -220,8 +220,8 @@ export default {
                 const response = await axios.get('/api/bands');
 
                 this.bands = response.data;
-            } catch(error) {
-                console.log(error);
+            } catch {
+                //
             }
         },
         getInputs(type, item) {
@@ -255,8 +255,8 @@ export default {
                 this.$root.$data.user = null;
 
                 await this.$root.getCartAmount();
-            } catch(error) {
-                console.log(error);
+            } catch {
+                //
             }
         },
     }

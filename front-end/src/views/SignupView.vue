@@ -85,7 +85,6 @@ export default {
                 this.errorText = '';
                 window.location = '/account';
             } catch(error) {
-                console.log(error);
                 this.$root.$data.user = null;
                 this.loading = false;
 

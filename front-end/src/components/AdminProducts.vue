@@ -76,8 +76,7 @@ export default {
                     await axios.delete(this.url + '/' + id);
                     this.show = false;
                     this.$emit('delete');
-                } catch(error) {
-                    console.log(error);
+                } catch {
                     this.show = false;
                 }
             }
@@ -102,10 +101,8 @@ export default {
                         else
                             formData.append(key, outputs[key]);
                     }
-                    console.log(outputs[key]);
                 }
 
-                console.log('Form data', formData);
                 if (this.editRoom) {
                     await axios.put(this.url + '/' + this.editRoom._id, formData);
                 } else {

@@ -90,8 +90,8 @@ const CartItem = {
                 await axios.delete('/api/cart/' + this.item._id);
                 await this.$emit('remove', this.item._id);
                 this.loading = false;
-            } catch(error) {
-                console.log(error);
+            } catch {
+                //
             }
         },
         totals

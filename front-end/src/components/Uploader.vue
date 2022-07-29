@@ -92,7 +92,6 @@ export default {
 
             let output = {};    
             let inputsChanged = false;
-            console.log('after submit: ' + this.theInputs);
             for (const name in this.theInputs) {
                 const input = this.theInputs[name];
 
