@@ -4,7 +4,7 @@
             <img :src="item.image"/>
         </div>
         <div class="data-container">
-            <p>{{item.name}}</p>
+            <p>{{item.name}} - {{item.quantity}}</p>
             <p>${{item.price}}</p>
             <p>{{item.size}}</p>
             <div class="button-container">

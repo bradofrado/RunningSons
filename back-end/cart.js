@@ -35,7 +35,7 @@ const cartItemSchema = new mongoose.Schema({
 
 cartItemSchema.methods.checkSize = async function(size) {
     if (!this.item.sizes) {
-        await this.populateMerchandise();
+        await this.populate();
     }
 
     const sizes = Object.keys(this.item.sizes);
@@ -51,14 +51,14 @@ cartItemSchema.methods.toJSON = function() {
     obj._id = id;
     obj.merchItem = obj.item._id;
     obj.type = obj.type.type;
-
+    
     delete obj.item;
     delete obj.isDeleted;
 
     return obj;
 }
 
-cartItemSchema.methods.populateMerchandise = async function() {
+cartItemSchema.methods.populate = async function() {
     if (mongoose.isValidObjectId(this.item)) {
         const item = await merchandise.model.findOne({
             _id: this.item
@@ -81,7 +81,7 @@ cartItemSchema.post(/^find|save/, async function(docs, next) {
         }
 
         for (let doc of docs) {
-            await doc.populateMerchandise();
+            await doc.populate();
         }
     }
 

@@ -10,12 +10,14 @@
         <admin-products class="item" name="Bands" :items="bands" :inputs="inputs.bands" url="/api/bands" @upload="getBands"  @delete="getBands"/>
     </div>
 </div>
+<login-view v-else/>
 </template>
 
 <script>
 import axios from 'axios';
 import AdminProducts from '../components/AdminProducts.vue';
 import AddKeyValue from '@/components/AddKeyValue.vue';
+import LoginView from './LoginView.vue';
 
 export default {
     name: "AccountView",
@@ -147,13 +149,16 @@ export default {
         }
     },
     components: {
-        AdminProducts
+        AdminProducts,
+        LoginView
     },
     async created() {
         try {
             let response = await axios.get('/api/users');
                 
             this.$root.$data.user = response.data.user;
+
+            await this.$root.getCartAmount();
 
             await this.getMerchandiseTypes();
             await this.getMerchandiseItems();
@@ -163,8 +168,6 @@ export default {
             
         } catch(error) {
             this.$root.$data.user = null;
-
-            window.location = '/account/login';
         }
     },
     computed: {
@@ -250,6 +253,8 @@ export default {
             try {
                 await axios.delete('/api/users');
                 this.$root.$data.user = null;
+
+                await this.$root.getCartAmount();
             } catch(error) {
                 console.log(error);
             }

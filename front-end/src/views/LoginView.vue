@@ -36,7 +36,8 @@ export default {
                 this.$root.$data.user = response.data.user;
                 this.loading = false;
                 this.errorText = '';
-                window.location = '/account';
+
+                await this.$root.getCartAmount();
             } catch(error) {
                 console.log(error);
                 this.$root.$data.user = null;

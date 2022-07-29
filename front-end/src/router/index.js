@@ -8,7 +8,6 @@ import MerchItemView from '@/views/MerchItemView.vue'
 import ShoppingCartView from '@/views/ShoppingCartView.vue'
 import CheckoutView from '@/views/CheckoutView.vue'
 import AccountView from '@/views/AccountView.vue'
-import LoginView from '@/views/LoginView.vue'
 import SignupView from '@/views/SignupView.vue'
 import AlbumView from '@/views/AlbumView.vue'
 import SongView from '@/views/SongView.vue'
@@ -66,12 +65,6 @@ const routes = [
     name: 'account',
     component: AccountView
   },
-  {
-    path: '/account/login',
-    name: 'login',
-    component: LoginView
-  }
-  ,
   {
     path: '/account/signup',
     name: 'signup',

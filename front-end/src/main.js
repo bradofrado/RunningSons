@@ -101,9 +101,9 @@ new Vue({
         async getCartAmount() {
             try {
                 const response = await axios.get('/api/cart/amount');
-                this.$root.$data.numCartItems = response.data.amount;
+                this.numCartItems = response.data.amount;
             } catch {
-                //
+                this.numCartItems = 0;
             }
             
         }
