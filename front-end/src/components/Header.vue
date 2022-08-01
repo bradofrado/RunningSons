@@ -28,7 +28,7 @@
                     <template v-else>
                         <b-nav-item  to="/account/signup" active-class="active">Sign up</b-nav-item>
                         <span class="not-mobile">|</span>
-                        <b-nav-item  to="/account" active-class="active">Login</b-nav-item>
+                        <b-nav-item  to="/account" exact-active-class="active">Login</b-nav-item>
                     </template>
                 </b-navbar-nav>
                 <b-popover v-if="types" ref="popover" target="merch-popover" triggers="hover blur" placement="bottom">
