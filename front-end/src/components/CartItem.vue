@@ -71,10 +71,16 @@ const CartItem = {
             var self = this;
             if (oldItem > 0) {
                 setTimeout(async function() {
-                    await axios.put('/api/cart/' + self.item._id, {
-                        quantity: item
-                    });
-                }, 100);
+                    try {
+                        await axios.put('/api/cart/' + self.item._id, {
+                            quantity: item,
+                            size: this.item.size
+                        });
+                    } catch {
+                        //
+                    }
+                    
+                }.bind(this), 100);
 
                 this.item.quantity = item;
             }
