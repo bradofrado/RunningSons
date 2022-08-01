@@ -111,6 +111,10 @@ export default {
     grid-column: 1/3;
 }
 
+input {
+    width: 100%;
+}
+
 @media only screen and (min-width: 960px) {
     .signup-container {
        max-width: 50%;
