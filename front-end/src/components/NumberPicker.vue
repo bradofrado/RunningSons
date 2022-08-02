@@ -1,8 +1,8 @@
 <template>
     <div class="picker-container">
-        <button class="square button button-secondary" @click="remove" :disabled="min && content <= min">-</button>
+        <button type="button" class="square button button-secondary" @click="remove" :disabled="content <= min">-</button>
         <input ref="input" class="square input" :value="content" @blur="handleInput"/>
-        <button class="square button button-secondary" @click="add" :disabled="max && content >= max">+</button>
+        <button type="button" class="square button button-secondary" @click="add" :disabled="max != null && content >= max">+</button>
     </div>
 </template>
 
@@ -87,7 +87,8 @@ export default {
 
 <style scoped>
 .picker-container {
-    display: display;
+    display: flex;
+    justify-content: center;
 }
 
 .square {

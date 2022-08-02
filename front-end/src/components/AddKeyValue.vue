@@ -5,7 +5,7 @@
             <span>{{keyText}}</span>
             <span>{{valueText}}</span>
         </div>
-        <div class="pair" v-for="pair in pairs" :key="pair._id">
+        <div class="pair" v-for="pair in pairs" :key="pair.id">
             <input class="input" v-model="pair.key"/>
             <number-picker v-if="valueType == 'number'" v-model="pair.value" :min="0"/>
             <input v-else-if="valueType == 'string'" class="input" v-model="pair.value"/>
@@ -46,6 +46,7 @@ export default {
     },
     created() {
         for (let key of this.value) {
+            key.id = `${key.key}-${key.value}`;
             this.pairs.push(key);
         }
     },
@@ -75,7 +76,7 @@ export default {
 <style scoped lang="scss">
 .pair {
     display: grid;
-    grid-template-columns: 100px 200px 60px;
+    grid-template-columns: 3rem 12rem 3rem;
     gap: 10px;
 }
 
