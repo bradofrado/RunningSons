@@ -5,7 +5,7 @@ const iconComponents = {
         name: "logo",
         render() {
             return (
-                <img src="RunningSonsLogo.png" width="42" />
+                <img src="/RunningSonsLogo.png" width="42" />
             )
         }
     },
