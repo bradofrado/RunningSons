@@ -1,6 +1,14 @@
 <script>
 
 const iconComponents = {
+    logo: {
+        name: "logo",
+        render() {
+            return (
+                <img src="RunningSonsLogo.png" width="42" />
+            )
+        }
+    },
     instagram: {
         name: "instagram",
         render() {

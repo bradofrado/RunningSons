@@ -1,7 +1,7 @@
 <template>
     <b-navbar class="bg-primary-dark" toggleable="lg" type="dark">
         <div class="container header-container">
-            <b-navbar-brand href="/">Running Sons</b-navbar-brand>
+            <b-navbar-brand href="/"><icon icon="logo"/></b-navbar-brand>
             <b-navbar-nav class="mobile navbar-singleline b-width-expand">
                 <b-nav-item to="/cart" active-class="active" class="cart-icon">
                     <icon class="active-circle" icon="cart" circle v-num-icon="numCartItems"/>
