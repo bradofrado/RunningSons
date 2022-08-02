@@ -1,22 +1,40 @@
 @import "https://fonts.googleapis.com/css?family=Montserrat";
 
-$white: #fff;
-$black: #2A2D34;
+$white: #EFEBE3;
+$off-white: #FFFCE7;
+$black: #292017;
+$gray: #6c757d;
 //$primary: #033740;
-$primary-2: #228579;
+$primary-2: #0a677d;
 //$secondary: #FFC31F;
 //$secondary-2: #FF5900;
 
 $primary: #033740;
 //$primary-2: #04677C;
 $secondary: #FACE0B;
+//$secondary-hover: 
 $secondary-2: #E06F05;
+$secondary-2-hover: #ce6504;
+
+$danger: #df1b41;
 
 $body-bg: $primary;
-$body-color: $white;
-$font-family-sans-serif: 'Montserrat', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+$body-color: $off-white;
+$font-family-sans-serif: 'Montserrat','Helvetica Neue',Helvetica,Arial,sans-serif;
+$body-text-align: center;
+$body-font-weight: 600; 
 
+$background-hover: $gray;
+$background-dark-hover: #3c3023;
 
+@font-face {
+    font-family: 'Tenor Sans';
+    src: url('http://localhost:8080/fonts/tenorsans-regular-webfont.woff2') format('woff2'),
+         url('http://localhost:8080/fonts/tenorsans-regular-webfont.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+
+}
 
 body {
     margin: 0px;
@@ -25,6 +43,7 @@ body {
     -moz-osx-font-smoothing: grayscale;
     color: $white;
     font-size: 12px;
+    background-color: $primary;
 }
 
 @media only screen and (min-width: 960px) {
@@ -43,14 +62,48 @@ p {
     margin-bottom: 1em !important;
 }
 
+.a {
+    color: $white !important;
+}
+
 @keyframes gradient {
     0%{background-position:10% 0%}
     50%{background-position:91% 100%}
     100%{background-position:10% 0%}
 }
 
+.button, .input {
+    border: none;
+    border-radius: 12px;
+    min-height: 30px;
+    padding: 10px;
+}
+
+.button:hover:not(:disabled) {
+    background-color: #919191;
+}
+
+.button-primary {
+    background-color: $secondary-2;
+    color: $white;
+}
+
+.button-primary:hover:not(:disabled) {
+    background-color: $secondary-2-hover;
+}
+
+.input {
+    background-color: #f1f1f1;
+    transition: background 0.15s ease, border 0.15s ease, box-shadow 0.15s ease, color 0.15s ease;
+    height: 50px;
+}
+
+.input:focus {
+    outline: 0;
+    box-shadow: 0 0 3px hsla(211, 100%, 50%, 25%), 0 0 0 1px hsla(211, 100%, 50%, 50%);
+}
+
 .app-default {
-    text-align: center;
     background-image: linear-gradient(-180deg, $primary-2 , $primary);
     background-size: 200% 200%;
     animation: gradient 5s ease infinite;
@@ -78,11 +131,157 @@ p {
     text-transform: uppercase;
     font-weight: 700;
     font-size: 5em;
-    text-shadow: 2px 4px 20px #283b3b;
+    text-shadow: 2px 4px 20px $black;
 }
 
-.sub-title {
+.sub-title, .text-secondary {
     color: $secondary;
+}
+
+.mr-1 {
+    margin-right: 10px;
+}
+
+.ml-0 {
+    margin-left: 10px;
+}
+
+.bubble-container{
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 5px;
+}
+
+/* spinner/processing state, errors */
+.spinner,
+.spinner:before,
+.spinner:after {
+  border-radius: 50%;
+}
+.spinner {
+    top: -50%;
+    -webkit-transform: translate(0, -50%);
+    -ms-transform: translate(0, -50%);
+    transform: translate(0, -50%);
+    font-size: 22px;
+    text-indent: -99999px;
+    margin: 0px auto;
+    position: relative;
+    width: 20px;
+    height: 20px;
+    box-shadow: inset 0 0 0 2px;
+    background-color: inherit;
+}
+.spinner:before,
+.spinner:after {
+  position: absolute;
+  content: "";
+}
+.spinner:before {
+  width: 10.4px;
+  height: 20.4px;
+  background: inherit;
+  border-radius: 20.4px 0 0 20.4px;
+  top: -0.2px;
+  left: -0.2px;
+  -webkit-transform-origin: 10.4px 10.2px;
+  transform-origin: 10.4px 10.2px;
+  -webkit-animation: loading 2s infinite ease 1.5s;
+  animation: loading 2s infinite ease 1.5s;
+}
+.spinner:after {
+  width: 10.4px;
+  height: 10.2px;
+  background: inherit;
+  border-radius: 0 10.2px 10.2px 0;
+  top: -0.1px;
+  left: 10.2px;
+  -webkit-transform-origin: 0px 10.2px;
+  transform-origin: 0px 10.2px;
+  -webkit-animation: loading 2s infinite ease;
+  animation: loading 2s infinite ease;
+}
+
+.spinner-light {
+    color: #ffffff;
+}
+
+.spinner-dark {
+    color: #000;
+}
+
+@-webkit-keyframes loading {
+  0% {
+    -webkit-transform: rotate(0deg);
+    transform: rotate(0deg);
+  }
+  100% {
+    -webkit-transform: rotate(360deg);
+    transform: rotate(360deg);
+  }
+}
+@keyframes loading {
+  0% {
+    -webkit-transform: rotate(0deg);
+    transform: rotate(0deg);
+  }
+  100% {
+    -webkit-transform: rotate(360deg);
+    transform: rotate(360deg);
+  }
+}
+
+.position-relative {
+    position: relative;
+}
+
+.num-icon {
+    position: absolute;
+    top: -9px;
+    right: -7px;
+    border: $white;
+    border-width: 2px;
+    border-style: solid;
+    border-radius: 15px;
+    padding: 3px 6px;
+    line-height: 1;
+    font-size: 11px;
+    font-weight: 700;
+    background-color: $secondary-2;
+    color: $white;
+}
+
+.danger {
+    color: $danger;
+    font-weight: 600;
+}
+
+.invalid {
+    border: 1px solid $danger;
+}
+
+.circle-hover {
+    width: 32px;
+}
+
+// .circle-hover:hover {
+//     background-color: $secondary-2-hover;
+//     border-radius: 50%;
+// }
+.circle-hover:hover svg {
+    fill: $secondary-2-hover;
+}
+
+.transition-background {
+    transition: background-color .3s ease;
+}
+
+.tooltip.b-tooltip {
+    opacity: 0.9 !important;
+}
+
+.ml-auto {
+    margin-left: auto !important;
 }
 
 @media only screen and (min-width: 960px) {
@@ -91,4 +290,8 @@ p {
     }
 }
 
-@import 'bootstrap/scss/bootstrap.scss'
+@import 'bootstrap/scss/bootstrap.scss';
+
+// Import Bootstrap an BootstrapVue CSS files (order is important)
+@import 'bootstrap/dist/css/bootstrap.css';
+@import 'bootstrap-vue/dist/bootstrap-vue.css';

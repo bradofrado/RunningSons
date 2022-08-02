@@ -1,85 +1,143 @@
 <template>
     <b-navbar class="bg-primary-dark" toggleable="lg" type="dark">
         <div class="container header-container">
-            <b-navbar-brand href="/">Running Sons</b-navbar-brand>
-
+            <b-navbar-brand href="/"><icon icon="logo"/></b-navbar-brand>
+            <b-navbar-nav class="mobile navbar-singleline b-width-expand">
+                <b-nav-item to="/cart" active-class="active" class="cart-icon">
+                    <icon class="active-circle" icon="cart" circle v-num-icon="numCartItems"/>
+                </b-nav-item>
+                <b-nav-item v-if="user" to="/account" exact-active-class="active">
+                    <icon class="active-circle" icon="profile" circle/>
+                </b-nav-item>
+            </b-navbar-nav>
             <b-navbar-toggle target="nav-collapse"></b-navbar-toggle>
 
             <b-collapse id="nav-collapse" is-nav>
-                <b-navbar-nav>
+                <b-navbar-nav >
                     <b-nav-item to="/" exact-active-class="active">Home</b-nav-item>
                     <b-nav-item to="/music" active-class="active">Music</b-nav-item> 
-                    <b-nav-item to="/merchandise" active-class="active">Merchandise</b-nav-item>                                       
+                    <b-nav-item id="merch-popover" active-class="active" to="/merchandise" @click="onMerchClick">Merchandise</b-nav-item>                                                        
                 </b-navbar-nav>
+                <b-navbar-nav class="ml-auto">
+                    <b-nav-item to="/cart" active-class="active" class="cart-icon not-mobile">
+                        <icon class="active-circle" icon="cart" circle v-num-icon="numCartItems"/>
+                    </b-nav-item>
+                    <b-nav-item v-if="user" to="/account" exact-active-class="active" class="not-mobile">
+                        <icon class="active-circle" icon="profile" circle/>
+                    </b-nav-item>
+                    <template v-else>
+                        <b-nav-item  to="/account/signup" active-class="active">Sign up</b-nav-item>
+                        <span class="not-mobile">|</span>
+                        <b-nav-item  to="/account" exact-active-class="active">Login</b-nav-item>
+                    </template>
+                </b-navbar-nav>
+                <b-popover v-if="types" ref="popover" target="merch-popover" triggers="hover blur" placement="bottom">
+                        <b-navbar-nav>
+                            <b-nav-item v-for="type in types" class="nav-dropdown-item" :href="'/merchandise/collections/'+type.type" :key="type._id">{{type.name}}</b-nav-item>                            
+                        </b-navbar-nav>
+                </b-popover>   
             </b-collapse>
         </div>
     </b-navbar>
 </template>
 
 <script>
+import axios from 'axios';
+import Icon from '../../../global/components/Icon.vue';
+
 export default {
-    name: "HeaderControl"
+  components: { Icon },
+    name: "HeaderControl",
+    data() {
+        return {
+            types: null
+        }
+    },
+    async created() {
+        await this.getMerchandiseTypes();
+    },
+    computed: {
+        user() {
+            return this.$root.$data.user;
+        },
+        numCartItems() {
+            return this.$root.$data.numCartItems;
+        }
+    },
+    methods: {
+        onMerchClick() {
+            this.$refs.popover.$emit('close');
+        },
+        async getMerchandiseTypes() {
+            try {
+                const response = await axios.get('/api/types');
+
+                this.types = response.data;
+            } catch {
+                //
+            }
+        }
+    }
 }
 </script>
 
 <style lang="scss" scoped>
-
-/* .navbar-dark .navbar-nav .nav-link.router-link-exact-active,
-.navbar-dark .navbar-nav .nav-link.router-link-exact-active:focus {
-    color: #fff;
+.not-mobile {
+    display: none;
 }
 
-
-.button-primary {
-    background-color: #0f8aa0;
-    height: 2.5rem;
-    color: #fff;
-    margin: 1rem 0;
-    font-weight: 500;
+.mobile {
+    display: inherit;
 }
 
-.button-primary:hover {
-    background-color: #18c6e5;
+.collapsed {
+    order: 2
 }
 
-button.nav-link {
-    border: none;
-    background-color: transparent;
+.navbar-nav {
+    align-items: center;
 }
 
-button:focus, button:focus-visible {
-    outline: none;
+.nav-dropdown-item {
+    // padding: 5px;
 }
 
-.container.header-container {
-    max-width: 100%;
-    min-height: 80px;
+.nav-link {
+    color: $white;
 }
 
-.navbar-collapse {
-    justify-content: flex-end;
-    margin-right: 20px;
+.nav-link:hover, .nav-dropdown-active, .navbar-dark .navbar-nav .nav-link:hover {
+    color: $secondary-2-hover;
 }
 
-.navbar-toggler-container {
-    border: none;   
+.navbar-singleline {
+    flex-direction: row !important;
+    align-items: center;
 }
 
-.navbar-dark .navbar-toggler {
-    color: rgba(255, 255, 255, .8);
-    border: none;
+.navbar-singleline li:first-child {
+    margin: 0 10px;
 }
 
-button.navbar-toggler {
-    padding: .75rem 0;
+.active .active-circle {
+    background-color: $black;
+    border-radius: 50%;
+}
+.cart-icon {
+    position: relative;
 }
 
-.navbar-toggler-label {
-    margin-right: 10px;
-    font-size: 1rem;
+.b-width-expand {
+    flex: 1;
 }
 
-.bg-primary-dark {
-    background-color: #0f8aa0;
-} */
+@media only screen and (min-width: 960px) {
+    .not-mobile {
+        display: inherit;
+    }
+
+    .mobile {
+        display: none;
+    }
+}
 </style>

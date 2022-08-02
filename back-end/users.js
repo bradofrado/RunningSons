@@ -10,6 +10,7 @@ const userSchema = new mongoose.Schema({
     email: String,
     firstname: String,
     lastname: String,
+    clientSecret: String,
     roles: [{
         type: String,
         default: ""
@@ -51,6 +52,8 @@ userSchema.methods.hasRoles = function(roles) {
 
 const User = mongoose.model('User', userSchema);
 
+const activeUsers = [];
+
 /* Middleware */
 const validUserRoles = async (req, res, next, roles) => {
     if (!req.session.userID)
@@ -61,7 +64,7 @@ const validUserRoles = async (req, res, next, roles) => {
     }
     
     try {
-        const user = await User.findOne({
+        let user = await User.findOne({
             _id: req.session.userID 
         });
 
@@ -71,7 +74,7 @@ const validUserRoles = async (req, res, next, roles) => {
             });
         }
 
-        if (roles) {
+        if (roles && user.roles) {
             for (let i = 0; i < roles.length; i++) {
                 const role = roles[i];
                 if (user && !user.roles.includes(role)) {
@@ -113,23 +116,38 @@ const getRoles = async function(roles) {
     return users.filter(x => x.hasRoles(roles));
 }
 
+const newGuest = async function() {
+    const user = new User({
+
+    });
+    user.firstname = `Guest${user._id}`;
+    user.username = user.firstname;
+    user.roles = ['guest'];
+
+    await user.save();
+
+    return user;
+}
+
 /* Endpoints */
 
 router.post('/', async (req, res) => {
     if (!req.body.username || !req.body.password || !req.body.email) {
         return res.status(400).send({
-            message: "username, password, and email are required"
+            message: "Username, password, and email are required"
         });
     }
 
     try {
+        req.body.username = req.body.username.toLowerCase();
+
         const existingUser = await User.findOne({
             username: req.body.username
         });
         if (existingUser) {
             console.log('Username already exists: ' + req.body.username);
             return res.status(403).send({
-                message: "username already exists"
+                message: "Username already exists"
             });
         }
 
@@ -168,13 +186,13 @@ router.post('/login', async (req, res) => {
     // password, otherwise return an error.
     if (!req.body.username || !req.body.password)
       return res.status(400).send({
-          message: "must include username and password"
+          message: "Must include username and password"
       });
   
     try {
         //  lookup user record
         const user = await User.findOne({
-            username: req.body.username
+            username: req.body.username.toLowerCase()
         });
 
         // Return an error if user does not exist.
@@ -182,7 +200,7 @@ router.post('/login', async (req, res) => {
             console.log('Failed login: ' + req.body.username);
 
             return res.status(403).send({
-                message: "username or password is incorrect"
+                message: "Username or password is incorrect"
             });
         }
   
@@ -192,7 +210,7 @@ router.post('/login', async (req, res) => {
             console.log('Failed login: ' + req.body.username);
 
             return res.status(403).send({
-                message: "username or password is incorrect"
+                message: "Username or password is incorrect"
             });
         }
 
@@ -213,12 +231,19 @@ router.post('/login', async (req, res) => {
 // get logged in user
 router.get('/', validUser, async (req, res) => {
     try {
-      res.send({
-        user: req.user
-      });
+        //Don't send back any guest users
+        if (req.user.hasRoles(['guest'])) {
+            return res.status(403).send({
+                message: "Not logged in"
+            });
+        }
+
+        res.send({
+            user: req.user
+        });
     } catch (error) {
-      console.log(error);
-      return res.sendStatus(500);
+        console.log(error);
+        return res.sendStatus(500);
     }
 });
 
@@ -239,5 +264,6 @@ module.exports = {
     routes: router,
     model: User,
     valid: validUser,
-    getRoles: getRoles
+    getRoles: getRoles,
+    newGuest: newGuest
 }

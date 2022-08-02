@@ -2,34 +2,86 @@ const express = require('express');
 const mongoose = require('mongoose');
 const router = express.Router();
 
-const multer = require('multer');
+const uploader = require('./uploader.js');
 
 const env = require('./env.js');
-const root = env.root;
+const path = '/images/merchandise/';
 
-const upload = multer({
-    dest: root+'/images/',
-    limits: {
-        fileSize: 50000000
-    }
-});
+const upload = uploader.upload('/images/merchandise').single('image');
+
+const MerchandiseType = require('./merchandise-types.js').model;
 
 const merchandiseSchema = new mongoose.Schema({
     name: String,
     price: Number,
     description: String,
     image: String,
-    type: String,
+    type: {
+        type: mongoose.Schema.ObjectId,
+        ref: "MerchandiseType"
+    },
+    sizes: Object,
     isDeleted: {
         type: Boolean,
         default: false
     }
 });
 
+
+merchandiseSchema.methods.populateType = async function() {
+    if (mongoose.isValidObjectId(this.type)) {
+        const type = await MerchandiseType.findOne({
+            _id: this.type
+        });
+
+        if (type) {
+            this.type = type;
+        }
+    } 
+}
+
+merchandiseSchema.pre(/^find/, function() {
+    this.where({isDeleted: false});
+});
+
+merchandiseSchema.post('find', async function(docs, next) {
+    for(let doc of docs) {
+        doc && await doc.populateType();
+    }
+
+    next();
+});
+
+merchandiseSchema.post('findOne', async function(doc, next) {
+    if (doc) {
+        await doc.populateType();
+    }
+
+    next();
+})
+
+merchandiseSchema.methods.toJSON = function() {
+    var obj = this.toObject();
+
+    if (obj.type && obj.type.type) {
+        obj.type = obj.type.type;
+    }
+
+    delete obj.isDeleted;
+
+    return obj;
+}
+
+
 const Merchandise = mongoose.model('Merchandise', merchandiseSchema);
 
 const users = require('./users.js');
 const validUser = users.valid;
+
+const manipulateSizes = (json) => {
+    const parsed = JSON.parse(json);
+    return parsed;
+}
 
 router.get('/', async (req, res) => {
     try {
@@ -42,20 +94,76 @@ router.get('/', async (req, res) => {
     }
 });
 
-router.post('/', validUser(['Admin']), upload.single('merchandise'), async (req, res) => {
-    if (!req.body.name ||  !req.body.price || !req.file) {
+router.get('/type/:type', async (req, res) => {
+    try {
+        let merchandise = await Merchandise.find();
+
+        merchandise = merchandise.filter(m => m.type.type == req.params.type);
+
+        if (!merchandise || !merchandise.length) {
+            console.log("Could not find merchandise with type " + req.params.type);
+            return res.status(400).send({
+                message: "Could not find merchandise with type " + req.params.type
+            });
+        }
+
+        res.send(merchandise);
+        
+    } catch(error) {
+        console.log(error);
+    }
+});
+
+router.get('/:name', async (req, res) => {
+    try {
+        const merchItem = await Merchandise.findOne({
+            name: req.params.name
+        });
+
+        if (!merchItem) {
+            console.log("Could not find merchandise item with name " + req.params.name);
+            return res.status(400).send({
+                message: "Could not find merchandise item with name " + req.params.name
+            });
+        }
+
+        res.send(merchItem);
+    } catch(error) {
+        console.log(error);
+        res.sendStatus(500);
+    }
+});
+
+router.post('/', validUser(['admin']), upload, async (req, res) => {
+    if (!req.body.name ||  !req.body.price || !req.body.type) {
+        if (req.file) {
+            uploader.delete(path + '/' + req.file.filename);
+        }
         return res.status(400).send({
-            message: "Name and price and image are required"
+            message: "Name and price are required"
         });
     }
     try {
+        const merchandiseType = await MerchandiseType.findOne({
+            type: req.body.type
+        });
+
+        if (!merchandiseType) {
+            return res.status(400).send({
+                message: "Could not find the merchandise type " + req.body.type
+            })
+        }
         const merchandise = new Merchandise({
             name: req.body.name,
             description: req.body.description,
-            image: '/images/' + req.file.filename,
+            image: req.file ? path + req.file.filename : null,
             price: req.body.price,
-            type: req.body.type
+            type: merchandiseType._id
         });
+
+        if (req.body.sizes) {
+            merchandise.sizes = manipulateSizes(req.body.sizes);
+        }
 
         await merchandise.save();
 
@@ -66,9 +174,12 @@ router.post('/', validUser(['Admin']), upload.single('merchandise'), async (req,
     }
 });
 
-router.put('/:id', validUser(['Admin']), async (req, res) => {
+router.put('/:id', validUser(['admin']), upload, async (req, res) => {
     try {
         if (!req.body.name ||  !req.body.price) {
+            if (req.file) {
+                uploader.delete(path + '/' + req.file.filename);
+            }
             return res.status(400).send({
                 message: "Name and price are required"
             });
@@ -86,6 +197,22 @@ router.put('/:id', validUser(['Admin']), async (req, res) => {
             });
         }
 
+        const oldImage = merchandise.image;
+
+        merchandise.name = req.body.name;
+        merchandise.price = req.body.price;
+        merchandise.description = req.body.description ?? merchandise.description;
+        merchandise.image = req.file ? path + req.file.filename : merchandise.image;
+
+        if (req.body.sizes) {
+            merchandise.sizes = manipulateSizes(req.body.sizes);
+        }
+       
+
+        if (oldImage != merchandise.image) {
+            uploader.delete(oldImage);
+        }
+
         await merchandise.save();
 
         console.log('Edited merchandise ' + merchandise._id);
@@ -97,9 +224,9 @@ router.put('/:id', validUser(['Admin']), async (req, res) => {
     }
 });
 
-router.delete('/:id', validUser(['Admin']), async (req, res) => {
+router.delete('/:id', validUser(['admin']), async (req, res) => {
     try {
-        const isAdmin = req.user.roles.includes('Admin');
+        const isAdmin = req.user.roles.includes('admin');
 
         let merchandise;
         
@@ -117,6 +244,7 @@ router.delete('/:id', validUser(['Admin']), async (req, res) => {
         //Admins can do hard deletes. Other wise just mark it as deleted
         if (req.query.hard === 'true') {
             if (isAdmin) {
+                uploader.delete(merchandise.image);
                 await merchandise.delete();
                 console.log('Hard deleted merchandise ' + merchandise._id);            
             } else {
