@@ -23,6 +23,7 @@ $body-color: $off-white;
 $font-family-sans-serif: 'Montserrat','Helvetica Neue',Helvetica,Arial,sans-serif;
 $body-text-align: center;
 $body-font-weight: 600; 
+$body-font-size: 12px;
 
 $background-hover: $gray;
 $background-dark-hover: #3c3023;
@@ -42,13 +43,13 @@ body {
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     color: $white;
-    font-size: 12px;
+    font-size: 12px !important;
     background-color: $primary;
 }
 
 @media only screen and (min-width: 960px) {
     body {
-        font-size: 16px;
+        font-size: 16px !important;
     }
 }
 
@@ -77,6 +78,7 @@ p {
     border-radius: 12px;
     min-height: 30px;
     padding: 10px;
+    text-decoration: none;
 }
 
 .button:hover:not(:disabled) {
@@ -90,6 +92,7 @@ p {
 
 .button-primary:hover:not(:disabled) {
     background-color: $secondary-2-hover;
+    color: $white;
 }
 
 .input {
@@ -293,5 +296,5 @@ p {
 @import 'bootstrap/scss/bootstrap.scss';
 
 // Import Bootstrap an BootstrapVue CSS files (order is important)
-@import 'bootstrap/dist/css/bootstrap.css';
-@import 'bootstrap-vue/dist/bootstrap-vue.css';
+// @import 'bootstrap/dist/css/bootstrap.css';
+// @import 'bootstrap-vue/dist/bootstrap-vue.css';
