@@ -19,6 +19,7 @@ Vue.directive('spinner', function(el, binding) {
         if (el.querySelector('[name="children"]')) return;
         el.style.width = `${el.clientWidth}px`;
         el.style.height = `${el.clientHeight}px`;
+        el.style.position = 'relative';
 
         //Create the spinner element
         const spinner = document.createElement('div');
