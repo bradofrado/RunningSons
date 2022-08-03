@@ -16,8 +16,10 @@ Vue.config.productionTip = false
 
 Vue.directive('spinner', function(el, binding) {
     if (binding.value) {
+        if (el.querySelector('[name="children"]')) return;
         el.style.width = `${el.clientWidth}px`;
         el.style.height = `${el.clientHeight}px`;
+        el.style.position = 'relative';
 
         //Create the spinner element
         const spinner = document.createElement('div');
@@ -39,6 +41,7 @@ Vue.directive('spinner', function(el, binding) {
 
         el.style.width = '';
         el.style.height = '';
+        el.style.position = '';
     }
 });
 

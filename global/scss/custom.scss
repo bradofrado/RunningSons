@@ -74,6 +74,10 @@ p {
     100%{background-position:10% 0%}
 }
 
+button {
+    padding: 1px 6px;
+}
+
 .button, .input {
     border: none;
     border-radius: 12px;
@@ -174,14 +178,15 @@ p {
   border-radius: 50%;
 }
 .spinner {
-    top: -50%;
-    -webkit-transform: translate(0, -50%);
-    -ms-transform: translate(0, -50%);
-    transform: translate(0, -50%);
+    top: 50%;
+    left: 50%;
+    -webkit-transform: translate(-50%, -50%);
+    -ms-transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
     font-size: 22px;
     text-indent: -99999px;
     margin: 0px auto;
-    position: relative;
+    position: absolute;
     width: 20px;
     height: 20px;
     box-shadow: inset 0 0 0 2px;
