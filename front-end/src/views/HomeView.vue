@@ -48,7 +48,7 @@ export default {
 
 <style scoped>
 .home-container {
-    font-size: 12px;
+    
 }
 
 .banner-container {
@@ -75,10 +75,6 @@ export default {
 @media only screen and (min-width: 960px) {
     .image-buttons-container {
         flex-direction: row;
-    }
-    
-    .home-container {
-        font-size: 1rem;
     }
 }
 </style>

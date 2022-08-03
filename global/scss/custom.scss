@@ -6,6 +6,7 @@ $black: #292017;
 $gray: #6c757d;
 //$primary: #033740;
 $primary-2: #0a677d;
+$primary-faded: #4a6e75;
 //$secondary: #FFC31F;
 //$secondary-2: #FF5900;
 
@@ -43,13 +44,13 @@ body {
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     color: $white;
-    font-size: 12px !important;
+    font-size: 12px;
     background-color: $primary;
 }
 
 @media only screen and (min-width: 960px) {
     body {
-        font-size: 16px !important;
+        font-size: 16px;
     }
 }
 
@@ -79,10 +80,15 @@ p {
     min-height: 30px;
     padding: 10px;
     text-decoration: none;
+    color: $black;
 }
 
 .button:hover:not(:disabled) {
     background-color: #919191;
+}
+
+.button:disabled {
+    background-color: $primary-faded;
 }
 
 .button-primary {
@@ -133,8 +139,14 @@ p {
 .title {
     text-transform: uppercase;
     font-weight: 700;
-    font-size: 5em;
+    font-size: 4.2em;
     text-shadow: 2px 4px 20px $black;
+}
+
+@media only screen and (min-width: 960px) {
+    .title {
+        font-size: 5em;
+    }
 }
 
 .sub-title, .text-secondary {
