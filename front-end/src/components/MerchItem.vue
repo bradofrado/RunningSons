@@ -104,7 +104,7 @@ export default {
                 }
                 this.error = '';
                 this.added = true;
-                //this.loading = false;
+                this.loading = false;
             } catch(error) {
                 this.error = 'There was an error in saving your item';
                 this.loading = false;
