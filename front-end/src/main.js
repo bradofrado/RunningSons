@@ -41,6 +41,7 @@ Vue.directive('spinner', function(el, binding) {
 
         el.style.width = '';
         el.style.height = '';
+        el.style.position = '';
     }
 });
 
