@@ -8,8 +8,10 @@
                 <p>Subtotal: ${{subtotals.toFixed(2)}}</p>
                 <p>Shipping: ${{shipping.toFixed(2)}}</p>
                 <hr>
+                <input class="input input-code" v-model="code"/> 
+                <button class="button button-primary" @click="applyCode">Apply</button>
                 <p><em>Total: ${{total.toFixed(2)}}</em></p>
-                <button class="button button-primary" @click="checkout">Checkout</button>
+                <button class="button button-primary checkout-button" @click="checkout">Checkout</button>
             </div>
         </div>
     </div>
@@ -27,7 +29,8 @@ export default {
     data() {
         return {
             items: [],
-            loading: false
+            loading: false,
+            code: null
         }
     },
     async created() {
@@ -59,6 +62,17 @@ export default {
         checkout() {
             window.location = '/checkout';
         },
+        async applyCode() {
+            if (!this.code) return;
+            this.applyLoading = true;
+            try { 
+                await axios.post('/api/cart/apply', {
+                    code: this.code
+                });
+            } catch {
+                //
+            }
+        }
         
     }
 }
@@ -76,7 +90,13 @@ export default {
     text-align: left;
 }
 
-button {
+.input-code {
+    max-width: 100px;
+    margin-right: 10px;
+    height: inherit;
+}
+
+.checkout-button {
     display: block;
     margin: auto;
 }
