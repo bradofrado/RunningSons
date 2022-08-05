@@ -25,6 +25,7 @@ $font-family-sans-serif: 'Montserrat','Helvetica Neue',Helvetica,Arial,sans-seri
 $body-text-align: center;
 $body-font-weight: 600; 
 $body-font-size: 12px;
+$body-background: $primary;
 
 $background-hover: $gray;
 $background-dark-hover: #3c3023;
@@ -45,7 +46,11 @@ body {
     -moz-osx-font-smoothing: grayscale;
     color: $white;
     font-size: 12px;
-    background-color: $primary;
+    background-color: $body-background;
+}
+
+.background-primary {
+    background-color: $body-background;
 }
 
 @media only screen and (min-width: 960px) {

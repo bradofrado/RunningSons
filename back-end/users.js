@@ -89,6 +89,7 @@ userSchema.methods.hasCode = async function(Code, code) {
     return false;
 }
 
+//isApplied: fetch the codes that have the same isApplied specified (or all of them if null)
 userSchema.methods.getCodes = async function(Code, isApplied = null) {
     const codes = [];
     for (let code of this.codes) {

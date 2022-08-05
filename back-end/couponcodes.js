@@ -4,6 +4,7 @@ const mongoose = require('mongoose');
 const router = express.Router();
 
 const validUser = require('./users.js').valid;
+const Cart = require('./cart.js').model;
 
 const multer = require('multer');
 const parseForm = multer().none();
@@ -34,7 +35,14 @@ router.get('/', validUser(['admin']), async (req, res) => {
 
 router.get('/applied', validUser, async (req, res) => {
     try {
+        //Get all of the codes associated with this user
         const codes = await req.user.getCodes(Code, false);
+
+        //Get the code values based on the paymentintent
+        //(most of the time we don't need the payment intent, 
+        // but sometimes the type is totals:percent which means take a percentage off of the
+        // total payment)
+        
 
         res.send(codes);
     } catch(error) {

@@ -5,7 +5,7 @@
         </div>
         <div class="data-container">
             <p>{{item.name}} - {{item.quantity}}</p>
-            <p>${{item.price}}</p>
+            <p>${{item.total}}</p>
             <p>{{item.size}}</p>
             <div class="button-container">
                 <button class='button button-secondary mr-1' @click='edit'>Edit</button>
@@ -31,17 +31,13 @@
         <td>
             <p>{{item.size}}</p>
         </td>
-        <td><p>${{totals(item).toFixed(2)}}</p></td>
+        <td><p v-spinner="loadingTotal" class="background-primary">${{item.total.toFixed(2)}}</p></td>
     </tr>
 </template>
 
 <script>
 import NumberPicker from './NumberPicker.vue'
 import axios from 'axios';
-
-const totals = (item) => {
-    return (item.price * item.quantity);
-}
 
 const CartItem = {
     name: "CartItem",
@@ -56,9 +52,11 @@ const CartItem = {
         return {
             numItems: 0,
             loading: false,
+            loadingTotal: false
         }
     },
-    created() {
+    async created() {
+        //await this.getItem(this.id);
         this.numItems = this.item.quantity;
     },
     computed: {
@@ -70,19 +68,21 @@ const CartItem = {
         numItems(item, oldItem) {
             var self = this;
             if (oldItem > 0) {
+                this.loadingTotal = true;
                 setTimeout(async function() {
                     try {
-                        await axios.put('/api/cart/' + self.item._id, {
+                        const response = await axios.put('/api/cart/' + self.item._id, {
                             quantity: item,
-                            size: this.item.size
+                            size: this.item.size,
                         });
+                        this.item.total = response.data.total;
                     } catch {
                         //
+                    } finally {
+                        this.loadingTotal = false;
                     }
                     
                 }.bind(this), 100);
-
-                this.item.quantity = item;
             }
         }
     },
@@ -90,6 +90,14 @@ const CartItem = {
         edit() {
             window.location = '/merchandise/' + this.item.name + '/' + this.item._id;
         },
+        // async getItem(id) {
+        //     try {
+        //         const response = await axios.get('/api/cart/' + id);
+        //         this.item = response.data;
+        //     } catch {
+        //         //
+        //     }
+        // },
         async remove() {
             try {
                 this.loading = true;
@@ -100,10 +108,8 @@ const CartItem = {
                 //
             }
         },
-        totals
     }
 }
-CartItem.totals = totals;
 
 export default CartItem;
 </script>

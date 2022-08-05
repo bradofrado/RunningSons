@@ -41,14 +41,13 @@ const getPaymentAmount = async function(items) {
 const getMetadata = async function(items) {
     const metadata = {};
     for (let item of items) {
-        const name = `${item.item.name} (${item.size})`;
         const quantity = item.quantity;
 
-        if (!metadata[name]) {
-            metadata[name] = 0;
+        if (!metadata[item.fullName]) {
+            metadata[item.fullName] = 0;
         }
 
-        metadata[name] += quantity;
+        metadata[item.fullName] += quantity;
     }
 
     return metadata;
@@ -56,7 +55,7 @@ const getMetadata = async function(items) {
 
 const getDescription = async function(items) {
     return items.reduce((prev, curr, i) => {
-        prev += `${curr.item.name} (${curr.size})`;
+        prev += curr.fullName;
 
         if (i < items.length - 1) {
             prev += ', ';

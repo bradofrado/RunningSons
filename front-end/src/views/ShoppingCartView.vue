@@ -5,14 +5,7 @@
         <div v-else class="shopping-container">
             <cart-items :items="items" @remove="getItems"/>
             <div class="sub-totals">
-                <p>Subtotal: ${{subtotals.toFixed(2)}}</p>
-                <p>Shipping: ${{shipping.toFixed(2)}}</p>
-                <p v-for="code in codes" :key="code._id">{{code.code}}: -${{code.value}}</p>
-                <hr>
-                <input class="input input-code" v-model="code"/> 
-                <button class="button button-primary" @click="applyCode" v-spinner="applyLoading">Apply</button>
-                <span v-if="error" class="danger">{{error}}</span>
-                <p><em>Total: ${{total.toFixed(2)}}</em></p>
+                <totals-field :items="items" subtotal/> 
                 <button class="button button-primary checkout-button" @click="checkout">Checkout</button>
             </div>
         </div>
@@ -22,25 +15,22 @@
 <script>
 import axios from 'axios';
 import CartItems from '../components/CartItems.vue';
+import TotalsField from '../components/TotalsField.vue';
 
 export default {
     name: "ShoppingCartView",
     components: {
-        CartItems
+        CartItems,
+        TotalsField
     },
     data() {
         return {
             items: [],
             loading: false,
-            code: null,
-            error: null,
-            applyLoading: false,
-            codes: []
         }
     },
     async created() {
         await this.getItems();
-        await this.getCodes();
     },
     computed: {
         subtotals() {
@@ -111,20 +101,31 @@ export default {
 }
 
 .sub-totals {
-    width: 200px;
+    width: 300px;
     margin: auto;
     text-align: left;
 }
 
-.input-code {
-    max-width: 100px;
-    margin-right: 10px;
-    height: inherit;
-}
-
 .checkout-button {
     display: block;
-    margin: auto;
+    margin: 10px 0;
+}
+
+.total-lineitem {
+    display: flex;
+    margin: 5px 0;
+}
+
+.total-lineitem span {
+    flex: 1
+}
+
+.total-lineitem span:first-child {
+    text-align: left;
+}
+
+.total-lineitem span:last-child {
+    text-align: right;
 }
 
 @media only screen and (min-width: 600px) {
