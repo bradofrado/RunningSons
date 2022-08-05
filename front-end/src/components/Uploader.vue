@@ -109,11 +109,12 @@ export default {
 
                 output = {...output, [name]: input.value };
             }
-
+            
+            this.submitError = '';
             await this.$emit('submit', output, inputsChanged);
 
             this.loading = false;
-            this.submitError = '';
+            
         }
     }
 }

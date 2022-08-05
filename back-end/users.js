@@ -3,6 +3,7 @@ const mongoose = require('mongoose');
 const argon2 = require('argon2');
 
 const router = express.Router();
+  
 
 const userSchema = new mongoose.Schema({
     username: String,
@@ -12,8 +13,14 @@ const userSchema = new mongoose.Schema({
     lastname: String,
     clientSecret: String,
     codes: [{
-        type: mongoose.Schema.ObjectId,
-        ref: 'CouponCode'
+        code: { type:
+            mongoose.Schema.ObjectId,
+            ref: 'CouponCode'
+        },
+        isApplied: {
+            type: Boolean,
+            default: false
+        }
     }],
     roles: [{
         type: String,
@@ -52,6 +59,49 @@ userSchema.methods.toJSON = function() {
 
 userSchema.methods.hasRoles = function(roles) {
     return roles.every(role => this.roles.includes(role));
+}
+
+userSchema.methods.codeApplied = async function(Code, code) {
+    let foundCode = await Code.findOne({
+        code: code
+    });
+
+    if (foundCode) {
+        const index = this.codes.findIndex(x => x.code.toString() === foundCode._id.toString());
+
+        return index > -1 && foundCode.isApplied;
+    }
+
+    return false;
+}
+
+userSchema.methods.hasCode = async function(Code, code) {
+    let foundCode = await Code.findOne({
+        code: code
+    });
+
+    if (foundCode) {
+        const index = this.codes.findIndex(x => x.code.toString() === foundCode._id.toString());
+
+        return index > -1;
+    }
+
+    return false;
+}
+
+userSchema.methods.getCodes = async function(Code, isApplied = null) {
+    const codes = [];
+    for (let code of this.codes) {
+        const populated = await Code.findOne({
+            _id: code.code
+        });
+
+        if (isApplied == null || code.isApplied === isApplied) {
+            codes.push(populated);
+        }
+    }
+
+    return codes;
 }
 
 const User = mongoose.model('User', userSchema);

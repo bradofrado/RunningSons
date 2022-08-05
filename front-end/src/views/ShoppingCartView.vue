@@ -7,6 +7,7 @@
             <div class="sub-totals">
                 <p>Subtotal: ${{subtotals.toFixed(2)}}</p>
                 <p>Shipping: ${{shipping.toFixed(2)}}</p>
+                <p v-for="code in codes" :key="code._id">{{code.code}}: -${{code.value}}</p>
                 <hr>
                 <input class="input input-code" v-model="code"/> 
                 <button class="button button-primary" @click="applyCode" v-spinner="applyLoading">Apply</button>
@@ -33,11 +34,13 @@ export default {
             loading: false,
             code: null,
             error: null,
-            applyLoading: false
+            applyLoading: false,
+            codes: []
         }
     },
     async created() {
         await this.getItems();
+        await this.getCodes();
     },
     computed: {
         subtotals() {
@@ -46,8 +49,15 @@ export default {
         shipping() {
             return 5;
         },
+        codeAmount() {
+            return this.codes.reduce((prev, curr) => {
+                prev += curr.value;
+
+                return prev;
+            }, 0)
+        },
         total() {
-            return this.subtotals + this.shipping;
+            return this.subtotals + this.shipping - this.codeAmount;
         }
     },
     methods: {
@@ -58,6 +68,15 @@ export default {
 
                 this.items = response.data;
                 this.$root.$data.numCartItems = this.items.length;
+            } catch {
+                //
+            }
+        },
+        async getCodes() {
+            try {
+                const response = await axios.get('/api/codes/applied');
+
+                this.codes = response.data;
             } catch {
                 //
             }
@@ -76,6 +95,7 @@ export default {
             } catch(error) {
                 this.error = "Cannot apply code";
             } finally {
+                await this.getCodes();
                 this.applyLoading = false;
             }
         }

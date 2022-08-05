@@ -8,6 +8,7 @@
         <admin-products class="item" name="Songs" :items="songs" :inputs="inputs.songs" url="/api/songs" @upload="getSongs"  @delete="getSongs"/>
         <admin-products class="item" name="Albums" :items="albums" :inputs="inputs.albums" url="/api/albums" @upload="getAlbums"  @delete="getAlbums"/>
         <admin-products class="item" name="Bands" :items="bands" :inputs="inputs.bands" url="/api/bands" @upload="getBands"  @delete="getBands"/>
+        <admin-products class="item" name="Promo Codes" :items="codes" :inputs="inputs.codes" url="/api/codes" @upload="getCodes"  @delete="getCodes"/>
     </div>
 </div>
 <login-view v-else/>
@@ -28,6 +29,7 @@ export default {
             songs: null,
             albums: null,
             bands: null,
+            codes: null,
             inputs: {
                 types: {
                     name: {
@@ -144,6 +146,28 @@ export default {
                         title: 'Choose an image',
                         required: false
                     }
+                },
+                codes: {
+                    code: {
+                        type: 'input',
+                        title: 'Code',
+                        required: true
+                    },
+                    dateExpiration: {
+                        type: 'date',
+                        title: 'Expiration Date',
+                        required: true
+                    },
+                    type: {
+                        type: 'input',
+                        title: 'Code type',
+                        required: true
+                    },
+                    value: {
+                        type: 'input',
+                        title: 'Code Price Value',
+                        required: true
+                    }
                 }
             }
         }
@@ -165,6 +189,7 @@ export default {
             await this.getSongs();
             await this.getAlbums();
             await this.getBands();
+            await this.getCodes();
             
         } catch(error) {
             this.$root.$data.user = null;
@@ -220,6 +245,15 @@ export default {
                 const response = await axios.get('/api/bands');
 
                 this.bands = response.data;
+            } catch {
+                //
+            }
+        },
+        async getCodes() {
+            try {
+                const response = await axios.get('/api/codes');
+
+                this.codes = response.data;
             } catch {
                 //
             }

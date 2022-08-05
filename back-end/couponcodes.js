@@ -5,6 +5,9 @@ const router = express.Router();
 
 const validUser = require('./users.js').valid;
 
+const multer = require('multer');
+const parseForm = multer().none();
+
 const couponCodesSchema = new mongoose.Schema({
     code: String,
     dateExpiration: Date,
@@ -29,7 +32,17 @@ router.get('/', validUser(['admin']), async (req, res) => {
     }
 });
 
-router.post('/', validUser(['admin']), async (req, res) => {
+router.get('/applied', validUser, async (req, res) => {
+    try {
+        const codes = await req.user.getCodes(Code, false);
+
+        res.send(codes);
+    } catch(error) {
+        console.log(error);
+    }
+});
+
+router.post('/', validUser(['admin']), parseForm, async (req, res) => {
     if (!req.body.code || !req.body.dateExpiration || !req.body.value || !req.body.type) {
         return res.status(400).send({
             message: "Invalid body parameters"
@@ -72,7 +85,21 @@ router.post('/apply', validUser, async (req, res) => {
             })
         }
 
-        req.user.codes.push(code);
+        //If the user has already applied this code and checked out with it,
+        //don't let them use it again
+        if (await req.user.codeApplied(Code, req.body.code)) {
+            return res.status(400).send({
+                message: "Codes was already applied"
+            })
+        }
+
+        //If the user has already applied this code (but not checked out), don't apply
+        //again
+        if (!await req.user.hasCode(Code, req.body.code)) {
+            req.user.codes.push({code});
+        }
+
+        
         await req.user.save();
 
         res.send(code);
@@ -82,7 +109,7 @@ router.post('/apply', validUser, async (req, res) => {
     }
 })
 
-router.put('/:id', validUser(['admin']), async (req, res) => {
+router.put('/:id', validUser(['admin']), parseForm, async (req, res) => {
     if (!req.body.code || !req.body.dateExpiration || !req.body.value || !req.body.type) {
         return res.status(400).send({
             message: "Invalid body parameters"
