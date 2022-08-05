@@ -1,9 +1,5 @@
 <template>
-<div>
     <div ref="card"></div>
-    <p v-if="error" class="danger">{{error}}</p>
-    <button class="button button-primary mt-3" @click="purchase" v-spinner="loading">Purchase</button>
-</div>
 </template>
 
 <script>
@@ -15,10 +11,6 @@ let stripe = window.Stripe(process.env.VUE_APP_STRIPE_KEY),
 
 export default {
     name: "CardElement",
-    props: {
-        address: Object,
-        contact: Object,
-    },
     data() {
         return {
             clientSecret: null,
@@ -30,14 +22,6 @@ export default {
     async mounted() {
         await this.getClient();
     },
-    watch: {
-        // async address() {
-        //     await this.updateClient();
-        // },
-        // async contact() {
-        //     await this.updateClient();
-        // }
-    },
     methods: {
         async getClient() {
             try {
@@ -45,17 +29,6 @@ export default {
                 let clientSecret = response.data.clientSecret;
                 
                 this.buildElement(clientSecret);
-            } catch {
-                //
-            }
-        },
-        async updateClient() {
-            try {
-                await axios.put('/api/payments/create-payment-intent', {
-                    address: this.address,
-                    name: `${this.contact.firstname} ${this.contact.lastname}`,
-                    email: this.contact.email,
-                });                
             } catch {
                 //
             }
@@ -71,18 +44,13 @@ export default {
             this.card = elements.create('payment');
             this.card.mount(this.$refs.card);
         },
-        async purchase() {
+        async purchase(address, contact) {
             
-            try {
-                if (!this.validate(this.address, ['line2']) || !this.validate(this.contact)) {
-                    this.error = "Please fill out all fields";
-                    return;
-                }
-                this.loading = true;
+            try {                
                 await axios.put('/api/payments/create-payment-intent', {
-                    address: this.address,
-                    name: `${this.contact.firstname} ${this.contact.lastname}`,
-                    email: this.contact.email,
+                    address: address,
+                    name: `${contact.firstname} ${contact.lastname}`,
+                    email: contact.email,
                 });
 
                 const { error } = await stripe.confirmPayment({
@@ -98,21 +66,11 @@ export default {
                     await axios.post('/api/payments');
                     window.location = '/cart';
                 }
-                this.error = error.message;
-                this.loading = false;
+                return error.message;
             } catch {
-                this.loading = false;                
+                //            
             }
         },
-        validate(obj, notInclude) {
-            if (!obj) return false;
-
-            for (let name in obj) {
-                if (!obj[name] && !notInclude.includes(name)) return false;
-            }
-
-            return true;
-        }
     }
 };
 </script>

@@ -7,7 +7,9 @@
             <address-field v-model="address"/>
         </form-section>
         <form-section class="mb-5" name="Card Information">
-            <card-element :address="address" :contact="contact"/>
+            <card-element ref="card" />
+            <p v-if="error" class="danger">{{error}}</p>
+            <button class="button button-primary mt-3" @click="purchase" v-spinner="loading">Purchase</button>
         </form-section>
     </div>
 </template>
@@ -27,6 +29,8 @@ export default {
     },
     data() {
         return {
+            loading: false,
+            error: null,
             address: {
                 street: null,
                 apartment: null,
@@ -39,6 +43,31 @@ export default {
                 firstname: null,
                 lastname: null
             }
+        }
+    },
+    methods: {
+        async purchase() {
+            if (!this.validate(this.address, ['line2']) || !this.validate(this.contact)) {
+                this.error = "Please fill out all fields";
+                return;
+            }
+            this.loading = true;
+
+            const error = await this.$refs.card.purchase(this.address, this.contact);
+            if (error) {
+                this.error = error;
+            }
+
+            this.loading = false;
+        },
+        validate(obj, notInclude) {
+            if (!obj) return false;
+
+            for (let name in obj) {
+                if (!obj[name] && !notInclude.includes(name)) return false;
+            }
+
+            return true;
         }
     }
 }
