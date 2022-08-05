@@ -29,6 +29,7 @@ app.use(cookieSession({
     }
 }));
 
+const couponcodes = require('./couponcodes.js');
 const songs = require('./songs.js');
 const bands = require('./bands.js');
 const albums = require('./albums.js');
@@ -38,6 +39,7 @@ const merchandise = require('./merchandise.js');
 const payments = require('./payment.js');
 const cart = require('./cart.js');
 
+app.use('/api/codes', couponcodes.routes);
 app.use('/api/songs', songs.routes);
 app.use('/api/bands', bands.routes);
 app.use('/api/albums', albums.routes);

@@ -11,6 +11,10 @@ const userSchema = new mongoose.Schema({
     firstname: String,
     lastname: String,
     clientSecret: String,
+    codes: [{
+        type: mongoose.Schema.ObjectId,
+        ref: 'CouponCode'
+    }],
     roles: [{
         type: String,
         default: ""

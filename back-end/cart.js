@@ -175,7 +175,7 @@ router.post('/', async (req, res) => {
         console.log(error);
         res.sendStatus(500);
     }
-})
+});
 
 router.put('/:id', valid, async (req, res) => {
     if (!req.body.quantity || !req.body.size) {

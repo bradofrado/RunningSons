@@ -9,7 +9,8 @@
                 <p>Shipping: ${{shipping.toFixed(2)}}</p>
                 <hr>
                 <input class="input input-code" v-model="code"/> 
-                <button class="button button-primary" @click="applyCode">Apply</button>
+                <button class="button button-primary" @click="applyCode" v-spinner="applyLoading">Apply</button>
+                <span v-if="error" class="danger">{{error}}</span>
                 <p><em>Total: ${{total.toFixed(2)}}</em></p>
                 <button class="button button-primary checkout-button" @click="checkout">Checkout</button>
             </div>
@@ -30,7 +31,9 @@ export default {
         return {
             items: [],
             loading: false,
-            code: null
+            code: null,
+            error: null,
+            applyLoading: false
         }
     },
     async created() {
@@ -65,12 +68,15 @@ export default {
         async applyCode() {
             if (!this.code) return;
             this.applyLoading = true;
+            this.error = null;
             try { 
-                await axios.post('/api/cart/apply', {
+                await axios.post('/api/codes/apply', {
                     code: this.code
                 });
-            } catch {
-                //
+            } catch(error) {
+                this.error = "Cannot apply code";
+            } finally {
+                this.applyLoading = false;
             }
         }
         
