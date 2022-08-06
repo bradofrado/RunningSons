@@ -6,9 +6,10 @@
             <span>${{item.total.toFixed(2)}}</span>
         </div>
         <div class="total-lineitem"><span>Shipping:</span><span>${{shipping.toFixed(2)}}</span></div>
-        <template v-for="code in codes">
-            <div v-if="code.value > 0" class="total-lineitem" :key="code._id">
-                <span>{{code.code}}:</span> <span>-${{code.value.toFixed(2)}}</span>
+        <template v-for="{_id, code} in codes">
+            <div v-if="code.value > 0" class="total-lineitem" :key="_id">
+                <span><button class="button apply-button" v-b-tooltip.hover title="remove" @click="remove(_id)">{{code.code}}:</button></span> 
+                <span>-${{code.value.toFixed(2)}}</span>
             </div>
         </template>
         <hr>
@@ -57,7 +58,7 @@ export default {
         },
         codeAmount() {
             return this.codes.reduce((prev, curr) => {
-                prev += curr.value;
+                prev += curr.code.value;
 
                 return prev;
             }, 0)
@@ -83,7 +84,7 @@ export default {
         },
         async applyCode() {
             if (!this.code) return;
-            this.applyLoading = true;
+            this.loading = true;
             this.error = null;
             try { 
                 await axios.post('/api/codes/apply', {
@@ -94,10 +95,17 @@ export default {
                 this.error = "Cannot apply code";
             } finally {
                 await this.getCodes();
-                this.applyLoading = false;
+                this.loading = false;
+            }
+        },
+        async remove(id) {
+            try {
+                await axios.delete('/api/codes/apply/'+id);
+                await this.getCodes();
+            } catch {
+                //
             }
         }
-        
     }
 }
 </script>
@@ -131,5 +139,10 @@ export default {
 
 .total-lineitem span:last-child {
     text-align: right;
+}
+
+.apply-button {
+    padding-top: 0;
+    padding-bottom: 0;
 }
 </style>

@@ -153,7 +153,7 @@ couponCodesSchema.methods.getValue = function(items, pastAmount) {
     //$10 for the coupon, just the $8 of whats rest of the total
     couponAmount = totalAmount - couponAmount > 0 ? couponAmount : totalAmount;
 
-    return pastAmount - couponAmount > 1 ? couponAmount : pastAmount - 1;
+    return (pastAmount - couponAmount > 1 ? couponAmount : pastAmount - 1).toFixed(2);
 }
 
 const Code = mongoose.model('CouponCode', couponCodesSchema);
@@ -179,7 +179,7 @@ router.get('/apply', validUser, async (req, res) => {
         });
 
         let amount = util.getItemsAmount(items);
-        for (code of codes) {
+        for (let {code} of codes) {
             code.value = code.getValue(items, amount);
             amount -= code.value;
         }
@@ -318,6 +318,16 @@ router.delete('/:id', validUser(['admin']), async (req, res) => {
             console.log('Deleted code ' + code._id);            
         }
 
+        res.sendStatus(200);
+    } catch(error) {
+        console.log(error);
+        res.sendStatus(500);
+    }
+});
+
+router.delete('/apply/:id', validUser, async (req, res) => {
+    try {
+        await req.user.removeCode(req.params.id);
         res.sendStatus(200);
     } catch(error) {
         console.log(error);

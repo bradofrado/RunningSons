@@ -29,8 +29,10 @@ export default {
                 let clientSecret = response.data.clientSecret;
                 
                 this.buildElement(clientSecret);
-            } catch {
-                //
+            } catch(error) {
+                if (error.response && error.response.data.message) {
+                    this.$emit('error', error.response.data.message);
+                }         
             }
         },
         buildElement(clientSecret) {
@@ -66,10 +68,12 @@ export default {
                     await axios.post('/api/payments');
                     window.location = '/cart';
                 }
-                return error.message;
+                this.$emit('error', error.message);
+                return false;
             } catch(error) {
                 if (error.response && error.response.data.message) {
-                    return error.response.data.message;
+                    this.$emit('error', error.response.data.message);
+                    return false;
                 }         
             }
         },

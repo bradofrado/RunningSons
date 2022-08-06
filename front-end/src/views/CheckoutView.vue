@@ -7,7 +7,7 @@
             <address-field v-model="address"/>
         </form-section>
         <form-section class="mb-5" name="Card Information">
-            <card-element ref="card" />
+            <card-element ref="card" @error="error => this.error = error"/>
         </form-section>
         <form-section class="mb-5" name="Totals">
             <totals-field class="totals-field" :items="items" coupon/>
@@ -74,10 +74,7 @@ export default {
             }
             this.loading = true;
 
-            const error = await this.$refs.card.purchase(this.address, this.contact);
-            if (error) {
-                this.error = error;
-            }
+            await this.$refs.card.purchase(this.address, this.contact);
 
             this.loading = false;
         },

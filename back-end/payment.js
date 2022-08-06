@@ -38,7 +38,7 @@ const getPaymentAmount = async function(items, user) {
     let subtotal = util.getItemsAmount(items);
 
     const codes = await user.getCodes(Code, false);
-    for (code of codes) {
+    for (let {code} of codes) {
         if (code.limit > 0 && (await user.codeApplied(Code, code.code)) > code.limit) {
             throw new CouponLimitError();
         }
@@ -170,7 +170,7 @@ router.post("/create-payment-intent", validUser, async (req, res) => {
         console.log(error); 
         if (error instanceof CouponLimitError) {
             return res.status(400).send({
-                message: error
+                message: error.message
             })
         }
         res.sendStatus(500);

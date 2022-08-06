@@ -92,11 +92,21 @@ userSchema.methods.getCodes = async function(Code, isApplied = null) {
         }
 
         if (isApplied == null || code.isApplied === isApplied) {
-            codes.push(populated);
+            code.code = populated;
+            codes.push(code);
         }
     }
 
     return codes;
+}
+
+userSchema.methods.removeCode = async function(id) {
+    const index = this.codes.findIndex(x => x._id.toString() == id.toString());
+    if (index > -1) {
+        this.codes.splice(index, 1);   
+    }
+    
+    await this.save();
 }
 
 const User = mongoose.model('User', userSchema);
