@@ -199,7 +199,7 @@ router.post('/', validUser(['admin']), parseForm, async (req, res) => {
 
     try {
         const code = new Code({
-            code: req.body.code,
+            code: req.body.code.toUpperCase(),
             dateExpiration: req.body.dateExpiration,
             value: req.body.value,
             type: req.body.type,
@@ -224,7 +224,7 @@ router.post('/apply', validUser, async (req, res) => {
 
     try {
         let code = await Code.findOne({
-            code: req.body.code
+            code: req.body.code.toUpperCase()
         });
 
         if (!code) {
@@ -282,7 +282,7 @@ router.put('/:id', validUser(['admin']), parseForm, async (req, res) => {
             });
         }
 
-        code.code = req.body.code;
+        code.code = req.body.code.toUpperCase();
         code.dateExpiration = req.body.dateExpiration;
         code.value = req.body.value;
         code.type = req.body.type;
