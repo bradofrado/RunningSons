@@ -79,10 +79,17 @@ userSchema.methods.codeApplied = async function(Code, code) {
 //isApplied: fetch the codes that have the same isApplied specified (or all of them if null)
 userSchema.methods.getCodes = async function(Code, isApplied = null) {
     const codes = [];
-    for (let code of this.codes) {
+    for (let i = this.codes.length - 1; i >=0; i--) {
+        let code = this.codes[i];
         const populated = await Code.findOne({
             _id: code.code
         });
+
+        //Only get the codes that exist (some 'don't exist' because they have expired)
+        if (!populated) {
+            this.codes.splice(i, 1);
+            continue;
+        }
 
         if (isApplied == null || code.isApplied === isApplied) {
             codes.push(populated);
