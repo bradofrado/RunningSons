@@ -167,6 +167,11 @@ export default {
                         type: 'input',
                         title: 'Code Price Value',
                         required: true
+                    },
+                    limit: {
+                        type: 'input',
+                        title: 'Number of times a user can apply this code (0 means infinite)',
+                        required: true
                     }
                 }
             }

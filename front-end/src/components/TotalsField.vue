@@ -66,6 +66,11 @@ export default {
             return this.subtotals + this.shipping - this.codeAmount;
         }
     },
+    watch: {
+        async total() {
+            await this.getCodes();
+        }
+    },
     methods: {
         async getCodes() {
             try {
@@ -84,6 +89,7 @@ export default {
                 await axios.post('/api/codes/apply', {
                     code: this.code
                 });
+                this.code = null;
             } catch(error) {
                 this.error = "Cannot apply code";
             } finally {

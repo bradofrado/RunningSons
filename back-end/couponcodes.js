@@ -16,6 +16,10 @@ const couponCodesSchema = new mongoose.Schema({
     code: String,
     dateExpiration: Date,
     value: Number,
+    limit: {
+        type: Number,
+        default: 1
+    },
     itemType: {
         type: String,
         //totals: value taken off the total amount
@@ -150,7 +154,7 @@ router.get('/applied', validUser, async (req, res) => {
 });
 
 router.post('/', validUser(['admin']), parseForm, async (req, res) => {
-    if (!req.body.code || !req.body.dateExpiration || !req.body.value || !req.body.type) {
+    if (!req.body.code || !req.body.dateExpiration || !req.body.value || !req.body.type || !req.body.limit) {
         return res.status(400).send({
             message: "Invalid body parameters"
         })
@@ -161,7 +165,8 @@ router.post('/', validUser(['admin']), parseForm, async (req, res) => {
             code: req.body.code,
             dateExpiration: req.body.dateExpiration,
             value: req.body.value,
-            type: req.body.type
+            type: req.body.type,
+            limit: req.body.limit
         });
 
         await code.save();
@@ -192,9 +197,9 @@ router.post('/apply', validUser, async (req, res) => {
             })
         }
 
-        //If the user has already applied this code and checked out with it,
+        //If the user has already hit the limit of this code,
         //don't let them use it again
-        if (await req.user.codeApplied(Code, req.body.code)) {
+        if (code.limit > 0 && (await req.user.codeApplied(Code, req.body.code)) >= code.limit) {
             return res.status(400).send({
                 message: "Code was already applied"
             })
@@ -210,11 +215,7 @@ router.post('/apply', validUser, async (req, res) => {
             })
         }
 
-        //If the user has already applied this code (but not checked out), don't apply
-        //again
-        if (!await req.user.hasCode(Code, req.body.code)) {
-            req.user.codes.push({code});
-        }
+        req.user.codes.push({code});
 
         
         await req.user.save();
@@ -227,7 +228,7 @@ router.post('/apply', validUser, async (req, res) => {
 })
 
 router.put('/:id', validUser(['admin']), parseForm, async (req, res) => {
-    if (!req.body.code || !req.body.dateExpiration || !req.body.value || !req.body.type) {
+    if (!req.body.code || !req.body.dateExpiration || !req.body.value || !req.body.type || !req.body.limit) {
         return res.status(400).send({
             message: "Invalid body parameters"
         })
@@ -244,10 +245,11 @@ router.put('/:id', validUser(['admin']), parseForm, async (req, res) => {
             });
         }
 
-        code.code = req.body.code,
-        code.dateExpiration = req.body.dateExpiration,
-        code.value = req.body.value,
-        code.type = req.body.type
+        code.code = req.body.code;
+        code.dateExpiration = req.body.dateExpiration;
+        code.value = req.body.value;
+        code.type = req.body.type;
+        code.limit = req.body.limit;
         
         await code.save();
 

@@ -20,7 +20,8 @@ const userSchema = new mongoose.Schema({
         isApplied: {
             type: Boolean,
             default: false
-        }
+        },
+        dateApplied: Date
     }],
     roles: [{
         type: String,
@@ -67,26 +68,12 @@ userSchema.methods.codeApplied = async function(Code, code) {
     });
 
     if (foundCode) {
-        const index = this.codes.findIndex(x => x.code.toString() === foundCode._id.toString());
+        const codes = this.codes.filter(x => x.code.toString() === foundCode._id.toString());
 
-        return index > -1 && foundCode.isApplied;
+        return codes.length;
     }
 
-    return false;
-}
-
-userSchema.methods.hasCode = async function(Code, code) {
-    let foundCode = await Code.findOne({
-        code: code
-    });
-
-    if (foundCode) {
-        const index = this.codes.findIndex(x => x.code.toString() === foundCode._id.toString());
-
-        return index > -1;
-    }
-
-    return false;
+    return 0;
 }
 
 //isApplied: fetch the codes that have the same isApplied specified (or all of them if null)

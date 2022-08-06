@@ -33,6 +33,10 @@ const getPaymentAmount = async function(items, user) {
     const codes = await user.getCodes(Code, false);
     let codeAmount = 0;
     for (code of codes) {
+        if (code.limit > 0 && (await user.codeApplied(Code, code.code)) > code.limit) {
+            throw new Error('User has exceeded the number of coupons');
+        }
+
         codeAmount += code.getValue(items)
     }
 
@@ -97,11 +101,16 @@ router.post('/', validUser, async (req, res) => {
         const items = await cart.model.find({
             user: req.user
         });
-
         for (let item of items) {
             item.bought = true;
             item.dateBought = new Date();
             await item.save();
+        }
+
+        //Apply the codes
+        for (let code of req.user.codes) {
+            code.isApplied = true;
+            code.dateApplied = new Date();
         }
 
         req.user.clientSecret = null;

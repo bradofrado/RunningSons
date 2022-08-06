@@ -81,7 +81,7 @@ export default {
 
             this.loading = false;
         },
-        validate(obj, notInclude) {
+        validate(obj, notInclude = []) {
             if (!obj) return false;
 
             for (let name in obj) {
