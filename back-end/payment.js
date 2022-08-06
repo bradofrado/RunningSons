@@ -28,19 +28,19 @@ const paymentSchema = new mongoose.Schema({
 const Payment = mongoose.model('Payment', paymentSchema);
 
 const getPaymentAmount = async function(items, user) {
-    const subtotal = util.getItemsAmount(items);
+    let subtotal = util.getItemsAmount(items);
 
     const codes = await user.getCodes(Code, false);
-    let codeAmount = 0;
     for (code of codes) {
         if (code.limit > 0 && (await user.codeApplied(Code, code.code)) > code.limit) {
             throw new Error('User has exceeded the number of coupons');
         }
 
-        codeAmount += code.getValue(items)
+        const codeAmount = code.getValue(items, subtotal);
+        subtotal -= codeAmount;
     }
 
-    return Math.floor((subtotal - codeAmount) * 100);
+    return Math.max(Math.floor(subtotal * 100), 0);
 }
 
 const getMetadata = async function(items) {

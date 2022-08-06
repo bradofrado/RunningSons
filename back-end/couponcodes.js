@@ -66,7 +66,7 @@ couponCodesSchema.pre(/^find/, function() {
     this.where({isDeleted: false, dateExpiration: { $gte: new Date() }});
 });
 
-couponCodesSchema.methods.getValue = function(items) {
+couponCodesSchema.methods.getValue = function(items, pastAmount) {
     let totalAmount = 0;
     switch(this.itemType) {
         case 'totals':
@@ -119,7 +119,9 @@ couponCodesSchema.methods.getValue = function(items) {
 
     //If, for example, the total is $8 but the coupon is $10 off, we don't want to return 
     //$10 for the coupon, just the $8 of whats rest of the total
-    return totalAmount - couponAmount > 0 ? couponAmount : totalAmount;
+    couponAmount = totalAmount - couponAmount > 0 ? couponAmount : totalAmount;
+
+    return pastAmount - couponAmount > 1 ? couponAmount : pastAmount - 1;
 }
 
 const Code = mongoose.model('CouponCode', couponCodesSchema);
@@ -143,8 +145,11 @@ router.get('/applied', validUser, async (req, res) => {
         const items = await Cart.find({
             user: req.user
         });
+
+        let amount = util.getItemsAmount(items);
         for (code of codes) {
-            code.value = code.getValue(items);
+            code.value = code.getValue(items, amount);
+            amount -= code.value;
         }
 
         res.send(codes);
