@@ -67,8 +67,10 @@ export default {
                     window.location = '/cart';
                 }
                 return error.message;
-            } catch {
-                //            
+            } catch(error) {
+                if (error.response && error.response.data.message) {
+                    return error.response.data.message;
+                }         
             }
         },
     }

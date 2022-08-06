@@ -13,6 +13,13 @@ const stripe = require("stripe")('sk_test_51LKwWoBXqDku0t2IqIBSAtSq6qCsXOOcVT1yC
 
 const shipping = 5;
 
+class CouponLimitError extends Error {
+    constructor() {
+        super('User has exceeded the number of allowed coupons');
+        this.name = 'CouponLimitError'
+    }
+}
+
 const paymentSchema = new mongoose.Schema({
     amount: Number,
     shipping: Object,
@@ -33,7 +40,7 @@ const getPaymentAmount = async function(items, user) {
     const codes = await user.getCodes(Code, false);
     for (code of codes) {
         if (code.limit > 0 && (await user.codeApplied(Code, code.code)) > code.limit) {
-            throw new Error('User has exceeded the number of coupons');
+            throw new CouponLimitError();
         }
 
         const codeAmount = code.getValue(items, subtotal);
@@ -161,6 +168,11 @@ router.post("/create-payment-intent", validUser, async (req, res) => {
         });
     } catch(error) {
         console.log(error); 
+        if (error instanceof CouponLimitError) {
+            return res.status(400).send({
+                message: error
+            })
+        }
         res.sendStatus(500);
     }
 });
@@ -198,6 +210,11 @@ router.put("/create-payment-intent", validUser, async (req, res) => {
         });
     } catch(error) {
         console.log(error);
+        if (error instanceof CouponLimitError) {
+            return res.status(400).send({
+                message: error.message
+            })
+        }
         res.sendStatus(500);
     }
 });
