@@ -97,7 +97,8 @@ export default {
 }
 
 .totals-field {
-    width: 400px;
+    width: 100%;
+    max-width: 400px;
 }
 
 @media only screen and (min-width: 960px) {
