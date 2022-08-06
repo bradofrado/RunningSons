@@ -6,20 +6,117 @@ const router = express.Router();
 const validUser = require('./users.js').valid;
 const Cart = require('./cart.js').model;
 
+const util = require('./util.js');
+
 const multer = require('multer');
 const parseForm = multer().none();
 
+const opts = { toJSON: { virtuals: true } };
 const couponCodesSchema = new mongoose.Schema({
     code: String,
     dateExpiration: Date,
     value: Number,
-    type: String
+    itemType: {
+        type: String,
+        //totals: value taken off the total amount
+        //shipping: value taken off shipping
+        //1: value taken off the most expensive item. 
+        //2: value taken off the second most expensive item
+        //3: value taken off the third most expensive item
+        //TODO: change this to validate to have an arbitrary amount of items (4,5,...)
+        enum: ['totals', 'shipping', '1', '2', '3']
+    },
+    valueType: {
+        type: String,
+        //fixed: a set amount taken off like $10 off. Can't exceed the type
+        //percentage: a percentage like %50 off of the type
+        enum: ['fixed', 'percentage'],
+        default: 'fixed'
+    }
+    //Example pairs: totals:fixed - take a certain amount off the total up until the full price
+    //totals:percentage - take a percentage off the total until the full price
+    //shipping:fixed - take a fixed amount off the shipping until the whole shipping price
+    //shipping:percentage - take a percentage off the shipping until the whole shipping price
+    //1:fixed - take a fixed amount off the most expensive item until the whole item price
+    //2:fixed - buy one get one x amount off
+    //2:percentage - buy one get one x percentage off
+    //3:percentage - buy two get one x percentage off
+}, opts);
+
+
+//type = itemType:valueType
+couponCodesSchema.virtual('type').get(function() {
+    return `${this.itemType}:${this.valueType}`;
+}).set(function(v) {
+    const [itemType, valueType] = v.split(':');
+    this.set({itemType});
+
+    if (valueType) {
+        this.set({valueType});
+    }
 });
+
 
 //Filter out the deleted coupons
 couponCodesSchema.pre(/^find/, function() {
     this.where({isDeleted: false, dateExpiration: { $gte: new Date() }});
 });
+
+couponCodesSchema.methods.getValue = function(items) {
+    let totalAmount = 0;
+    switch(this.itemType) {
+        case 'totals':
+            totalAmount = util.getItemsAmount(items);
+            break;
+        case 'shipping':
+            totalAmount = util.shipping;
+            break;
+        //If it is a number, then it is a buy x get one free, or whatever value type is
+        default:
+            const type = parseInt(this.itemType);
+            if (isNaN(type)) {
+                throw new Error('Invalid coupon item type');
+            }
+
+            //sort the items by price descending so we know which item we are grabbing
+            items = items.sort((a, b) => b.item.price - a.item.price);
+            
+            //Each item has a quantity, and we want to get the true first, second, etc.
+            //so split up all of the items by their quantities
+            const merchItems = [];
+            for (let item of items) {
+                for (let i = 0; i < item.quantity; i++) {
+                    merchItems.push(item.item.price);
+                }
+            }
+
+            //We need to get the nth item, so if that doesn't exist then this
+            //coupon doesn't apply
+            if (type > merchItems.length) {
+                break;
+            }
+
+            //type - 1 because type is not zero based
+            totalAmount = merchItems[type - 1];
+            break;
+    }
+
+    let couponAmount = 0;
+    switch (this.valueType) {
+        case 'fixed':
+            couponAmount = this.value;
+            break;
+        case 'percentage':
+            couponAmount = this.value * totalAmount;
+            break;
+        default:
+            throw new Error("Invalid coupon value type");
+    }
+
+    //If, for example, the total is $8 but the coupon is $10 off, we don't want to return 
+    //$10 for the coupon, just the $8 of whats rest of the total
+    return totalAmount - couponAmount > 0 ? couponAmount : totalAmount;
+}
 
 const Code = mongoose.model('CouponCode', couponCodesSchema);
 
@@ -38,11 +135,13 @@ router.get('/applied', validUser, async (req, res) => {
         //Get all of the codes associated with this user
         const codes = await req.user.getCodes(Code, false);
 
-        //Get the code values based on the paymentintent
-        //(most of the time we don't need the payment intent, 
-        // but sometimes the type is totals:percent which means take a percentage off of the
-        // total payment)
-        
+        //Get the code values based on the cart items
+        const items = await Cart.find({
+            user: req.user
+        });
+        for (code of codes) {
+            code.value = code.getValue(items);
+        }
 
         res.send(codes);
     } catch(error) {
@@ -97,7 +196,17 @@ router.post('/apply', validUser, async (req, res) => {
         //don't let them use it again
         if (await req.user.codeApplied(Code, req.body.code)) {
             return res.status(400).send({
-                message: "Codes was already applied"
+                message: "Code was already applied"
+            })
+        }
+
+        //Check to see if the code acually does anything
+        const items = await Cart.find({
+            user: req.user
+        });
+        if (code.getValue(items) <= 0) {
+            return res.status(400).send({
+                message: "Code does not apply"
             })
         }
 
@@ -126,7 +235,7 @@ router.put('/:id', validUser(['admin']), parseForm, async (req, res) => {
 
     try {
         const code = await Code.findOne({
-            code: req.params.id
+            _id: req.params.id
         });
 
         if (!code) {

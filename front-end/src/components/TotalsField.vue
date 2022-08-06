@@ -6,16 +6,18 @@
             <span>${{item.total.toFixed(2)}}</span>
         </div>
         <div class="total-lineitem"><span>Shipping:</span><span>${{shipping.toFixed(2)}}</span></div>
-        <div class="total-lineitem" v-for="code in codes" :key="code._id">
-            <span>{{code.code}}:</span> <span>-${{code.value}}</span>
-        </div>
+        <template v-for="code in codes">
+            <div v-if="code.value > 0" class="total-lineitem" :key="code._id">
+                <span>{{code.code}}:</span> <span>-${{code.value.toFixed(2)}}</span>
+            </div>
+        </template>
         <hr>
-        <span v-if="error" class="danger">{{error}}</span>
         <div class="total-lineitem"><span><em>Total:</em></span><span>${{total.toFixed(2)}}</span></div>
         <div v-if="coupon" class="total-lineitem mt-3">
             <span><input class="input input-code" v-model="code" placeholder="Apply Code"/></span>
             <span><button class="button button-primary" @click="applyCode" v-spinner="loading">Apply</button></span>
         </div>
+        <span v-if="error" class="danger">{{error}}</span>
     </div>
 </template>
 

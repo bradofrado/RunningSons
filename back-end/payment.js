@@ -5,9 +5,13 @@ const user = require('./users.js');
 const validUser = user.valid;
 
 const cart = require('./cart.js');
+const util = require('./util.js');
+const Code = require('./couponcodes.js').model;
 
 const router = express.Router();
 const stripe = require("stripe")('sk_test_51LKwWoBXqDku0t2IqIBSAtSq6qCsXOOcVT1yCw9B4DkGSAymFCo0f1IkavOKONVxbhyekTEUA1EzRuUBpDDJWoYE00IVnboIS8');
+
+const shipping = 5;
 
 const paymentSchema = new mongoose.Schema({
     amount: Number,
@@ -23,19 +27,16 @@ const paymentSchema = new mongoose.Schema({
 
 const Payment = mongoose.model('Payment', paymentSchema);
 
-const getPaymentAmount = async function(items) {
-    const shipping = 5;
-    if (!items.length) {
-        return shipping * 100;
+const getPaymentAmount = async function(items, user) {
+    const subtotal = util.getItemsAmount(items);
+
+    const codes = await user.getCodes(Code, false);
+    let codeAmount = 0;
+    for (code of codes) {
+        codeAmount += code.getValue(items)
     }
 
-    let price = items.reduce((prev, curr) => {
-        return prev + curr.quantity * curr.item.price;
-    }, 0);
-
-    price += shipping;
-
-    return parseInt(price * 100);
+    return Math.floor((subtotal - codeAmount) * 100);
 }
 
 const getMetadata = async function(items) {
@@ -120,7 +121,7 @@ router.post("/create-payment-intent", validUser, async (req, res) => {
             user: req.user
         });
 
-        let amount = await getPaymentAmount(items);
+        let amount = await getPaymentAmount(items, req.user);
         let metadata = await getMetadata(items);
         let description = await getDescription(items);
 
@@ -166,7 +167,7 @@ router.put("/create-payment-intent", validUser, async (req, res) => {
             user: req.user
         });
 
-        let amount = await getPaymentAmount(items);
+        let amount = await getPaymentAmount(items, req.user);
         let metadata = await getMetadata(items);
         let description = await getDescription(items);
 
