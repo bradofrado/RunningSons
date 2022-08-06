@@ -5,9 +5,20 @@ const user = require('./users.js');
 const validUser = user.valid;
 
 const cart = require('./cart.js');
+const util = require('./util.js');
+const Code = require('./couponcodes.js').model;
 
 const router = express.Router();
 const stripe = require("stripe")('sk_test_51LKwWoBXqDku0t2IqIBSAtSq6qCsXOOcVT1yCw9B4DkGSAymFCo0f1IkavOKONVxbhyekTEUA1EzRuUBpDDJWoYE00IVnboIS8');
+
+const shipping = 5;
+
+class CouponLimitError extends Error {
+    constructor() {
+        super('User has exceeded the number of allowed coupons');
+        this.name = 'CouponLimitError'
+    }
+}
 
 const paymentSchema = new mongoose.Schema({
     amount: Number,
@@ -23,32 +34,32 @@ const paymentSchema = new mongoose.Schema({
 
 const Payment = mongoose.model('Payment', paymentSchema);
 
-const getPaymentAmount = async function(items) {
-    const shipping = 5;
-    if (!items.length) {
-        return shipping * 100;
+const getPaymentAmount = async function(items, user) {
+    let subtotal = util.getItemsAmount(items);
+
+    const codes = await user.getCodes(Code, false);
+    for (let {code} of codes) {
+        if (code.limit > 0 && (await user.codeApplied(Code, code.code)) > code.limit) {
+            throw new CouponLimitError();
+        }
+
+        const codeAmount = code.getValue(items, subtotal);
+        subtotal -= codeAmount;
     }
 
-    let price = items.reduce((prev, curr) => {
-        return prev + curr.quantity * curr.item.price;
-    }, 0);
-
-    price += shipping;
-
-    return parseInt(price * 100);
+    return Math.max(Math.floor(subtotal * 100), 0);
 }
 
 const getMetadata = async function(items) {
     const metadata = {};
     for (let item of items) {
-        const name = `${item.item.name} (${item.size})`;
         const quantity = item.quantity;
 
-        if (!metadata[name]) {
-            metadata[name] = 0;
+        if (!metadata[item.fullName]) {
+            metadata[item.fullName] = 0;
         }
 
-        metadata[name] += quantity;
+        metadata[item.fullName] += quantity;
     }
 
     return metadata;
@@ -56,7 +67,7 @@ const getMetadata = async function(items) {
 
 const getDescription = async function(items) {
     return items.reduce((prev, curr, i) => {
-        prev += `${curr.item.name} (${curr.size})`;
+        prev += curr.fullName;
 
         if (i < items.length - 1) {
             prev += ', ';
@@ -97,11 +108,16 @@ router.post('/', validUser, async (req, res) => {
         const items = await cart.model.find({
             user: req.user
         });
-
         for (let item of items) {
             item.bought = true;
             item.dateBought = new Date();
             await item.save();
+        }
+
+        //Apply the codes
+        for (let code of req.user.codes) {
+            code.isApplied = true;
+            code.dateApplied = new Date();
         }
 
         req.user.clientSecret = null;
@@ -121,7 +137,7 @@ router.post("/create-payment-intent", validUser, async (req, res) => {
             user: req.user
         });
 
-        let amount = await getPaymentAmount(items);
+        let amount = await getPaymentAmount(items, req.user);
         let metadata = await getMetadata(items);
         let description = await getDescription(items);
 
@@ -152,6 +168,11 @@ router.post("/create-payment-intent", validUser, async (req, res) => {
         });
     } catch(error) {
         console.log(error); 
+        if (error instanceof CouponLimitError) {
+            return res.status(400).send({
+                message: error.message
+            })
+        }
         res.sendStatus(500);
     }
 });
@@ -167,7 +188,7 @@ router.put("/create-payment-intent", validUser, async (req, res) => {
             user: req.user
         });
 
-        let amount = await getPaymentAmount(items);
+        let amount = await getPaymentAmount(items, req.user);
         let metadata = await getMetadata(items);
         let description = await getDescription(items);
 
@@ -189,6 +210,11 @@ router.put("/create-payment-intent", validUser, async (req, res) => {
         });
     } catch(error) {
         console.log(error);
+        if (error instanceof CouponLimitError) {
+            return res.status(400).send({
+                message: error.message
+            })
+        }
         res.sendStatus(500);
     }
 });

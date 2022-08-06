@@ -3,6 +3,7 @@ const mongoose = require('mongoose');
 const argon2 = require('argon2');
 
 const router = express.Router();
+  
 
 const userSchema = new mongoose.Schema({
     username: String,
@@ -11,6 +12,17 @@ const userSchema = new mongoose.Schema({
     firstname: String,
     lastname: String,
     clientSecret: String,
+    codes: [{
+        code: { type:
+            mongoose.Schema.ObjectId,
+            ref: 'CouponCode'
+        },
+        isApplied: {
+            type: Boolean,
+            default: false
+        },
+        dateApplied: Date
+    }],
     roles: [{
         type: String,
         default: ""
@@ -48,6 +60,53 @@ userSchema.methods.toJSON = function() {
 
 userSchema.methods.hasRoles = function(roles) {
     return roles.every(role => this.roles.includes(role));
+}
+
+userSchema.methods.codeApplied = async function(Code, code) {
+    let foundCode = await Code.findOne({
+        code: code
+    });
+
+    if (foundCode) {
+        const codes = this.codes.filter(x => x.code.toString() === foundCode._id.toString());
+
+        return codes.length;
+    }
+
+    return 0;
+}
+
+//isApplied: fetch the codes that have the same isApplied specified (or all of them if null)
+userSchema.methods.getCodes = async function(Code, isApplied = null) {
+    const codes = [];
+    for (let i = this.codes.length - 1; i >=0; i--) {
+        let code = this.codes[i];
+        const populated = await Code.findOne({
+            _id: code.code
+        });
+
+        //Only get the codes that exist (some 'don't exist' because they have expired)
+        if (!populated) {
+            this.codes.splice(i, 1);
+            continue;
+        }
+
+        if (isApplied == null || code.isApplied === isApplied) {
+            code.code = populated;
+            codes.push(code);
+        }
+    }
+
+    return codes;
+}
+
+userSchema.methods.removeCode = async function(id) {
+    const index = this.codes.findIndex(x => x._id.toString() == id.toString());
+    if (index > -1) {
+        this.codes.splice(index, 1);   
+    }
+    
+    await this.save();
 }
 
 const User = mongoose.model('User', userSchema);

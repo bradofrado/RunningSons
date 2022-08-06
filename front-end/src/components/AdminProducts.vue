@@ -2,7 +2,7 @@
 <div>
     <h4>{{name}}</h4>
     <div class="items-container">
-        <image-button v-for="item in items" :key="item._id" :img="item.image" @click="editItem(item)" :title="item.name || item.title"/>
+        <image-button v-for="item in items" :key="item._id" :img="item.image" :name="!item.image ? item.name : null" @click="editItem(item)" :title="item.name || item.title"/>
         <image-button name="Add" @click="addItem"/>
     </div>
     <modal :show="show">
@@ -68,6 +68,7 @@ export default {
         close() {
             this.show = false;
             this.editRoom = null;
+            this.error = null;
         },
         async onDelete(id) {
             const item = this.items.find(x => x._id === id);
@@ -110,6 +111,7 @@ export default {
                 }
                 
                 this.show = false;
+                this.error = null;
                 this.$emit('upload');
             } catch (error) {
                 if (error.response && error.response.data.message) {

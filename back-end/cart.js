@@ -8,6 +8,7 @@ const merchandise = require('./merchandise.js');
 const user = require('./users.js');
 const valid = user.valid;
 
+const opts = { toObject: { virtuals: true } };
 const cartItemSchema = new mongoose.Schema({
     item: {
         type: mongoose.Schema.ObjectId,
@@ -31,7 +32,14 @@ const cartItemSchema = new mongoose.Schema({
         type: Boolean,
         default: false
     }
+}, opts);
+
+cartItemSchema.virtual('total').get(function() {
+    return this.item.price * this.quantity;
 });
+cartItemSchema.virtual('fullName').get(function() {
+    return `${this.item.name} (${this.size})`;
+})
 
 cartItemSchema.methods.checkSize = async function(size) {
     if (!this.item.sizes) {
@@ -51,7 +59,7 @@ cartItemSchema.methods.toJSON = function() {
     obj._id = id;
     obj.merchItem = obj.item._id;
     obj.type = obj.type.type;
-    
+
     delete obj.item;
     delete obj.isDeleted;
 
@@ -175,7 +183,7 @@ router.post('/', async (req, res) => {
         console.log(error);
         res.sendStatus(500);
     }
-})
+});
 
 router.put('/:id', valid, async (req, res) => {
     if (!req.body.quantity || !req.body.size) {

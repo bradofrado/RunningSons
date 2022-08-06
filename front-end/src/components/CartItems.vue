@@ -21,7 +21,6 @@ import axios from 'axios';
 import NumberPicker from '@/components/NumberPicker.vue'
 import CartItem from './CartItem.vue';
 
-const totals = CartItem.totals;
 const CartItems = {
     name: "CartItems",
     components: {
@@ -32,7 +31,6 @@ const CartItems = {
         items: Array
     },
     methods: {
-        totals,
         edit(item) {
             window.location = '/merchandise/' + item.name + '/' + item._id;
         },
@@ -47,9 +45,6 @@ const CartItems = {
         },
     }
 }
-
-CartItems.totals = totals;
-
 export default CartItems;
 </script>
 
