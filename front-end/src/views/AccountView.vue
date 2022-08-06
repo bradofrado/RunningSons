@@ -160,18 +160,18 @@ export default {
                     },
                     type: {
                         type: 'input',
-                        title: 'Code type',
+                        title: 'Code type (key:value)',
                         required: true
                     },
                     value: {
                         type: 'input',
-                        title: 'Code Price Value',
+                        title: 'Code Price Value (if it is percentage, then do a number between 0 and 1)',
                         required: true
                     },
                     limit: {
                         type: 'input',
                         title: 'Number of times a user can apply this code (0 means infinite)',
-                        required: true
+                        required: false
                     }
                 }
             }

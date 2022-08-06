@@ -64,7 +64,7 @@ export default {
         },
         async getCodes() {
             try {
-                const response = await axios.get('/api/codes/applied');
+                const response = await axios.get('/api/codes/apply');
 
                 this.codes = response.data;
             } catch {

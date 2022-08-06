@@ -11,11 +11,16 @@ const util = require('./util.js');
 const multer = require('multer');
 const parseForm = multer().none();
 
+const isNumber = function(n) {
+    if (typeof n === 'string') 
+        return /^\d*$/.test(n);
+    return typeof n === 'number';
+}
+
 const opts = { toJSON: { virtuals: true } };
 const couponCodesSchema = new mongoose.Schema({
     code: String,
     dateExpiration: Date,
-    value: Number,
     limit: {
         type: Number,
         default: 1
@@ -27,8 +32,15 @@ const couponCodesSchema = new mongoose.Schema({
         //1: value taken off the most expensive item. 
         //2: value taken off the second most expensive item
         //3: value taken off the third most expensive item
-        //TODO: change this to validate to have an arbitrary amount of items (4,5,...)
-        enum: ['totals', 'shipping', '1', '2', '3']
+        //enum: ['totals', 'shipping', '1', '2', '3']
+        validate: function(v) {
+            //Returns true if this is a number
+            if (isNumber(v)) {
+                return true;
+            }
+
+            return ['totals', 'shipping'].includes(v);
+        }
     },
     valueType: {
         type: String,
@@ -36,6 +48,22 @@ const couponCodesSchema = new mongoose.Schema({
         //percentage: a percentage like %50 off of the type
         enum: ['fixed', 'percentage'],
         default: 'fixed'
+    },
+    value: {
+        type: Number,
+        validate: function(v) {
+            if (!isNumber(v)) return false;
+
+            if (this.valueType === 'percentage') {
+                return v >= 0 && v <= 1;
+            }
+
+            return v >= 0;
+        }
+    },
+    isDeleted: {
+        type: Boolean,
+        default: false
     }
     //Example pairs: totals:fixed - take a certain amount off the total up until the full price
     //totals:percentage - take a percentage off the total until the full price
@@ -59,6 +87,10 @@ couponCodesSchema.virtual('type').get(function() {
         this.set({valueType});
     }
 });
+
+couponCodesSchema.virtual('name').get(function() {
+    return this.code;
+})
 
 
 //Filter out the deleted coupons
@@ -136,7 +168,7 @@ router.get('/', validUser(['admin']), async (req, res) => {
     }
 });
 
-router.get('/applied', validUser, async (req, res) => {
+router.get('/apply', validUser, async (req, res) => {
     try {
         //Get all of the codes associated with this user
         const codes = await req.user.getCodes(Code, false);
@@ -268,7 +300,7 @@ router.put('/:id', validUser(['admin']), parseForm, async (req, res) => {
 router.delete('/:id', validUser(['admin']), async (req, res) => {
     try {
         const code = await Code.findOne({
-            code: req.params.id
+            _id: req.params.id
         });
 
         if (!code) {

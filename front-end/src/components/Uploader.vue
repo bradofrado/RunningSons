@@ -78,8 +78,8 @@ export default {
     },
     methods: {
         onClose() {
-            this.$emit('close');
             this.submitError = '';
+            this.$emit('close');
         },
         async onDelete() {
             this.loadingDelete = true;
