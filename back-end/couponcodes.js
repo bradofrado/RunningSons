@@ -198,8 +198,10 @@ router.post('/', validUser(['admin']), parseForm, async (req, res) => {
     }
 
     try {
+        req.body.code = req.body.code.toUpperCase();
+
         const code = new Code({
-            code: req.body.code.toUpperCase(),
+            code: req.body.code,
             dateExpiration: req.body.dateExpiration,
             value: req.body.value,
             type: req.body.type,
@@ -223,8 +225,10 @@ router.post('/apply', validUser, async (req, res) => {
     }
 
     try {
+        req.body.code = req.body.code.toUpperCase();
+
         let code = await Code.findOne({
-            code: req.body.code.toUpperCase()
+            code: req.body.code
         });
 
         if (!code) {
