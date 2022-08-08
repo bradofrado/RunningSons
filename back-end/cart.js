@@ -103,6 +103,16 @@ const NotFoundMessage = (id) => {
     return "Could not find cart item with id " + id;
 }
 
+const checkSizes = async function(items) {
+    for (let item of items) {
+        if (!await item.checkSize(item.size)) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
 router.get('/', valid, async (req, res) => {
     try {
         let items = await CartItem.find({
@@ -252,5 +262,6 @@ router.delete('/:id', valid, async (req, res) => {
 
 module.exports = {
     routes: router,
-    model: CartItem
+    model: CartItem,
+    checkSizes
 }

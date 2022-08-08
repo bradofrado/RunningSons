@@ -137,6 +137,12 @@ router.post("/create-payment-intent", validUser, async (req, res) => {
             user: req.user
         });
 
+        if (!await cart.checkSizes(items)) {
+            return res.status(400).send({
+                message: "One or more cart item sizes is either invalid or out of stock"
+            })
+        }
+
         let amount = await getPaymentAmount(items, req.user);
         let metadata = await getMetadata(items);
         let description = await getDescription(items);
@@ -187,6 +193,12 @@ router.put("/create-payment-intent", validUser, async (req, res) => {
         const items = await cart.model.find({
             user: req.user
         });
+
+        if (!await cart.checkSizes(items)) {
+            return res.status(400).send({
+                message: "Size is either invalid or out of stock"
+            })
+        }
 
         let amount = await getPaymentAmount(items, req.user);
         let metadata = await getMetadata(items);
