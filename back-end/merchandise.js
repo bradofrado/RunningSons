@@ -4,6 +4,8 @@ const router = express.Router();
 
 const uploader = require('./uploader.js');
 
+const util = require('./util.js');
+
 const env = require('./env.js');
 const path = '/images/merchandise/';
 
@@ -53,13 +55,21 @@ merchandiseSchema.post('find', async function(docs, next) {
 });
 
 merchandiseSchema.post('findOne', async function(doc, next) {
-    if (doc) {
+    if (doc && doc.popuateType) {
         await doc.populateType();
     }
 
     next();
 })
 
+merchandiseSchema.methods.updateSize = async function(size, quantity) {
+    if (this.sizes[size]) {
+        const sizes = util.copy(this.sizes);
+        sizes[size] += quantity;
+        this.sizes = sizes;
+        await this.save();
+    }
+}
 merchandiseSchema.methods.toJSON = function() {
     var obj = this.toObject();
 

@@ -111,6 +111,8 @@ router.post('/', validUser, async (req, res) => {
         for (let item of items) {
             item.bought = true;
             item.dateBought = new Date();
+            
+            await item.item.updateSize(item.size, -item.quantity);
             await item.save();
         }
 
