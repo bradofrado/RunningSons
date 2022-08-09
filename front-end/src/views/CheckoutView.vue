@@ -12,7 +12,7 @@
         <form-section class="mb-5" name="Totals">
             <totals-field class="totals-field" :items="items" coupon/>
         </form-section>
-        <div class="consent-container">
+        <div class="consent-container mb-3">
             <input type="checkbox" v-model="agreed">
             <label>By purchasing these items, you agree to our <a href="/terms">Terms and Conditions</a></label>
         </div>
