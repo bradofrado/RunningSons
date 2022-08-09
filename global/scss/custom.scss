@@ -16,6 +16,7 @@ $secondary: #FACE0B;
 //$secondary-hover: 
 $secondary-2: #E06F05;
 $secondary-2-hover: #ce6504;
+$secondary-2-disabled: #bf5e04;
 
 $danger: #df1b41;
 
@@ -108,6 +109,10 @@ button {
 .button-primary:hover:not(:disabled) {
     background-color: $secondary-2-hover;
     color: $white;
+}
+
+.button-primary:disabled {
+    background-color: $secondary-2-disabled;
 }
 
 .input {

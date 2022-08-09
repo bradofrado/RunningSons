@@ -12,8 +12,12 @@
         <form-section class="mb-5" name="Totals">
             <totals-field class="totals-field" :items="items" coupon/>
         </form-section>
+        <div class="consent-container">
+            <input type="checkbox" v-model="agreed">
+            <label>By purchasing these items, you agree to our <a href="/terms">Terms and Conditions</a></label>
+        </div>
         <p v-if="error" class="danger">{{error}}</p>
-        <button class="button button-primary" @click="purchase" v-spinner="loading">Purchase</button>
+        <button class="button button-primary" @click="purchase" v-spinner="loading" :disabled="!agreed">Purchase</button>
     </div>
 </template>
 
@@ -50,7 +54,8 @@ export default {
                 firstname: null,
                 lastname: null
             },
-            items: []
+            items: [],
+            agreed: false
         }
     },
     async created() {
@@ -91,14 +96,21 @@ export default {
 }
 </script>
 
-<style scoped>
-.card-container {
-   
+<style scoped lang="scss">
+.consent-container {
+   text-align: left;
+   color: $black;
+   display: flex;
+   align-items: center;
 }
 
 .totals-field {
     width: 100%;
     max-width: 400px;
+}
+
+.consent-container label {
+    margin-left: 10px;
 }
 
 @media only screen and (min-width: 960px) {
