@@ -11,6 +11,10 @@ import AccountView from '@/views/AccountView.vue'
 import SignupView from '@/views/SignupView.vue'
 import AlbumView from '@/views/AlbumView.vue'
 import SongView from '@/views/SongView.vue'
+import TermsAndConditions from '@/components/TermsAndConditions.vue';
+import PrivacyPolicy from '@/components/PrivacyPolicy.vue';
+import Contact from '@/components/Contact.vue';
+import ReturnPolicy from '@/components/ReturnPolicy.vue';
 
 Vue.use(VueRouter)
 
@@ -69,7 +73,27 @@ const routes = [
     path: '/account/signup',
     name: 'signup',
     component: SignupView
-  }
+  },
+  {
+    path: '/terms',
+    name: 'terms',
+    component: TermsAndConditions
+  },
+  {
+    path: '/privacy',
+    name: 'privacy',
+    component: PrivacyPolicy
+  },
+  {
+    path: '/Contact',
+    name: 'Contact',
+    component: Contact
+  },
+  {
+    path: '/returns',
+    name: 'return',
+    component: ReturnPolicy
+  },
 ]
 
 const router = new VueRouter({
