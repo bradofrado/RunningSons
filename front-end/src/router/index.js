@@ -11,6 +11,8 @@ import AccountView from '@/views/AccountView.vue'
 import SignupView from '@/views/SignupView.vue'
 import AlbumView from '@/views/AlbumView.vue'
 import SongView from '@/views/SongView.vue'
+import EventsView from '@/views/EventsView.vue'
+import EventView from '@/views/EventView.vue'
 import TermsAndConditions from '@/components/TermsAndConditions.vue';
 import PrivacyPolicy from '@/components/PrivacyPolicy.vue';
 import Contact from '@/components/Contact.vue';
@@ -53,6 +55,16 @@ const routes = [
     path: '/merchandise/:name/:id?',
     name: 'merchandiseItem',
     component: MerchItemView
+  },
+  {
+    path: '/events',
+    name: 'events',
+    component: EventsView
+  },
+  {
+    path: '/events/:id',
+    name: 'event',
+    component: EventView
   },
   {
     path: '/cart',

@@ -16,7 +16,8 @@
                 <b-navbar-nav >
                     <b-nav-item to="/" exact-active-class="active">Home</b-nav-item>
                     <b-nav-item to="/music" active-class="active">Music</b-nav-item> 
-                    <b-nav-item id="merch-popover" active-class="active" to="/merchandise" @click="onMerchClick">Merchandise</b-nav-item>                                                        
+                    <b-nav-item id="merch-popover" active-class="active" to="/merchandise" @click="onMerchClick">Merchandise</b-nav-item>
+                    <b-nav-item to="/events" active-class="active">Events</b-nav-item>                                                        
                 </b-navbar-nav>
                 <b-navbar-nav class="ml-auto">
                     <b-nav-item to="/cart" active-class="active" class="cart-icon not-mobile">
