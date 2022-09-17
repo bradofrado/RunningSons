@@ -38,6 +38,7 @@ const merchandiseType = require('./merchandise-types.js');
 const merchandise = require('./merchandise.js');
 const payments = require('./payment.js');
 const cart = require('./cart.js');
+const events = require('./events.js');
 
 app.use('/api/codes', couponcodes.routes);
 app.use('/api/songs', songs.routes);
@@ -48,5 +49,6 @@ app.use('/api/merchandise', merchandise.routes);
 app.use('/api/types', merchandiseType.routes);
 app.use('/api/payments', payments.routes);
 app.use('/api/cart', cart.routes);
+app.use('/api/events', events.routes);
 
 app.listen(port, () => console.log(`Server listening on port ${port}!`));

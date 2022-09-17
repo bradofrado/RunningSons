@@ -1,32 +1,48 @@
 <template>
     <div class="event-container">
-        <h1>{{event.title}}</h1>
+        <h2>{{event.title}}</h2>
         <div class="image-container">
             <img :src="event.image"/>
         </div>
         <div class="d-flex justify-content-center no_hover">
-            <span>{{event.startDate}}</span> - <span>{{event.endDate}}</span>
+            <span>{{date(event.date)}}</span> - <span>{{event.location}}</span>
         </div>
         <p class="event-description">{{event.description}}</p>
+        <div class="buttons-container">
+            <router-link class="button button-primary m-r" :to="to">Info</router-link>
+            <a class="button button-primary" href="/">Tickets</a>
+        </div>
     </div>
 </template>
 
 <script>
+import dayjs from 'dayjs';
+
 export default {
     name: "EventItemDisplay",
     props: {
         event: Object
     },
-
+    computed: {
+        to() {
+            return '/events/' + this.event._id;
+        }
+    },
+    methods: {
+        date(date) {
+            return dayjs(date).format('MM/DD/YYYY')
+        }
+    }
 }
 </script>
 
 <style scoped>
 .event-container {
-    border-width: 3px;
+    border: 3px solid;
     height: 100%;
     width: 300px;
     margin: auto;
+    padding: 10px;
 }
 
 .image-container {
@@ -40,6 +56,16 @@ img {
     max-height: 100%;
 }
 .event-description {
-    padding: 20px;
+    text-align: left;
+    padding: 0 10px;
+}
+
+.buttons-container {
+    display: flex;
+    justify-content: center;
+}
+
+.m-r {
+    margin-right: 10px;
 }
 </style>

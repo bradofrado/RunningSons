@@ -2,6 +2,7 @@
     <div v-if="isAdmin" class="products-container">
         <admin-products class="item" name="Merchandise Types" :items="types" :inputs="inputs.types" url="/api/types" @upload="getMerchandiseTypes" @delete="getMerchandiseTypes"/>
         <admin-products class="item" name="Merchandise" :items="merchandise" :inputs="inputs.merchandise" url="/api/merchandise" @upload="getMerchandiseItems"  @delete="getMerchandiseItems"/>
+        <admin-products class="item" name="Events" :items="events" :inputs="inputs.events" url="/api/events" @upload="getEvents"  @delete="getEvents"/>
         <admin-products class="item" name="Songs" :items="songs" :inputs="inputs.songs" url="/api/songs" @upload="getSongs"  @delete="getSongs"/>
         <admin-products class="item" name="Albums" :items="albums" :inputs="inputs.albums" url="/api/albums" @upload="getAlbums"  @delete="getAlbums"/>
         <admin-products class="item" name="Bands" :items="bands" :inputs="inputs.bands" url="/api/bands" @upload="getBands"  @delete="getBands"/>
@@ -71,6 +72,33 @@ export default {
                         title: 'Sizes',
                         required: true,
                         component: AddKeyValue
+                    },
+                    image: {
+                        type: 'file',
+                        title: 'Choose an Image',
+                        required: false
+                    },
+                },
+                events: {
+                    title: {
+                        type: 'input',
+                        title: 'Title',
+                        required: true
+                    },
+                    description: {
+                        type: 'textarea',
+                        title: 'Description',
+                        required: true,
+                    },
+                    location: {
+                        type: 'input',
+                        title: 'Location',
+                        required: true,
+                    },
+                    date: {
+                        type: 'date',
+                        title: 'Date',
+                        required: true
                     },
                     image: {
                         type: 'file',
@@ -195,6 +223,7 @@ export default {
         async getEverything() {
             await this.getMerchandiseTypes();
             await this.getMerchandiseItems();
+            await this.getEvents();
             await this.getSongs();
             await this.getAlbums();
             await this.getBands();
@@ -223,6 +252,15 @@ export default {
                 const response = await axios.get('/api/songs');
 
                 this.songs = response.data;
+            } catch {
+                //
+            }
+        },
+        async getEvents() {
+            try {
+                const response = await axios.get('/api/events');
+
+                this.events = response.data;
             } catch {
                 //
             }
