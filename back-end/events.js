@@ -12,8 +12,12 @@ const path = '/images/events/';
 const upload = uploader.upload('/images/events').single('image');
 
 const eventsSchema = new mongoose.Schema({
-    title: String,
+    name: String,
     description: String,
+    price: {
+        type: Number,
+        default: 0
+    },
     image: String,
     date: Date,
     location: String,
@@ -65,7 +69,7 @@ router.get('/:id', async (req, res) => {
 });
 
 router.post('/', validUser(['admin']), upload, async (req, res) => {
-    if (!req.body.title ||  !req.body.description || !req.body.date || !req.body.location) {
+    if (!req.body.name ||  !req.body.description || !req.body.date || !req.body.location) {
         if (req.file) {
             uploader.delete(path + '/' + req.file.filename);
         }
@@ -75,10 +79,11 @@ router.post('/', validUser(['admin']), upload, async (req, res) => {
     }
     try {
         const event = new Event({
-            title: req.body.title,
+            name: req.body.name,
             description: req.body.description,
             image: req.file ? path + req.file.filename : null,
             location: req.body.location,
+            price: req.body.price,
             date: req.body.date,
         });
 
@@ -93,7 +98,7 @@ router.post('/', validUser(['admin']), upload, async (req, res) => {
 
 router.put('/:id', validUser(['admin']), upload, async (req, res) => {
     try {
-        if (!req.body.title ||  !req.body.description || !req.body.date || !req.body.location) {
+        if (!req.body.name ||  !req.body.description || !req.body.date || !req.body.location) {
             if (req.file) {
                 uploader.delete(path + '/' + req.file.filename);
             }
@@ -115,10 +120,11 @@ router.put('/:id', validUser(['admin']), upload, async (req, res) => {
         }
 
         const oldImage = event.image;
-
-        event.title = req.body.title;
+        
+        event.name = req.body.name;
         event.description = req.body.description;
         event.location = req.body.location;
+        event.price = req.body.price;
         event.image = req.file ? path + req.file.filename : event.image;
         event.date = req.body.date;
         

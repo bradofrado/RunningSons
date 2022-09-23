@@ -80,9 +80,9 @@ export default {
                     },
                 },
                 events: {
-                    title: {
+                    name: {
                         type: 'input',
-                        title: 'Title',
+                        title: 'Name',
                         required: true
                     },
                     description: {
@@ -94,6 +94,11 @@ export default {
                         type: 'input',
                         title: 'Location',
                         required: true,
+                    },
+                    price: {
+                        type: 'input',
+                        title: 'Price',
+                        required: false
                     },
                     date: {
                         type: 'date',

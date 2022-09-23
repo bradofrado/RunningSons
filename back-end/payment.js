@@ -112,7 +112,7 @@ router.post('/', validUser, async (req, res) => {
             item.bought = true;
             item.dateBought = new Date();
             
-            await item.item.updateSize(item.size, -item.quantity);
+            item.item.updateSize && await item.item.updateSize(item.size, -item.quantity);
             await item.save();
         }
 
