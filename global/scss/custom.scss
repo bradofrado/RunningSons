@@ -84,6 +84,14 @@ button {
     color: $black;
 }
 
+.button {
+    background-color: $white;
+}
+
+.button:hover:not(:disabled) {
+    cursor: pointer;
+}
+
 .button:hover:not(:disabled) {
     background-color: #919191;
 }

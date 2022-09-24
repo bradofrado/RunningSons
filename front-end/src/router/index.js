@@ -12,7 +12,8 @@ import SignupView from '@/views/SignupView.vue'
 import AlbumView from '@/views/AlbumView.vue'
 import SongView from '@/views/SongView.vue'
 import EventsView from '@/views/EventsView.vue'
-import EventView from '@/views/EventView.vue'
+//import EventView from '@/views/EventView.vue'
+import TicketView from '@/views/TicketView.vue'
 import TermsAndConditions from '@/components/TermsAndConditions.vue';
 import PrivacyPolicy from '@/components/PrivacyPolicy.vue';
 import Contact from '@/components/Contact.vue';
@@ -61,10 +62,15 @@ const routes = [
     name: 'events',
     component: EventsView
   },
+//   {
+//     path: '/events/:id',
+//     name: 'event',
+//     component: EventView
+//   },
   {
     path: '/events/:id',
     name: 'event',
-    component: EventView
+    component: TicketView
   },
   {
     path: '/cart',

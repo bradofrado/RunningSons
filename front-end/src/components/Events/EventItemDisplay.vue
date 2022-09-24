@@ -7,16 +7,16 @@
         <div class="d-flex justify-content-center no_hover">
             <span>{{date(event.date)}}</span> - <span>{{event.location}}</span>
         </div>
-        <p class="event-description">{{event.description}}</p>
+        <p class="event-description">{{event.subdescription}}</p>
         <div class="buttons-container">
-            <router-link class="button button-primary m-r" :to="to">Info</router-link>
-            <a class="button button-primary" href="/">Tickets</a>
+            <!-- <router-link class="button button-primary m-r" :to="to">Info</router-link> -->
+            <router-link class="button button-primary" :to="'/events/'+event._id">Tickets</router-link>
         </div>
     </div>
 </template>
 
 <script>
-import dayjs from 'dayjs';
+import {date} from '@/util.js';
 
 export default {
     name: "EventItemDisplay",
@@ -29,9 +29,7 @@ export default {
         }
     },
     methods: {
-        date(date) {
-            return dayjs(date).format('MM/DD/YYYY')
-        }
+        date
     }
 }
 </script>

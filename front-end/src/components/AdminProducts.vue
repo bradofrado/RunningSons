@@ -15,6 +15,7 @@
 import ImageButton from '@/components/ImageButton.vue';
 import Modal from './Modal.vue';
 import Uploader from './Uploader.vue';
+import {toUtc} from '@/util.js';
 
 import axios from 'axios';
 
@@ -95,6 +96,10 @@ export default {
                     if (this.inputs[key].type === 'file') {
                         if (typeof outputs[key] === 'object')
                             formData.append(key, outputs[key], outputs[key].name);
+                    }
+                    else if (this.inputs[key].type === 'date') {
+                        console.log(outputs[key]);
+                        formData.append(key, toUtc(outputs[key]));
                     }
                     else {
                         if (typeof outputs[key] === 'object')

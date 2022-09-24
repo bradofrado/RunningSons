@@ -28,6 +28,7 @@ export default {
             albums: null,
             bands: null,
             codes: null,
+            events: null,
             inputs: {
                 types: {
                     name: {
@@ -90,6 +91,11 @@ export default {
                         title: 'Description',
                         required: true,
                     },
+                    subdescription: {
+                        type: 'textarea',
+                        title: 'Subdescription',
+                        required: true,
+                    },
                     location: {
                         type: 'input',
                         title: 'Location',
@@ -104,6 +110,11 @@ export default {
                         type: 'date',
                         title: 'Date',
                         required: true
+                    },
+                    time: {
+                        type: 'input',
+                        title: 'Time',
+                        required: false
                     },
                     image: {
                         type: 'file',

@@ -6,7 +6,7 @@
         <div class="info-container">
             <h1>{{theItem.name}}</h1>
             <span>${{theItem.price.toFixed(2)}}</span>
-            <p>{{theItem.description}}</p>
+            <slot><p>{{theItem.description}}</p></slot>
             <div>
                 <span>Quantity:</span>
                 <number-picker v-model="numItems" class="date-picker" :max="max"/>
@@ -16,9 +16,12 @@
                 <select-size :sizes="theItem.sizes" v-model="theItem.size"/>
             </div>
             <p v-if="error" class="danger">{{error}}</p>
-            <button class="button button-primary" @click="addToCart" :disabled="loading" v-spinner="loading">
-                {{addToCartText}}
-            </button>
+            <div class="buttons-container">
+                <button class="button button-primary" @click="addToCart" :disabled="loading" v-spinner="loading">
+                    {{addToCartText}}
+                </button>
+                <venmo-button v-if="venmo"/>
+            </div>
         </div>
     </div>
 </template>
@@ -27,17 +30,23 @@
 import NumberPicker from '../components/NumberPicker.vue';
 import axios from 'axios';
 import SelectSize from './SelectSize.vue';
+import VenmoButton from './VenmoButton.vue';
 
 export default {
     name: "MerchItem",
     components: {
         NumberPicker,
         SelectSize,
+        VenmoButton,
     },
     props: {
         item: Object,
         edit: Boolean,
-        type: String
+        type: String,
+        venmo: {
+            default: true,
+            type: Boolean
+        }
     },
     data() {
         return {
@@ -70,10 +79,6 @@ export default {
     },
     watch: {
         numItems() {
-            // if (this.added) {
-            //     this.isEdit = true;
-            // }
-
             this.added = false;
         }
     },
@@ -130,6 +135,11 @@ export default {
 </script>
 
 <style scoped>
+p {
+    margin-top: 0 !important;
+    margin-bottom: 0 !important;
+}
+
 .merch-container {
     display: flex;
     flex-direction: column;
@@ -143,8 +153,8 @@ export default {
     padding: 0 10%;
 }
 
-.info-container > * {
-    padding: 20px;
+.info-container > *:not(.close) {
+    padding: 20px 0;
 }
 
 .info-container > *:first-child {
@@ -153,6 +163,7 @@ export default {
 
 h1 {
     margin: 0;
+    padding: 0;
 }
 
 .date-picker {
@@ -162,8 +173,17 @@ img {
     width: 100%;
 }
 
-button {
-    width: 100%;
+.buttons-container {
+    padding: 0;
+    display: flex;
+}
+
+.buttons-container > :first-child {
+    margin-right: 10px;
+}
+
+.buttons-container > .button {
+    flex: 1;
 }
 
 p.danger {

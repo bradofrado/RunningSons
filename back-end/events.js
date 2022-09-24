@@ -13,6 +13,7 @@ const upload = uploader.upload('/images/events').single('image');
 
 const eventsSchema = new mongoose.Schema({
     name: String,
+    subdescription: String,
     description: String,
     price: {
         type: Number,
@@ -20,6 +21,10 @@ const eventsSchema = new mongoose.Schema({
     },
     image: String,
     date: Date,
+    time: {
+        type: String,
+        default: "7:00 PM"
+    },
     location: String,
     isDeleted: {
         type: Boolean,
@@ -69,7 +74,7 @@ router.get('/:id', async (req, res) => {
 });
 
 router.post('/', validUser(['admin']), upload, async (req, res) => {
-    if (!req.body.name ||  !req.body.description || !req.body.date || !req.body.location) {
+    if (!req.body.name ||  !req.body.description || !req.body.subdescription || !req.body.date || !req.body.location) {
         if (req.file) {
             uploader.delete(path + '/' + req.file.filename);
         }
@@ -81,10 +86,12 @@ router.post('/', validUser(['admin']), upload, async (req, res) => {
         const event = new Event({
             name: req.body.name,
             description: req.body.description,
+            subdescription: req.body.subdescription,
             image: req.file ? path + req.file.filename : null,
             location: req.body.location,
             price: req.body.price,
             date: req.body.date,
+            time: req.body.time,
         });
 
         await event.save();
@@ -98,7 +105,7 @@ router.post('/', validUser(['admin']), upload, async (req, res) => {
 
 router.put('/:id', validUser(['admin']), upload, async (req, res) => {
     try {
-        if (!req.body.name ||  !req.body.description || !req.body.date || !req.body.location) {
+        if (!req.body.name ||  !req.body.description || !req.body.subdescription || !req.body.date || !req.body.location) {
             if (req.file) {
                 uploader.delete(path + '/' + req.file.filename);
             }
@@ -123,10 +130,12 @@ router.put('/:id', validUser(['admin']), upload, async (req, res) => {
         
         event.name = req.body.name;
         event.description = req.body.description;
+        event.subdescription = req.body.subdescription;
         event.location = req.body.location;
         event.price = req.body.price;
         event.image = req.file ? path + req.file.filename : event.image;
         event.date = req.body.date;
+        event.time = req.body.time;
         
         if (oldImage != event.image) {
             uploader.delete(oldImage);
