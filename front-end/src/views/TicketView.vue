@@ -3,12 +3,16 @@
         Loading...
     </h1>
     <merch-item v-else :item="event" :edit="edit" type="Event">
-        <div class="close">{{event.location}}</div>
-        <div class="close">{{date(event.date)}} - {{event.time}}</div>
-        <p>{{event.description}}</p>
-        <p>If you are ordering on venmo, pay ${{event.price.toFixed(2)}} with names for each ticket you want to buy
-            and we will put you on our list!
-        </p>
+        <template #default>
+            <div class="close">{{event.location}}</div>
+            <div class="close">{{date(event.date)}} - {{event.time}}</div>
+            <p>{{event.description}}</p>
+        </template>
+        <template #venmo>
+            <p>If you are ordering on venmo, pay ${{event.price.toFixed(2)}} for each ticket with names
+                and we will put you on our list!
+            </p>
+        </template>
     </merch-item>
 </template>
 

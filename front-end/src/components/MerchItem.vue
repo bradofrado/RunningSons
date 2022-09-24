@@ -6,7 +6,9 @@
         <div class="info-container">
             <h1>{{theItem.name}}</h1>
             <span>${{theItem.price.toFixed(2)}}</span>
-            <slot><p>{{theItem.description}}</p></slot>
+            <slot>
+                <p>{{theItem.description}}</p>
+            </slot>
             <div>
                 <span>Quantity:</span>
                 <number-picker v-model="numItems" class="date-picker" :max="max"/>
@@ -15,6 +17,8 @@
                 <span>Sizes:</span>
                 <select-size :sizes="theItem.sizes" v-model="theItem.size"/>
             </div>
+            <slot name="venmo">
+            </slot>
             <p v-if="error" class="danger">{{error}}</p>
             <div class="buttons-container">
                 <button class="button button-primary" @click="addToCart" :disabled="loading" v-spinner="loading">
