@@ -1,20 +1,17 @@
 <template>
-    <div class="song-view">
-        <div class="image-container">
-            <img :src="song.image"/>
-        </div>
-        <div class="info-container">
-            <h1>{{song.title}}</h1>
-            <h4 class="text-secondary">{{song.album}}</h4>
-            <p>{{song.description}}</p>
-        </div>
-    </div>
+    <image-view :image="song.image">
+        <h1>{{song.title}}</h1>
+        <h4 class="text-secondary">{{song.album}}</h4>
+        <p>{{song.description}}</p>
+    </image-view>
 </template>
 
 <script>
 import axios from 'axios';
+import ImageView from '../components/ImageView.vue';
 
 export default {
+  components: { ImageView },
     name: "SongView",
     data() {
         return {
@@ -38,38 +35,7 @@ export default {
 </script>
 
 <style scoped>
-.song-view {
-    display: flex;
-    flex-direction: column;
-}
-
-.image-container {
-    padding: 0 60px;
-}
-
-.info-container {
-    display: flex;
-    flex-direction: column;
-}
-
-.info-container p {
-    padding-top: 1rem;
-    text-align: left;
-}
-
-img {
-    width: 100%;
-}
-
-@media only screen and (min-width: 960px) {
-    .song-view {
-        flex-direction: row;
-        padding: 20px 40px;
-    }
-
-        .song-view div {
-        width: 50%;
-    }
-
+.a {
+    
 }
 </style>

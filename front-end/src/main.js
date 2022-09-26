@@ -4,6 +4,10 @@ import router from './router'
 import components from '../../global'
 import { BootstrapVue } from 'bootstrap-vue'
 import axios from 'axios'
+import dayjs from 'dayjs';
+
+var utc = require('dayjs/plugin/utc')
+dayjs.extend(utc)
 
 // Make BootstrapVue available throughout your project
 Vue.use(BootstrapVue);

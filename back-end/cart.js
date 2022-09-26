@@ -4,6 +4,12 @@ const mongoose = require('mongoose');
 const router = express.Router();
 
 const merchandise = require('./merchandise.js');
+const events = require('./events.js');
+
+const models = {
+    Merchandise: merchandise.model,
+    Event: events.model
+}
 
 const user = require('./users.js');
 const valid = user.valid;
@@ -12,7 +18,12 @@ const opts = { toObject: { virtuals: true } };
 const cartItemSchema = new mongoose.Schema({
     item: {
         type: mongoose.Schema.ObjectId,
-        ref: 'Merchandise'
+        refPath: 'itemType'
+    },
+    itemType: {
+        type: String,
+        enum: ['Merchandise', 'Event'],
+        default: 'Merchandise'
     },
     user: {
         type: mongoose.Schema.ObjectId,
@@ -38,10 +49,18 @@ cartItemSchema.virtual('total').get(function() {
     return this.item.price * this.quantity;
 });
 cartItemSchema.virtual('fullName').get(function() {
-    return `${this.item.name} (${this.size})`;
+    if (this.size) {
+        return `${this.item.name} (${this.size})`;
+    }
+
+    return this.item.name;
 })
 
 cartItemSchema.methods.checkSize = async function(size) {
+    if (!size) {
+        return true;
+    }
+
     if (!this.item.sizes) {
         await this.populate();
     }
@@ -58,17 +77,21 @@ cartItemSchema.methods.toJSON = function() {
     obj = Object.assign(obj, obj.item);
     obj._id = id;
     obj.merchItem = obj.item._id;
-    obj.type = obj.type.type;
+
+    if (obj.type) {
+        obj.type = obj.type.type;
+    }
 
     delete obj.item;
     delete obj.isDeleted;
+    delete obj.itemType;
 
     return obj;
 }
 
 cartItemSchema.methods.populate = async function() {
     if (mongoose.isValidObjectId(this.item)) {
-        const item = await merchandise.model.findOne({
+        const item = await models[this.itemType].findOne({
             _id: this.item
         });
 
@@ -161,7 +184,7 @@ router.get('/:id', valid, async (req, res) => {
 });
 
 router.post('/', async (req, res) => {
-    if (!req.body.item || !req.body.quantity || !req.body.size) {
+    if (!req.body.item || !req.body.quantity) {
         return res.status(400).send({
             message: "Invalid body parameters"
         })
@@ -177,7 +200,8 @@ router.post('/', async (req, res) => {
             quantity: req.body.quantity,
             size: req.body.size,
             user: req.session.userID,
-            dateCreated: new Date()
+            dateCreated: new Date(),
+            itemType: req.query.type
         });
 
         if (!await item.checkSize(req.body.size)) {
@@ -196,7 +220,7 @@ router.post('/', async (req, res) => {
 });
 
 router.put('/:id', valid, async (req, res) => {
-    if (!req.body.quantity || !req.body.size) {
+    if (!req.body.quantity) {
         return res.status(400).send({
             message: "Invalid body parameters"
         })
@@ -218,6 +242,10 @@ router.put('/:id', valid, async (req, res) => {
         item.quantity = req.body.quantity;
         item.size = req.body.size;
         item.dateModified = new Date();
+
+        if (req.query.type) {
+            item.itemType = req.query.type;
+        }
 
         if (!await item.checkSize(req.body.size)) {
             return res.status(400).send({

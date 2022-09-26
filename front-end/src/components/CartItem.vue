@@ -120,6 +120,10 @@ export default CartItem;
     width: 100%;
 }
 
+.item-product > * {
+    flex: 1;
+}
+
 .item-product > p {
     margin-left: 20px;
 }
@@ -154,9 +158,9 @@ td {
     width: 50%;
 } */
 
-.image-container {
+/* .image-container {
     width: 50%;
-}
+} */
 
 .data-container {
     width: 200px;

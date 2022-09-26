@@ -2,7 +2,13 @@
     <h1 v-if="!item">
         Loading...
     </h1>
-    <merch-item v-else :item="item" :edit="edit"/>
+    <merch-item v-else :item="item" :edit="edit">
+        <template #venmo>
+            <p>If using venmo, pay ${{item.price.toFixed(2)}} with your name and address 
+                and we will ship this item to you!
+            </p>
+        </template>
+    </merch-item>
 </template>
 
 <script>

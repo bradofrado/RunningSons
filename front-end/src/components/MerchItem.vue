@@ -5,20 +5,27 @@
         </div>
         <div class="info-container">
             <h1>{{theItem.name}}</h1>
-            <span>${{theItem.price}}</span>
-            <p>{{theItem.description}}</p>
+            <span>${{theItem.price.toFixed(2)}}</span>
+            <slot>
+                <p>{{theItem.description}}</p>
+            </slot>
             <div>
                 <span>Quantity:</span>
                 <number-picker v-model="numItems" class="date-picker" :max="max"/>
             </div>
-            <div>
+            <div v-if="hasSize">
                 <span>Sizes:</span>
                 <select-size :sizes="theItem.sizes" v-model="theItem.size"/>
             </div>
+            <slot name="venmo">
+            </slot>
             <p v-if="error" class="danger">{{error}}</p>
-            <button class="button button-primary" @click="addToCart" :disabled="loading" v-spinner="loading">
-                {{addToCartText}}
-            </button>
+            <div class="buttons-container">
+                <button class="button button-primary" @click="addToCart" :disabled="loading" v-spinner="loading">
+                    {{addToCartText}}
+                </button>
+                <venmo-button v-if="venmo"/>
+            </div>
         </div>
     </div>
 </template>
@@ -27,16 +34,23 @@
 import NumberPicker from '../components/NumberPicker.vue';
 import axios from 'axios';
 import SelectSize from './SelectSize.vue';
+import VenmoButton from './VenmoButton.vue';
 
 export default {
     name: "MerchItem",
     components: {
         NumberPicker,
         SelectSize,
+        VenmoButton,
     },
     props: {
         item: Object,
         edit: Boolean,
+        type: String,
+        venmo: {
+            default: true,
+            type: Boolean
+        }
     },
     data() {
         return {
@@ -62,20 +76,19 @@ export default {
         },
         max() {
             return this.theItem.size ? this.theItem.sizes[this.theItem.size] : null;
+        },
+        hasSize() {
+            return this.item.sizes != null && this.item.sizes != undefined;
         }
     },
     watch: {
         numItems() {
-            // if (this.added) {
-            //     this.isEdit = true;
-            // }
-
             this.added = false;
         }
     },
     methods: {
         async addToCart() {
-            if (!this.theItem.size || this.theItem.sizes[this.theItem.size] <= 0) {
+            if (this.hasSize && (!this.theItem.size || this.theItem.sizes[this.theItem.size] <= 0)) {
                 this.error = 'Please select a size';
                 return;
             }
@@ -84,13 +97,23 @@ export default {
                 this.loading = true;
                 //If we are editing this item, then put it
                 if (this.isEdit) {
-                    await axios.put('/api/cart/' + this.theItem._id, {
+                    let url = '/api/cart/' + this.theItem._id;
+                    if (this.type) {
+                        url += '?type=' + this.type;
+                    }
+
+                    await axios.put(url, {
                         quantity: this.numItems,
                         size: this.theItem.size
                     });
                 //Otherwise make a new one
                 } else {
-                    await axios.post('/api/cart', {
+                    let url = '/api/cart';
+                    if (this.type) {
+                        url += '?type=' + this.type;
+                    }
+
+                    await axios.post(url, {
                         item: this.theItem,
                         quantity: this.numItems,
                         size: this.theItem.size
@@ -116,6 +139,11 @@ export default {
 </script>
 
 <style scoped>
+p {
+    margin-top: 0 !important;
+    margin-bottom: 0 !important;
+}
+
 .merch-container {
     display: flex;
     flex-direction: column;
@@ -129,8 +157,8 @@ export default {
     padding: 0 10%;
 }
 
-.info-container > * {
-    padding: 20px;
+.info-container > *:not(.close) {
+    padding: 20px 0;
 }
 
 .info-container > *:first-child {
@@ -139,6 +167,7 @@ export default {
 
 h1 {
     margin: 0;
+    padding: 0;
 }
 
 .date-picker {
@@ -148,8 +177,17 @@ img {
     width: 100%;
 }
 
-button {
-    width: 100%;
+.buttons-container {
+    padding: 0;
+    display: flex;
+}
+
+.buttons-container > :first-child {
+    margin-right: 10px;
+}
+
+.buttons-container > .button {
+    flex: 1;
 }
 
 p.danger {
