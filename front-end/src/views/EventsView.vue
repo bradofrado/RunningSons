@@ -1,7 +1,10 @@
 <template>
 <div>
     <h1>Events</h1>
-    <div v-if="events.length == 0">
+    <h1 v-if="!events">
+        Loading...
+    </h1>
+    <div v-else-if="events.length == 0">
         <p>Sorry, there are no events. Check back later!</p>
     </div>
     <div v-else class="events-container">
@@ -21,7 +24,7 @@ export default {
     },
     data() {
         return {
-            events: []
+            events: null
         }
     },
     async created() {

@@ -9,8 +9,7 @@
         </div>
         <p class="event-description">{{event.subdescription}}</p>
         <div class="buttons-container">
-            <!-- <router-link class="button button-primary m-r" :to="to">Info</router-link> -->
-            <router-link class="button button-primary" :to="'/events/'+event._id">Tickets</router-link>
+            <router-link class="button button-primary" :to="'/events/'+event._id">{{text}}</router-link>
         </div>
     </div>
 </template>
@@ -26,6 +25,9 @@ export default {
     computed: {
         to() {
             return '/events/' + this.event._id;
+        },
+        text() {
+            return this.event.price > 0 ? 'Tickets' : 'Info';
         }
     },
     methods: {
