@@ -1,5 +1,5 @@
 <template>
-    <div v-if="center" v-b-tooltip.hover :title="title" :class="'image-button-container' + (dark ? ' dark' : '')">
+    <div v-if="center" v-b-tooltip.hover :title="title" v-on="$listeners" :class="'image-button-container' + (dark ? ' dark' : '')">
         <div v-if="img" class="image-container">
             <img :src="img">
         </div>
@@ -13,7 +13,7 @@
             <div class="image-button-text center-center" >{{name ? name : ''}}</div>
         </div>
     </div>
-    <div v-else v-b-tooltip.hover :title="title" :class="'image-button-container-2 image-hover transition-background' + (img ? ' no-color ' : '') + (dark ? ' dark' : '')" @click="onClick">
+    <div v-else v-b-tooltip.hover :title="title" v-on="$listeners" :class="'image-button-container-2 image-hover transition-background' + (img ? ' no-color ' : '') + (dark ? ' dark' : '')" @click="onClick">
         <div v-if="img" class="image-container-2">
             <img :src="img">
         </div>

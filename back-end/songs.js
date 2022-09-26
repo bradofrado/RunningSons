@@ -16,6 +16,7 @@ const songSchema = new mongoose.Schema({
         type: mongoose.Schema.ObjectId,
         ref: 'Album'
     },
+    order: Number,
     description: String,
     image: String,
     isDeleted: {
@@ -61,7 +62,7 @@ songSchema.methods.toJSON = function() {
 }
 
 songSchema.pre(/^find/, function() {
-    this.where({isDeleted: false});
+    this.where({isDeleted: false}).sort({order: 1});;
 });
 
 songSchema.post(/^find/, async function(docs, next) {
@@ -139,11 +140,15 @@ router.post('/', validUser(['admin']), upload, async(req, res) => {
             })
         }
 
+        let aggregate = await Song.aggregate().group({ _id: null, order: { $max: '$order' } });
+        const order = aggregate[0].order + 1;
+
         const song = new Song({
             title: req.body.title,
             image: req.file ? path + '/' + req.file.filename : '',
             description: req.body.description,
-            album: album
+            album: album,
+            order: order
         });
 
         await song.save();
@@ -152,6 +157,51 @@ router.post('/', validUser(['admin']), upload, async(req, res) => {
     } catch(error) {
         console.log(error);
         res.sendStatus(500);
+    }
+});
+
+router.put('/order', validUser(['admin']), async (req, res) => {
+    try {
+        if (!req.body.items || !Array.isArray(req.body.items)) {
+            console.log("Invalid body parameters");
+            return res.status(400).send({
+                message: "Invalid body parameters"
+            })
+        }
+
+        const items = req.body.items;
+        const toUpdate = [];
+
+        //Loop twice. Once to error check, another to do the saving
+        for (let i = 0; i < items.length; i++) {
+            const id = items[i]._id;
+            const order = items[i].order;
+            const item = await Song.findOne({
+                _id: id
+            });
+
+            if (!item) {
+                console.log("Could not find song " + id);
+                return res.status(400).send({
+                    message: "Could not find song " + id
+                })
+            }
+
+            toUpdate.push({item: item, order: order});
+        }
+
+        for (let i = 0; i < toUpdate.length; i++) {
+            const item = toUpdate[i].item;
+            const order = toUpdate[i].order;
+
+            item.order = order;
+            await item.save();
+        }
+
+        return res.send(toUpdate.map(x => x.item));
+
+    } catch(error) {
+        console.log(error);
     }
 })
 

@@ -1,8 +1,8 @@
 <template>
 <div>
     <h4>{{name}}</h4>
-    <div class="items-container">
-        <image-button v-for="item in items" :key="item._id" :img="item.image" :name="!item.image ? item.name : null" @click="editItem(item)" :title="item.name || item.title"/>
+    <div class="items-container" >
+        <image-button :draggable="isDraggable" @dragstart="onDrag($event, item)" @drop="onDrop($event, i)" @dragover.prevent @dragenter.prevent v-for="(item,i) in sorted" :key="item._id" :img="item.image" :name="!item.image ? item.name : null" @click="editItem(item)" :title="item.name || item.title"/>
         <image-button name="Add" @click="addItem"/>
     </div>
     <modal :show="show">
@@ -45,9 +45,54 @@ export default {
     computed: {
         title() {
             return this.editRoom ? 'Edit ' + (this.editRoom.name || this.editRoom.title) : 'Add ' + this.name;
+        },
+        sorted() {
+            if (this.isDraggable) {
+                return this.items.slice().sort((a, b) => a.order - b.order);
+            }
+
+            return this.items;
+        },
+        isDraggable() {
+            return this.items.length > 0 && this.items[0].order >= 0;
         }
     },
     methods: {
+        onDrag(evt, item) {
+            evt.dataTransfer.dropEffect = 'move'
+            evt.dataTransfer.effectAllowed = 'move'
+            evt.dataTransfer.setData('itemID', item._id);
+            evt.dataTransfer.setData('order', item.order);
+        },
+        async onDrop(evt, order) {
+            const itemID = evt.dataTransfer.getData('itemID')
+            const item = this.items.find((item) => item._id == itemID)
+            const startOrder = parseInt(evt.dataTransfer.getData('order'));
+
+            //Don't do anything if we did not change positions
+            if (order == startOrder) {
+                return;
+            }
+
+            if (order > startOrder) {
+                for (let i = startOrder + 1; i <= order; i++) {
+                    const _item = this.items.find((item) => item.order == i);
+                    _item.order--;
+                }
+            } else if (order < startOrder) {
+                for (let i = order; i < startOrder; i++) {
+                    const _item = this.items.find((item) => item.order == i);
+                    _item.order++;
+                }
+            }
+            item.order = order;
+
+            try {
+                await axios.put('/api/songs/order', {items: this.items});
+            } catch {
+                //
+            }
+        },
         addItem() {
             this.theInputs = Copy(this.$props.inputs);
             this.show = true;

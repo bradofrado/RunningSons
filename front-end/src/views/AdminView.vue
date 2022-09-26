@@ -22,13 +22,13 @@ export default {
     },
     data() {
         return {
-            types: null,
-            merchandise: null,
-            songs: null,
-            albums: null,
-            bands: null,
-            codes: null,
-            events: null,
+            types: [],
+            merchandise: [],
+            songs: [],
+            albums: [],
+            bands: [],
+            codes: [],
+            events: [],
             inputs: {
                 types: {
                     name: {
