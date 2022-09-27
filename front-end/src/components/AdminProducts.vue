@@ -2,7 +2,7 @@
 <div>
     <h4>{{name}}</h4>
     <div class="items-container" >
-        <image-button :draggable="isDraggable" @dragstart="onDrag($event, item)" @drop="onDrop($event, i)" @dragover.prevent @dragenter.prevent v-for="(item,i) in sorted" :key="item._id" :img="item.image" :name="!item.image ? item.name : null" @click="editItem(item)" :title="item.name || item.title"/>
+        <image-button :draggable="isDraggable" @dragstart="onDrag($event, item)" @drop="onDrop($event, item.order)" @dragover.prevent @dragenter.prevent v-for="item in sorted" :key="item._id" :img="item.image" :name="!item.image ? item.name : null" @click="editItem(item)" :title="item.name || item.title"/>
         <image-button name="Add" @click="addItem"/>
     </div>
     <modal :show="show">
