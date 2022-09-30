@@ -19,6 +19,10 @@ const songSchema = new mongoose.Schema({
     order: Number,
     description: String,
     image: String,
+    weight: {
+        type: Number,
+        default: 0
+    },
     isDeleted: {
         type: Boolean,
         default: false
@@ -116,6 +120,19 @@ router.get('/', async (req, res) => {
         res.sendStatus(500);
     }
 });
+
+router.get('/featured', async (req, res) => {
+    try {
+        let songs = await Song.find();
+
+        let items = songs.slice().sort((a, b) => b.weight - a.weight).slice(0,3);
+
+        res.send(items);
+    } catch (error) {
+        console.log(error);
+        res.sendStatus(500);
+    }
+})
 
 router.post('/', validUser(['admin']), upload, async(req, res) => {
     if (!req.body.title || !req.body.description || !req.body.album) {

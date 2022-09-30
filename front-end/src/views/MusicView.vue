@@ -2,7 +2,7 @@
 <div>
     <h1>This is Running Sons</h1>
     <div class="songs-container">
-        <song-line-item class="song-item" v-for="(song, i) in songs" :key="song._id" :song="song" :index="i"/>
+        <song-line-item class="song-item" v-for="(song, i) in featured" :key="song._id" :song="song" :index="i"/>
     </div>
     <image-list name="Albums" :items="albums" to="/music/" />
 </div>
@@ -26,10 +26,15 @@ export default {
         await this.getMusic();
         await this.getAlbums();
     },
+    computed: {
+        featured() {
+            return this.songs;
+        }
+    },
     methods: {
         async getMusic() {
             try {
-                const response = await axios.get('/api/songs');
+                const response = await axios.get('/api/songs/featured');
 
                 this.songs = response.data; 
             } catch {

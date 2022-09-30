@@ -14,14 +14,21 @@
 export default {
     name: "MerchItemButton",
     props: {
-        item: Object
+        item: Object,
+        type: {
+            type: String,
+            default: 'merchandise'
+        }
     },
     computed: {
         hasClick() {
             return this.$listeners && this.$listeners.click;
         },
         to() {
-            return '/merchandise/' + this.item.name;
+            return '/' + this.type + '/' + this.endPoint;
+        },
+        endPoint() {
+            return this.type === 'events' ? this.item._id : this.item.name;
         }
     },
     methods: {

@@ -25,6 +25,10 @@ const eventsSchema = new mongoose.Schema({
         type: String,
         default: "7:00 PM"
     },
+    weight: {
+        type: Number,
+        default: 0
+    },
     location: String,
     isDeleted: {
         type: Boolean,
@@ -53,6 +57,19 @@ router.get('/', async (req, res) => {
         res.sendStatus(500);
     }
 });
+
+router.get('/featured', async (req, res) => {
+    try {
+        let events = await Event.find();
+
+        let items = events.slice(0,3);
+
+        res.send(items);
+    } catch (error) {
+        console.log(error);
+        res.sendStatus(500);
+    }
+})
 
 router.get('/:id', async (req, res) => {
     try {

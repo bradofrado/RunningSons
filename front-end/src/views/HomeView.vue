@@ -9,6 +9,7 @@
         <image-button class="imadge-item" to="/merchandise" img="/images/MerchLogo.png"/>
     </div>
     <merch-collection :items="items" label="Featured Items"/>
+    <merch-collection class="m-t-1" :items="events" label="Upcoming Events" type="events"/>
 </div>
 </template>
 
@@ -27,17 +28,27 @@ export default {
     },
     data() {
         return {
-            items: []
+            items: [],
+            events: []
         }
     },
     async created() {
         await this.getMerchandise();
+        await this.getEvents();
     },
     methods: {
         async getMerchandise() {
             try {
-                const response = await axios.get('/api/merchandise');
+                const response = await axios.get('/api/merchandise/featured');
                 this.items = response.data;
+            } catch {
+                //
+            }
+        },
+        async getEvents() {
+            try {
+                const response = await axios.get('/api/events/featured');
+                this.events = response.data;
             } catch {
                 //
             }
@@ -70,6 +81,10 @@ export default {
 
 .image-item {
     margin: auto;
+}
+
+.m-t-1 {
+    margin-top: 100px;
 }
 
 @media only screen and (min-width: 960px) {

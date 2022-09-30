@@ -22,6 +22,10 @@ const merchandiseSchema = new mongoose.Schema({
         type: mongoose.Schema.ObjectId,
         ref: "MerchandiseType"
     },
+    weight: {
+        type: Number,
+        default: 0
+    },
     sizes: Object,
     isDeleted: {
         type: Boolean,
@@ -123,6 +127,19 @@ router.get('/type/:type', async (req, res) => {
         console.log(error);
     }
 });
+
+router.get('/featured', async (req, res) => {
+    try {
+        let merch = await Merchandise.find();
+
+        let items = merch.slice().sort((a, b) => b.weight - a.weight).slice(0,3);
+
+        res.send(items);
+    } catch (error) {
+        console.log(error);
+        res.sendStatus(500);
+    }
+})
 
 router.get('/:name', async (req, res) => {
     try {
