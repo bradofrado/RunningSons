@@ -22,6 +22,7 @@ const merchandiseSchema = new mongoose.Schema({
         type: mongoose.Schema.ObjectId,
         ref: "MerchandiseType"
     },
+    order: Number,
     weight: {
         type: Number,
         default: 0
@@ -47,7 +48,7 @@ merchandiseSchema.methods.populateType = async function() {
 }
 
 merchandiseSchema.pre(/^find/, function() {
-    this.where({isDeleted: false});
+    this.where({isDeleted: false}).sort({order: 1});
 });
 
 merchandiseSchema.post('find', async function(docs, next) {
@@ -180,12 +181,17 @@ router.post('/', validUser(['admin']), upload, async (req, res) => {
                 message: "Could not find the merchandise type " + req.body.type
             })
         }
+
+        let aggregate = await Merchandise.aggregate().group({ _id: null, order: { $max: '$order' } });
+        const order = aggregate[0].order + 1;
+
         const merchandise = new Merchandise({
             name: req.body.name,
             description: req.body.description,
             image: req.file ? path + req.file.filename : null,
             price: req.body.price,
-            type: merchandiseType._id
+            type: merchandiseType._id,
+            order: order
         });
 
         if (req.body.sizes) {
@@ -200,6 +206,35 @@ router.post('/', validUser(['admin']), upload, async (req, res) => {
         res.sendStatus(500);
     }
 });
+
+router.put('/order', validUser(['admin']), async (req, res) => {
+    try {
+        if (!req.body.items || !Array.isArray(req.body.items)) {
+            console.log("Invalid body parameters");
+            return res.status(400).send({
+                message: "Invalid body parameters"
+            })
+        }
+
+        const items = req.body.items;
+
+        let allItems;
+        try {
+            allItems = await util.sortItems(items, Merchandise);
+        } catch(error) {
+            console.log("Cannot find song with id " + error.message);
+            return res.status(400).send({
+                message: "Cannot find song with id " + error.message
+            })
+        }
+        
+
+        return res.send(allItems);
+
+    } catch(error) {
+        console.log(error);
+    }
+})
 
 router.put('/:id', validUser(['admin']), upload, async (req, res) => {
     try {

@@ -7,6 +7,7 @@ const path = '/images/songs';
 
 const env = require('./env.js');
 const Album = require('./albums.js').model;
+const util = require('./util.js');
 
 const upload = uploader.upload(path).single('image');
 
@@ -66,7 +67,7 @@ songSchema.methods.toJSON = function() {
 }
 
 songSchema.pre(/^find/, function() {
-    this.where({isDeleted: false}).sort({order: 1});;
+    this.where({isDeleted: false}).sort({order: 1});
 });
 
 songSchema.post(/^find/, async function(docs, next) {
@@ -189,34 +190,17 @@ router.put('/order', validUser(['admin']), async (req, res) => {
         }
 
         const items = req.body.items;
-        const allItems = await Song.find();
-        const toUpdate = [];
 
-        //Loop twice. Once to error check, another to do the saving
-        for (let i = 0; i < items.length; i++) {
-            const id = items[i]._id;
-            const order = items[i].order;
-            const item = allItems.find(x => x._id.toString() == id.toString());
-
-            if (!item) {
-                console.log("Could not find song " + id);
-                return res.status(400).send({
-                    message: "Could not find song " + id
-                })
-            }
-
-            if (item.order != order) {
-                toUpdate.push({item: item, order: order});
-            }
+        let allItems;
+        try {
+            allItems = await util.sortItems(items, Song);
+        } catch(error) {
+            console.log("Cannot find song with id " + error.message);
+            return res.status(400).send({
+                message: "Cannot find song with id " + error.message
+            })
         }
-
-        for (let i = 0; i < toUpdate.length; i++) {
-            const item = toUpdate[i].item;
-            const order = toUpdate[i].order;
-
-            item.order = order;
-            await item.save();
-        }
+        
 
         return res.send(allItems);
 

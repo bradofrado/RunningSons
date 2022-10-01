@@ -88,7 +88,7 @@ export default {
             item.order = order;
 
             try {
-                await axios.put('/api/songs/order', {items: this.items});
+                await axios.put(this.url + '/order', {items: this.items});
             } catch {
                 //
             }
