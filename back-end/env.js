@@ -9,4 +9,5 @@ module.exports = {
     mongoConnection: mongoConnection,
     root: root,
     port: port,
+    stripeKey: process.env.STRIPE_PUBLISHABLE_KEY
 }

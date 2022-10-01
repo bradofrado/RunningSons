@@ -6,10 +6,11 @@ const validUser = user.valid;
 
 const cart = require('./cart.js');
 const util = require('./util.js');
+const env = require('./env.js');
 const Code = require('./couponcodes.js').model;
 
 const router = express.Router();
-const stripe = require("stripe")('sk_test_51LKwWoBXqDku0t2IqIBSAtSq6qCsXOOcVT1yCw9B4DkGSAymFCo0f1IkavOKONVxbhyekTEUA1EzRuUBpDDJWoYE00IVnboIS8');
+const stripe = require("stripe")(env.stripeKey);
 
 const shipping = 5;
 
