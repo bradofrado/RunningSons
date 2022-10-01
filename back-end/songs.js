@@ -78,10 +78,12 @@ songSchema.post(/^find/, async function(docs, next) {
 
     for (let i = items.length - 1; i >= 0; i--) {
         let item = items[i];
-        item && await item.populate();
+        if (item && item.populate) {
+            item && await item.populate();
 
-        if (item && !item.album) {
-            items.splice(i, 1);
+            if (item && !item.album) {
+                items.splice(i, 1);
+            }
         }
     }
 
@@ -187,15 +189,14 @@ router.put('/order', validUser(['admin']), async (req, res) => {
         }
 
         const items = req.body.items;
+        const allItems = await Song.find();
         const toUpdate = [];
 
         //Loop twice. Once to error check, another to do the saving
         for (let i = 0; i < items.length; i++) {
             const id = items[i]._id;
             const order = items[i].order;
-            const item = await Song.findOne({
-                _id: id
-            });
+            const item = allItems.find(x => x._id.toString() == id.toString());
 
             if (!item) {
                 console.log("Could not find song " + id);
@@ -204,7 +205,9 @@ router.put('/order', validUser(['admin']), async (req, res) => {
                 })
             }
 
-            toUpdate.push({item: item, order: order});
+            if (item.order != order) {
+                toUpdate.push({item: item, order: order});
+            }
         }
 
         for (let i = 0; i < toUpdate.length; i++) {
@@ -215,7 +218,7 @@ router.put('/order', validUser(['admin']), async (req, res) => {
             await item.save();
         }
 
-        return res.send(toUpdate.map(x => x.item));
+        return res.send(allItems);
 
     } catch(error) {
         console.log(error);
