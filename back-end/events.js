@@ -100,6 +100,12 @@ router.post('/', validUser(['admin']), upload, async (req, res) => {
         });
     }
     try {
+        if (isNaN(Number(req.body.price))) {
+            return res.status(400).send({
+                message: "Price must be a number"
+            })
+        }
+
         const event = new Event({
             name: req.body.name,
             description: req.body.description,
@@ -129,6 +135,12 @@ router.put('/:id', validUser(['admin']), upload, async (req, res) => {
             return res.status(400).send({
                 message: "Invalid body parameters"
             });
+        }
+
+        if (isNaN(Number(req.body.price))) {
+            return res.status(400).send({
+                message: "Price must be a number"
+            })
         }
 
         const event = await Event.findOne({

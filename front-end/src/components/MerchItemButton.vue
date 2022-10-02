@@ -5,7 +5,7 @@
                 <img :src="item.image">
             </div>
             <div>{{item.name}}</div>
-            <div>${{item.price}}</div>
+            <div v-if="item.price > 0">${{item.price}}</div>
         </router-link>
     </div>
 </template>
