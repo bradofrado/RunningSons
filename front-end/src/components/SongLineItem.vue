@@ -1,8 +1,11 @@
 <template>
     <router-link class="song-container transition-background" :to="`/music/${song.album}/${song.title}`">
-        <div class="number-container">
+        <!-- <div class="number-container">
             <div>{{index + 1}}</div>
-        </div>
+        </div> -->
+        <button class="number-container button-none" @click="onPlay">
+            <icon icon="play"/>
+        </button>
         <div class="image-container">
             <img :src="song.albumCover"/>
         </div>
@@ -14,12 +17,19 @@
 </template>
 
 <script>
+import Icon from '../../../global/components/Icon.vue'
 export default {
+  components: { Icon },
     name: "SongLineItem",
     props: {
         song: Object,
         index: Number
     },
+    methods: {
+        onPlay() {
+            this.$refs.audio.play();
+        }
+    }
     
 }
 </script>

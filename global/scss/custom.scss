@@ -114,6 +114,15 @@ button {
     background-color: $secondary-2-disabled;
 }
 
+.button-none {
+    background: none;
+    border: none;
+}
+
+.button-none:focus-visible {
+    outline: none;
+}
+
 .input {
     background-color: #f1f1f1;
     transition: background 0.15s ease, border 0.15s ease, box-shadow 0.15s ease, color 0.15s ease;

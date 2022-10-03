@@ -9,7 +9,8 @@ const env = require('./env.js');
 const Album = require('./albums.js').model;
 const util = require('./util.js');
 
-const upload = uploader.upload(path).single('image');
+const image = uploader.upload(path).single('image');
+const audio = uploader.upload(path).single('audio');
 
 const songSchema = new mongoose.Schema({
     title: String,
@@ -24,6 +25,7 @@ const songSchema = new mongoose.Schema({
         type: Number,
         default: 0
     },
+    audio: String,
     isDeleted: {
         type: Boolean,
         default: false
@@ -137,7 +139,7 @@ router.get('/featured', async (req, res) => {
     }
 })
 
-router.post('/', validUser(['admin']), upload, async(req, res) => {
+router.post('/', validUser(['admin']), image, audio, async(req, res) => {
     if (!req.body.title || !req.body.description || !req.body.album) {
         if (req.file) {
             uploader.delete(path + '/' + req.file.filename);
@@ -209,7 +211,7 @@ router.put('/order', validUser(['admin']), async (req, res) => {
     }
 })
 
-router.put('/:id', validUser(['admin']), upload, async (req, res) => {
+router.put('/:id', validUser(['admin']), image, audio, async (req, res) => {
     if (!req.body.title || !req.body.description || !req.body.album) {
         if (req.file) {
             uploader.delete(path + '/' + req.file.filename);
