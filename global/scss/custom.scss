@@ -156,6 +156,18 @@ button {
     text-shadow: 2px 4px 20px $black;
 }
 
+.items-container {
+    display: grid;
+    grid-template-columns: auto;
+}
+
+@media only screen and (min-width: 960px) {
+    .items-container {
+        display: grid;
+        grid-template-columns: auto auto auto auto;
+    }
+}
+
 @media only screen and (min-width: 960px) {
     .title {
         font-size: 5em;
