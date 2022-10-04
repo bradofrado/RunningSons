@@ -5,17 +5,24 @@ const urls = {
     instagram: "https://www.instagram.com/runningsons/",
     facebook: "https://www.facebook.com/braydon.jones.330/",
     github: "https://github.com/bradofrado/RunningSons",
+    // spotify: "https://github.com/bradofrado/RunningSons",
+    // apple: "https://music.apple.com/us/artist/1645664457",
+    // itunes: "https://music.apple.com/us/artist/1645664457",
+    // amazon: "https://github.com/bradofrado/RunningSons",
+    // pandora: "https://github.com/bradofrado/RunningSons",
+    // youtube: "https://github.com/bradofrado/RunningSons",
 }
 
 export default {
     name: "LogoIcon",
     props: {
         icon: String,
+        url: String
     },
     render() {
-        const url = urls[this.icon];
+        const url = this.url || urls[this.icon];
         if (!url) {
-            console.error("Invalid logo icon " + this.icon);
+            console.log("Invalid logo icon " + this.icon);
             return;
         }
 

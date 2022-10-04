@@ -19,6 +19,7 @@ const albumSchema = new mongoose.Schema({
         ref: 'Band'
     },
     presave: String,
+    links: Array,
     isDeleted: {
         type: Boolean,
         default: false
@@ -68,7 +69,7 @@ albumSchema.post(/^find/, async function(docs, next) {
 
     for (let i = items.length - 1; i >= 0; i--) {
         let item = items[i];
-        item && await item.populate();
+        item && item.populate && await item.populate();
     }
 
     next();
@@ -135,12 +136,16 @@ router.post('/', validUser(['admin']), upload, async(req, res) => {
                 message: "Could not find band " + req.body.band
             })
         }
+
+        let links = req.body.links ? JSON.parse(req.body.links) : [];
+
         const album = new Album({
             title: req.body.title,
             image: req.file ? path + '/' + req.file.filename : '',
             description: req.body.description,
             releaseDate: req.body.releaseDate,
-            band: band
+            band: band,
+            links: links
         });
 
         await album.save();
@@ -198,12 +203,14 @@ router.put('/:id', validUser(['admin']), upload, async (req, res) => {
         }
 
         const oldImage = album.image;
+        let links = req.body.links ? JSON.parse(req.body.links) : [];
 
         album.title = req.body.title,
         album.image = req.file ? path + '/' + req.file.filename : album.image,
         album.description = req.body.description,
         album.releaseDate = req.body.releaseDate
-        album.band = band 
+        album.band = band;
+        album.links = links;
 
         if (album.image != oldImage) {
             uploader.delete(oldImage);

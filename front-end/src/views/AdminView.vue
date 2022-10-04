@@ -12,7 +12,6 @@
 
 <script>
 import axios from 'axios';
-import AddKeyValue from '@/components/AddKeyValue.vue';
 import AdminProducts from '../components/AdminProducts.vue';
 
 export default {
@@ -72,7 +71,7 @@ export default {
                         type: 'custom',
                         title: 'Sizes',
                         required: true,
-                        component: AddKeyValue
+                        component: 'AddSize'
                     },
                     image: {
                         type: 'file',
@@ -159,6 +158,12 @@ export default {
                         type: 'textarea',
                         title: 'Description',
                         required: true,
+                    },
+                    links: {
+                        type: 'custom',
+                        title: 'Links',
+                        required: false,
+                        component: 'AddLink'
                     },
                     releaseDate: {
                         type: 'date',

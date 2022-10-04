@@ -4,7 +4,10 @@
         ALL CONTENT COPYRIGHT &#169; 2022 Running Sons
     </div>
     <div class="icons-container">
-        <logo-icon icon="instagram" class="icon"/>              
+        <logo-icon icon="instagram" class="icon"/>  
+        <logo-icon icon="spotify" class="icon"/>
+        <logo-icon icon="itunes" class="icon"/>
+        <logo-icon icon="youtube" class="icon"/>
     </div>   
 </div>     
 </template>

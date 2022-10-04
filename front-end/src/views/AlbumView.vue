@@ -3,6 +3,9 @@
         <div class="image-container">
             <img :src="album.image"/>
         </div>
+        <div class="logo-container">
+            <logo-icon class="ml-3" v-for="link in album.links" :key="link.type" :icon="link.type" :url="link.url"/>
+        </div>
         <div v-if="songs.length" class="songs-container">
             <song-line-item v-for="(song, i) in songs" :key="song._id" :song="song" :index="i"/>
         </div>
@@ -15,11 +18,13 @@
 <script>
 import axios from 'axios';
 import SongLineItem from '../components/SongLineItem.vue';
+import LogoIcon from '../../../global/components/LogoIcon.vue';
 
 export default {
     name: "AlbumView",
     components: { 
-        SongLineItem 
+        SongLineItem,
+        LogoIcon 
     },
     data() {
         return {
@@ -53,6 +58,17 @@ export default {
     margin-bottom: 10px;
 }
 
+.logo-container {
+    margin: 20px auto;
+    width: 250px;
+    display: flex;
+    justify-content: center;
+}
+
+/* .logo-container > * {
+    flex: 1;
+} */
+
 img {
     width: 100%;
 }
@@ -61,5 +77,9 @@ img {
     .image-container {
         width: 400px;
     }
+
+    /* .logo-container {
+        width: 450px;
+    } */
 }
 </style>

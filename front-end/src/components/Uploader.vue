@@ -13,7 +13,7 @@
             </fieldset>  
             <fieldset v-else-if="input.type == 'custom'" :key="index">
                 <label>{{input.title}}</label>
-                <component :is="AddSize" v-model="input.value"/>
+                <component :is="getComponent(input.component)" v-model="input.value"/>
             </fieldset>               
         </template>
         <div class="imageInputContainer">
@@ -45,6 +45,11 @@
 import FileInput from "@/components/FileInput.vue"
 import {Copy} from '@/util.js';
 import AddSize from '@/components/AddSize.vue';
+import AddLink from '@/components/AddLink.vue';
+
+const components = {
+    AddSize, AddLink
+}
 
 export default {
     name: 'Uploader',
@@ -63,8 +68,7 @@ export default {
             submitError: '',
             theInputs: {},
             loading: false,
-            loadingDelete: false,
-            AddSize
+            loadingDelete: false
         }
     },
     created() {
@@ -77,6 +81,9 @@ export default {
         }
     },
     methods: {
+        getComponent(comp) {
+            return components[comp];
+        },
         onClose() {
             this.submitError = '';
             this.$emit('close');
