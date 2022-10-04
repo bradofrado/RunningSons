@@ -42,6 +42,10 @@ albumSchema.methods.toJSON = function() {
         obj.band = obj.band.name;
     }
 
+    if (new Date() > obj.releaseDate) {
+        delete obj.presave;
+    }
+
     return obj;
 }
 
