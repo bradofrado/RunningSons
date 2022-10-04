@@ -18,6 +18,7 @@ const albumSchema = new mongoose.Schema({
         type: mongoose.Schema.ObjectId,
         ref: 'Band'
     },
+    presave: String,
     isDeleted: {
         type: Boolean,
         default: false
@@ -50,7 +51,7 @@ albumSchema.methods.exists = function() {
 
 //Filter out the deleted albums
 albumSchema.pre(/^find/, function() {
-    this.where({isDeleted: false});
+    this.where({isDeleted: false}).sort({releaseDate: 1});
 });
 
 //Populate the albums 
