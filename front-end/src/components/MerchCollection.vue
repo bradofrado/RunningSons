@@ -27,16 +27,6 @@ export default {
 </script>
 
 <style scoped lang="scss">
-.items-container {
-    display: grid;
-    grid-template-columns: auto;
-}
 
-@media only screen and (min-width: 960px) {
-    .items-container {
-        display: grid;
-        grid-template-columns: auto auto auto auto;
-    }
-}
 
 </style>

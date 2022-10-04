@@ -8,7 +8,8 @@
         <image-button class="imadge-item" to="/music" img="/images/MusicLogo.png"/>
         <image-button class="imadge-item" to="/merchandise" img="/images/MerchLogo.png"/>
     </div>
-    <merch-collection :items="items" label="Featured Items"/>
+    <pre-save />
+    <merch-collection class="m-t-1" :items="items" label="Featured Items"/>
     <merch-collection class="m-t-1" :items="events" label="Upcoming Events" type="events"/>
 </div>
 </template>
@@ -17,17 +18,18 @@
 import MerchCollection from '@/components/MerchCollection.vue';
 import axios from 'axios';
 import ImageButton from '../components/ImageButton.vue';
-//import MerchItem from '../components/MerchItem.vue';
+import PreSave from '../components/PreSave.vue';
 
 export default {
     name: 'HomeView',
     components: {
         MerchCollection,
         ImageButton,
-        //MerchItem
+        PreSave
     },
     data() {
         return {
+            releases: [],
             items: [],
             events: []
         }
