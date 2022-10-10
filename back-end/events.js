@@ -38,7 +38,7 @@ const eventsSchema = new mongoose.Schema({
 
 
 eventsSchema.pre(/^find/, function() {
-    this.where({isDeleted: false}).sort({date: 1});
+    this.where({isDeleted: false, date: { $gte: new Date() }}).sort({date: 1});
 });
 
 
