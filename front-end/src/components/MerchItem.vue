@@ -17,7 +17,7 @@
                 <span>Sizes:</span>
                 <select-size :sizes="theItem.sizes" v-model="theItem.size"/>
             </div>
-            <slot name="venmo" :total="totalAmount">
+            <slot name="venmo">
             </slot>
             <p v-if="error" class="danger">{{error}}</p>
             <div class="buttons-container">
