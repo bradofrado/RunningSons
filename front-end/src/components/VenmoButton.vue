@@ -5,12 +5,35 @@
 </template>
 
 <script>
+const urls = {
+    default: process.env.VUE_APP_VENMO_URL,
+    ios: process.env.VUE_APP_VENMO_URL_IOS,
+    android: process.env.VUE_APP_VENMO_URL_ANDROID
+}
+
 export default {
     name: "VenmoButton",
+    props: {
+        amount: Number,
+        note: String
+    },
     computed: {
         url() {
-            console.log(process.env);
-            return process.env.VUE_APP_VENMO_URL;
+            let url = urls[this.device];
+
+            url += '&amount=' + this.amount;
+            if (this.note) {
+                url +=  '&note=' + this.note;
+            }
+
+            return url;
+        },
+        device() {
+            return 'default';
+            // if (/Android/i.test(navigator.userAgent)) return 'android';
+            // if (/iPhone|iPad|iPod/i.test(navigator.userAgent)) return 'ios';
+
+            // return 'default'
         }
     }
 }

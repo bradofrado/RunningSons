@@ -24,7 +24,7 @@
                 <button class="button button-primary" @click="addToCart" :disabled="loading" v-spinner="loading">
                     {{addToCartText}}
                 </button>
-                <venmo-button v-if="venmo"/>
+                <venmo-button v-if="venmo" :amount="theItem.price" :note="theItem.name"/>
             </div>
         </div>
     </div>

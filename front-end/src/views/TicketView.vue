@@ -9,7 +9,7 @@
             <p>{{event.description}}</p>
         </template>
         <template #venmo>
-            <p>If you are ordering on venmo, pay ${{event.price.toFixed(2)}} for each ticket with names
+            <p>If you are ordering on venmo, pay ${{event.price.toFixed(2)}} for each ticket with your names
                 and we will put you on our list!
             </p>
         </template>
