@@ -1,4 +1,16 @@
-const shipping = 5;
+const shipping = 0;
+
+
+const getShipping = function(items) {
+    if (!items.length) return 0;
+
+    if (items.some(x => x.itemType == 'Merchandise')) {
+        return shipping;
+    }
+
+    return 0;
+}
+
 
 const getItemsAmount = function(items) {
     if (!items.length) {
@@ -9,7 +21,7 @@ const getItemsAmount = function(items) {
         return prev += curr.total;
     }, 0);
 
-    price += shipping;
+    price += getShipping(items);
 
     return price;
 }
@@ -50,7 +62,7 @@ const sortItems = async function(items, model) {
 
 module.exports = {
     getItemsAmount,
-    shipping,
+    getShipping,
     copy,
-    sortItems
+    sortItems,
 }

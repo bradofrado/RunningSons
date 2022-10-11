@@ -105,7 +105,7 @@ couponCodesSchema.methods.getValue = function(items, pastAmount) {
             totalAmount = util.getItemsAmount(items);
             break;
         case 'shipping':
-            totalAmount = util.shipping;
+            totalAmount = util.getShipping(items);
             break;
         //If it is a number, then it is a buy x get one free, or whatever value type is
         default:

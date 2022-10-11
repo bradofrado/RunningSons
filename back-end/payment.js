@@ -12,8 +12,6 @@ const Code = require('./couponcodes.js').model;
 const router = express.Router();
 const stripe = require("stripe")(env.stripeKey);
 
-const shipping = 5;
-
 class CouponLimitError extends Error {
     constructor() {
         super('User has exceeded the number of allowed coupons');
@@ -77,6 +75,19 @@ const getDescription = async function(items) {
         return prev;
     }, '')
 }
+
+router.get('/shipping', validUser, async (req, res) => {
+    try {
+        const items = await cart.model.find({
+            user: req.user
+        });
+
+        return res.send({shipping: util.getShipping(items)});
+    } catch(error) {
+        console.log(error);
+        res.sendStatus(500);
+    }
+})
 
 router.post('/', validUser, async (req, res) => {
     if (!req.user.clientSecret) {

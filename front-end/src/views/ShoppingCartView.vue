@@ -32,24 +32,6 @@ export default {
     async created() {
         await this.getItems();
     },
-    computed: {
-        subtotals() {
-            return this.items.reduce((prev, curr) => prev + CartItems.totals(curr), 0);
-        },
-        shipping() {
-            return 5;
-        },
-        codeAmount() {
-            return this.codes.reduce((prev, curr) => {
-                prev += curr.value;
-
-                return prev;
-            }, 0)
-        },
-        total() {
-            return this.subtotals + this.shipping - this.codeAmount;
-        }
-    },
     methods: {
         async getItems() {
             try {

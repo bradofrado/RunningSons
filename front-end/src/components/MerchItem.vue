@@ -81,7 +81,7 @@ export default {
             return this.item.sizes != null && this.item.sizes != undefined;
         },
         totalAmount() {
-            return (this.theItem.price * this.numItems).toFixed(2);
+            return this.theItem.price * this.numItems;
         }
     },
     watch: {

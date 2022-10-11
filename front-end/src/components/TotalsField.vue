@@ -5,7 +5,11 @@
             <span>{{item.fullName}}</span>
             <span>${{item.total.toFixed(2)}}</span>
         </div>
-        <div class="total-lineitem"><span>Shipping:</span><span>${{shipping.toFixed(2)}}</span></div>
+        <div class="total-lineitem">
+            <span>Shipping:</span>
+            <span v-if="shipping > 0">${{shipping.toFixed(2)}}</span>
+            <span v-else>FREE</span>
+        </div>
         <template v-for="{_id, code} in codes">
             <div v-if="code.value > 0" class="total-lineitem" :key="_id">
                 <span><button class="button apply-button" v-b-tooltip.hover title="remove" @click="remove(_id)">{{code.code}}:</button></span> 
@@ -44,17 +48,16 @@ export default {
             error: null,
             loading: false,
             codes: [],
+            shipping: 0
         }
     },
     async created() {
         await this.getCodes();
+        await this.getShipping();
     },
     computed: {
         subtotals() {
             return this.items.reduce((prev, curr) => prev + curr.total, 0);
-        },
-        shipping() {
-            return 5;
         },
         codeAmount() {
             return this.codes.reduce((prev, curr) => {
@@ -78,6 +81,15 @@ export default {
                 const response = await axios.get('/api/codes/apply');
 
                 this.codes = response.data;
+            } catch {
+                //
+            }
+        },
+        async getShipping() {
+            try {
+                const response = await axios.get('/api/payments/shipping');
+
+                this.shipping = response.data.shipping;
             } catch {
                 //
             }
