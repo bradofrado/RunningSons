@@ -8,8 +8,8 @@
             <div class="close">{{date(event.date)}} - {{event.time}}</div>
             <p>{{event.description}}</p>
         </template>
-        <template #venmo>
-            <p>If you are ordering on venmo, pay ${{event.price.toFixed(2)}} for each ticket with your names
+        <template #venmo={total}>
+            <p>If you are ordering on venmo, pay ${{total.toFixed(2)}} for each ticket with your names
                 and we will put you on our list!
             </p>
         </template>
