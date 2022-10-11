@@ -24,7 +24,7 @@
                 <button class="button button-primary" @click="addToCart" :disabled="loading" v-spinner="loading">
                     {{addToCartText}}
                 </button>
-                <venmo-button v-if="venmo" :amount="theItem.price" :note="theItem.name"/>
+                <venmo-button v-if="venmo" :amount="totalAmount" :note="theItem.name"/>
             </div>
         </div>
     </div>
@@ -79,6 +79,9 @@ export default {
         },
         hasSize() {
             return this.item.sizes != null && this.item.sizes != undefined;
+        },
+        totalAmount() {
+            return (this.theItem.price * this.numItems).toFixed(2);
         }
     },
     watch: {
