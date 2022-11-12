@@ -10,7 +10,6 @@ const urls = {
     itunes: "https://music.apple.com/us/artist/running-sons/1645664457",
     amazon: "https://music.amazon.com/artists/B0BFSWSL79/running-sons",
     pandora: "https://www.pandora.com/artist/running-sons/AR4Z6mVblk2lf39",
-    // youtube: "https://github.com/bradofrado/RunningSons",
 }
 
 export default {

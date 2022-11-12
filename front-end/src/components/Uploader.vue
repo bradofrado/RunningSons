@@ -10,6 +10,10 @@
             <fieldset v-else-if="input.type == 'textarea'" :key="index">
                 <label>{{input.title}}</label>
                 <textarea v-model="input.value" :placeholder="input.title"/>                
+            </fieldset> 
+            <fieldset v-else-if="input.type == 'dropdown'" :key="index">
+                <label>{{input.title}}</label>
+                <dropdown :items="input.items" v-model="input.value" :_key="input.key" :name="input.name"/>                
             </fieldset>  
             <fieldset v-else-if="input.type == 'custom'" :key="index">
                 <label>{{input.title}}</label>
@@ -46,6 +50,7 @@ import FileInput from "@/components/FileInput.vue"
 import {Copy} from '@/util.js';
 import AddSize from '@/components/AddSize.vue';
 import AddLink from '@/components/AddLink.vue';
+import Dropdown from './Dropdown.vue';
 
 const components = {
     AddSize, AddLink
@@ -62,6 +67,7 @@ export default {
     },
     components: {
         FileInput,
+        Dropdown,
     },
     data() {
         return {

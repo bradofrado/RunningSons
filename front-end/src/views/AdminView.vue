@@ -58,8 +58,10 @@ export default {
                         required: true
                     },
                     type: {
-                        type: 'input',
+                        type: 'dropdown',
                         title: 'Type',
+                        key: 'type',
+                        items: 'types',
                         required: true
                     },
                     description: {
@@ -128,7 +130,10 @@ export default {
                         require: true
                     },
                     album: {
-                        type: 'input',
+                        type: 'dropdown',
+                        items: 'albums',
+                        key: 'title',
+                        name: 'title',
                         title: 'Album',
                         require: true
                     },
@@ -150,8 +155,10 @@ export default {
                         require: true
                     },
                     band: {
-                        type: 'input',
+                        type: 'dropdown',
                         title: 'Band',
+                        items: 'bands',
+                        key: 'name',
                         require: true
                     },
                     description: {
@@ -225,6 +232,8 @@ export default {
     },
     async created() {
         await this.getEverything();
+
+        this.attachDropdownData();
     },
     computed: {
         isAdmin() {
@@ -241,6 +250,16 @@ export default {
         }
     },
     methods: {
+        attachDropdownData() {
+            for (let type in this.inputs) {
+                for (let inputName in this.inputs[type]) {
+                    const input = this.inputs[type][inputName];
+                    if (input.type == 'dropdown') {
+                        input.items = this[input.items];
+                    }
+                }
+            }
+        },
         async getEverything() {
             await this.getMerchandiseTypes();
             await this.getMerchandiseItems();
